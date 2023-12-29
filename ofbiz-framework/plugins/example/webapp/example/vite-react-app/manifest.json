@@ -1,0 +1,21 @@
+{
+  "index.css": {
+    "file": "assets/index-122722c9.css",
+    "src": "index.css"
+  },
+  "index.html": {
+    "assets": [
+      "assets/react-35ef61ed.svg"
+    ],
+    "css": [
+      "assets/index-122722c9.css"
+    ],
+    "file": "assets/index-0924c20c.js",
+    "isEntry": true,
+    "src": "index.html"
+  },
+  "src/assets/react.svg": {
+    "file": "assets/react-35ef61ed.svg",
+    "src": "src/assets/react.svg"
+  }
+}
