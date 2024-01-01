@@ -40,7 +40,7 @@ public class TopicMasterEvents {
 
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
 
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 
@@ -89,11 +89,27 @@ public class TopicMasterEvents {
 		}
 	}
 
+	public static String fetchOneTopic(HttpServletRequest request, HttpServletResponse response) {
+		Delegator delegator = (Delegator) request.getAttribute("delegator");
+		
+		String topicId = (String)request.getAttribute(ConstantValues.TOPIC_ID);
+		try {
+			GenericValue fetchedTopic = EntityQuery.use(delegator).select(ConstantValues.TOPIC_NAME).from("TopicMaster").where(ConstantValues.TOPIC_ID,topicId).cache().queryOne();
+
+			request.setAttribute("TopicMaster", fetchedTopic);
+			return "success";
+
+		} catch (GenericEntityException e) {
+			request.setAttribute("Error", e);
+			return "error";
+		}
+	}
+
 	public static String fetchTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
 		List<Map<String, Object>> topicMasterdata = new ArrayList<Map<String, Object>>();
 		try {
-			List<GenericValue> listOfTopicMasterData = EntityQuery.use(delegator).from("TopicMaster").queryList();
+			List<GenericValue> listOfTopicMasterData = EntityQuery.use(delegator).from("TopicMaster").cache().queryList();
 			if (UtilValidate.isNotEmpty(listOfTopicMasterData)) {
 				for (GenericValue list : listOfTopicMasterData) {
 					Map<String, Object> listOfTopicMasterEntity = new HashMap<String, Object>();
@@ -121,7 +137,7 @@ public class TopicMasterEvents {
 
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.TOPIC_NAME,
@@ -175,7 +191,7 @@ public class TopicMasterEvents {
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId);
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
 
 		try {
 			Debug.logInfo("=======Deleting TopicMaster record in event using service DeleteTopicMaster=========",
