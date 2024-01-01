@@ -7,46 +7,46 @@ import FillUp from "../Options/FillUp";
 import Detail from "../Options/Detail";
 
 export default function QuestionForm(props) {
-  const [mcq, showMcq] = useState({ display: "none" });
-  const [tf, showTF] = useState({ display: "none" });
-  const [sc, showSC] = useState({ display: "none" });
+  const [mcqOption, showMcqOption] = useState({ display: "none" });
+  const [truefalseOption, showtruefalseOption] = useState({ display: "none" });
+  const [singleChoiceOption, showsingleChoiceOption] = useState({ display: "none" });
   const [fillup, showFillUp] = useState({ display: "none" });
   const [detail, showDetail] = useState({ display: "none" });
 
   useEffect(() => {
     switch (props.quesType || props.questionType) {
       case "QT_MC":
-        showMcq({ display: "block" });
-        showTF({ display: "none" });
-        showSC({ display: "none" });
+        showMcqOption({ display: "block" });
+        showtruefalseOption({ display: "none" });
+        showsingleChoiceOption({ display: "none" });
         showDetail({ display: "none" });
         showFillUp({ display: "none" });
         break;
       case "QT_TF":
-        showTF({ display: "block" });
-        showMcq({ display: "none" });
-        showSC({ display: "none" });
+        showtruefalseOption({ display: "block" });
+        showMcqOption({ display: "none" });
+        showsingleChoiceOption({ display: "none" });
         showDetail({ display: "none" });
         showFillUp({ display: "none" });
         break;
       case "QT_SC":
-        showSC({ display: "block" });
-        showMcq({ display: "none" });
-        showTF({ display: "none" });
+        showsingleChoiceOption({ display: "block" });
+        showMcqOption({ display: "none" });
+        showtruefalseOption({ display: "none" });
         showDetail({ display: "none" });
         showFillUp({ display: "none" });
         break;
       case "QT_FIB":
-        showSC({ display: "none" });
-        showMcq({ display: "none" });
-        showTF({ display: "none" });
+        showsingleChoiceOption({ display: "none" });
+        showMcqOption({ display: "none" });
+        showtruefalseOption({ display: "none" });
         showDetail({ display: "none" });
         showFillUp({ display: "block" });
         break;
       case "QT_DA":
-        showSC({ display: "none" });
-        showMcq({ display: "none" });
-        showTF({ display: "none" });
+        showsingleChoiceOption({ display: "none" });
+        showMcqOption({ display: "none" });
+        showtruefalseOption({ display: "none" });
         showDetail({ display: "block" });
         showFillUp({ display: "none" });
         break;
@@ -162,7 +162,7 @@ export default function QuestionForm(props) {
             </div>
           </div>
         </div>
-        <div style={mcq}>
+        <div style={mcqOption}>
           <MultipleChoice
             optionA={props.optionA}
             optionB={props.optionB}
@@ -181,7 +181,7 @@ export default function QuestionForm(props) {
             changeOptionEHandler={props.changeOptionEHandler}
           />
         </div>
-        <div style={tf}>
+        <div style={truefalseOption}>
           <TrueFalse
             changedoptionA={props.changedoptionA}
             changedoptionB={props.changedoptionB}
@@ -191,7 +191,7 @@ export default function QuestionForm(props) {
             changeOptionBHandler={props.changeOptionBHandler}
           />
         </div>
-        <div style={sc}>
+        <div style={singleChoiceOption}>
           <SingleChoice
             optionA={props.optionA}
             optionB={props.optionB}

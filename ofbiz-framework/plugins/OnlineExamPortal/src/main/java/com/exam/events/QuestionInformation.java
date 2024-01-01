@@ -16,6 +16,7 @@ import org.apache.ofbiz.service.LocalDispatcher;
 import org.apache.ofbiz.service.ServiceUtil;
 
 import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
 
 public class QuestionInformation {
 	// Define a constant for the class name
@@ -23,9 +24,9 @@ public class QuestionInformation {
 
 	public static String getQuestionInfo(HttpServletRequest request, HttpServletResponse response) {
 		// Retrieve the LocalDispatcher and Delegator from the request attributes
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		// Retrieve examId, noOfQuestions, and initialize sequenceNum and performanceId
 		String examId = request.getAttribute(ConstantValues.EXAM_ID).toString();
@@ -74,7 +75,7 @@ public class QuestionInformation {
 				Map<String, Object> createUserAttemptMasterresult = dispatcher.runSync("createUserAttemptMaster",
 						UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
 								ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
-								noOfAttempt));
+								noOfAttempt,EntityConstants.USER_LOGIN, userLogin));
 
 				// Check if the service call resulted in an error
 				if (ServiceUtil.isError(createUserAttemptMasterresult)) {
@@ -130,7 +131,7 @@ public class QuestionInformation {
 							"createUserAttemptTopicMaster",
 							UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.USER_ANSWER_PERFORMANCE_ID,
 									performanceId, ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
-									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam));
+									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam,EntityConstants.USER_LOGIN, userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(createUserAttemptTopicMasterresult)) {
@@ -150,7 +151,7 @@ public class QuestionInformation {
 							.runSync("updateUserExamMappingnoOfAttempts",
 									UtilMisc.toMap(ConstantValues.EXAM_ID, examId,
 											ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempt,
-											ConstantValues.USEREXAM_PARTY_ID, partyId));
+											ConstantValues.USEREXAM_PARTY_ID, partyId,EntityConstants.USER_LOGIN, userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(updateUserExamMappingnoOfAttemptsresult)) {
@@ -167,7 +168,7 @@ public class QuestionInformation {
 
 					// Call service to get question information
 					Map<String, Object> getQuestionInformationresult = dispatcher.runSync("getQuestionInformation",
-							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request));
+							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request,EntityConstants.USER_LOGIN, userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(getQuestionInformationresult)) {
@@ -198,7 +199,7 @@ public class QuestionInformation {
 						Map<String, Object> resultMap = dispatcher.runSync("createUserAttemptAnswerMaster",
 								UtilMisc.toMap(ConstantValues.QUES_ID, questionId,
 										ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId, "sequenceNum",
-										sequenceNum));
+										sequenceNum,EntityConstants.USER_LOGIN, userLogin));
 						
 						// Increment sequenceNum
 						++sequenceNum;

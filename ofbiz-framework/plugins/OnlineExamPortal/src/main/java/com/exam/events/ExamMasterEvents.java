@@ -1,7 +1,11 @@
 package com.exam.events;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericEntityException;
@@ -25,11 +30,7 @@ import com.exam.forms.HibernateValidationMaster;
 import com.exam.forms.checks.ExamMasterCheck;
 import com.exam.helper.HibernateHelper;
 import com.exam.util.ConstantValues;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.exam.util.EntityConstants;
 
 public class ExamMasterEvents {
 	private static final String MODULE = ExamMasterEvents.class.getName();
@@ -39,9 +40,9 @@ public class ExamMasterEvents {
 	public static String createExamMasterEvent(HttpServletRequest request, HttpServletResponse response) {
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue)request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String examName = (String) request.getAttribute(ConstantValues.EXAM_NAME);
 		String description = (String) request.getAttribute(ConstantValues.EXAM_DESCRIPTION);
@@ -70,7 +71,7 @@ public class ExamMasterEvents {
 				noOfQuestions, ConstantValues.EXAM_DURATION, durationMinutes, ConstantValues.EXAM_PASS_PERCENTAGE,
 				passPercentage, ConstantValues.EXAM_QUES_RANDOMIZED, questionsRandomized, ConstantValues.EXAM_ANS_MUST,
 				answersMust, ConstantValues.EXAM_ENABLE_NEG_MARK, enableNegativeMark, ConstantValues.EXAM_NEG_MARK,
-				negativeMarkValue,"userLogin", userLogin);
+				negativeMarkValue, EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo("=======Creating ExamMaster record in event using service CreateExamMaster=========", MODULE);
@@ -93,21 +94,21 @@ public class ExamMasterEvents {
 						request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 						Debug.logError(errorMessage, MODULE);
 						return "error";
-					} else {
-						String successMessage = "Create Exam Service executed successfully.";
-						ServiceUtil.getMessages(request, createExamMasterInfoResult, successMessage);
-						request.setAttribute("_EVENT_MESSAGE_", successMessage);
-						return "success";
 					}
+					String successMessage = "Create Exam Service executed successfully.";
+					ServiceUtil.getMessages(request, createExamMasterInfoResult, successMessage);
+					request.setAttribute("_EVENT_MESSAGE_", successMessage);
+					return "success";
+
 				} catch (GenericServiceException e) {
-					String errMsg = "Error setting exam info: " + e.toString();
+					String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError", UtilHttp.getLocale(request))+ e.toString();//"Error setting exam info: " + e.toString();
 					request.setAttribute("_ERROR_MESSAGE_", errMsg);
 					return "error";
 				}
-			} else {
-				request.setAttribute("_ERROR_MESSAGE", errors);
-				return "error";
 			}
+			request.setAttribute("_ERROR_MESSAGE", errors);
+			return "error";
+
 		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
@@ -118,7 +119,7 @@ public class ExamMasterEvents {
 
 	// Method to retrieve data's from ExamMaster Entity
 	public static String fetchExamMasterEvent(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> examMasterdata = new ArrayList<Map<String, Object>>();
 		try {
 			// Query to retrieve data's from ExamMaster
@@ -149,12 +150,12 @@ public class ExamMasterEvents {
 				}
 				request.setAttribute("ExamMaster", examMasterdata);
 				return "success";
-			} else {
-				String errorMessage = "No matched fields in ExamMaster Entity";
-				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-				Debug.logError(errorMessage, MODULE);
-				return "error";
 			}
+			String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData", UtilHttp.getLocale(request));//"No matched fields in ExamMaster Entity";
+			request.setAttribute("_ERROR_MESSAGE_", errorMessage);
+			Debug.logError(errorMessage, MODULE);
+			return "error";
+
 		} catch (GenericEntityException e) {
 			request.setAttribute("Error", e);
 			return "error";
@@ -166,9 +167,9 @@ public class ExamMasterEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
 		String examName = (String) request.getAttribute(ConstantValues.EXAM_NAME);
@@ -200,7 +201,7 @@ public class ExamMasterEvents {
 				ConstantValues.EXAM_TOTAL_QUES, noOfQuestions, ConstantValues.EXAM_DURATION, durationMinutes,
 				ConstantValues.EXAM_PASS_PERCENTAGE, passPercentage, ConstantValues.EXAM_QUES_RANDOMIZED,
 				questionsRandomized, ConstantValues.EXAM_ANS_MUST, answersMust, ConstantValues.EXAM_ENABLE_NEG_MARK,
-				enableNegativeMark, ConstantValues.EXAM_NEG_MARK, negativeMarkValue, "userLogin", userLogin);
+				enableNegativeMark, ConstantValues.EXAM_NEG_MARK, negativeMarkValue, EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo("=======Updating ExamMaster record in event using service UpdateExamMaster=========", MODULE);
@@ -210,7 +211,7 @@ public class ExamMasterEvents {
 			Set<ConstraintViolation<HibernateValidationMaster>> errors = HibernateHelper
 					.checkValidationErrors(hibernate, ExamMasterCheck.class);
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
-					"Mandatory Err ExamMaster Entity", RES_ERR, false);
+					"Mandatory Fields missing in ExamMaster Entity", RES_ERR, false);
 
 			if (!hasFormErrors) {
 				try {
@@ -230,7 +231,7 @@ public class ExamMasterEvents {
 						return "success";
 					}
 				} catch (GenericServiceException e) {
-					String errMsg = "Error setting exam info: " + e.toString();
+					String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError", UtilHttp.getLocale(request)) + e.toString();
 					request.setAttribute("_ERROR_MESSAGE_", errMsg);
 					return "error";
 				}

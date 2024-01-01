@@ -73,7 +73,7 @@ function Field({ change, title, rolestate }) {
     var login = (add) => {
         setLoading(true);
         console.log("entered loginserver", add);
-        fetch('https://localhost:8443/OnlineExamPortal/control/Validate', {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/validate", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'

@@ -20,10 +20,12 @@ import org.apache.ofbiz.entity.GenericValue;
 import org.apache.ofbiz.entity.util.EntityQuery;
 import org.apache.ofbiz.service.LocalDispatcher;
 
+import com.exam.util.EntityConstants;
+
 public class UserResult {
 	public static String getUserResult(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 //		String performanceId=(String) request.getSession().getAttribute("performanceId");
 //		System.out.println("performanceId------->"+performanceId);
 		try {

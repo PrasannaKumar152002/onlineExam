@@ -24,6 +24,7 @@ import com.exam.forms.HibernateValidationMaster;
 import com.exam.forms.checks.TopicMasterCheck;
 import com.exam.helper.HibernateHelper;
 import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,13 +39,13 @@ public class TopicMasterEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 
-		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_NAME, topicName);
+		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_NAME, topicName,EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo("=======Creating TopicMaster record in event using service CreateTopicMaster=========",
@@ -90,7 +91,7 @@ public class TopicMasterEvents {
 	}
 
 	public static String fetchTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> topicMasterdata = new ArrayList<Map<String, Object>>();
 		try {
 			List<GenericValue> listOfTopicMasterData = EntityQuery.use(delegator).from("TopicMaster").queryList();
@@ -119,13 +120,13 @@ public class TopicMasterEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.TOPIC_NAME,
-				topicName);
+				topicName,EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo("=======Updating TopicMaster record in event using service UpdateTopicMaster=========",
@@ -172,10 +173,11 @@ public class TopicMasterEvents {
 	}
 
 	public static String deleteTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
-		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId);
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId,EntityConstants.USER_LOGIN, userLogin);
+
 
 		try {
 			Debug.logInfo("=======Deleting TopicMaster record in event using service DeleteTopicMaster=========",

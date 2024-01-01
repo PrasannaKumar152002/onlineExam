@@ -34,4 +34,13 @@ under the License.
     <property key="MandatoryFieldErrMsgLoginForm">
         <value xml:lang="en">Mandatory Field Missing in Login Form --</value>
     </property>
+    <property key="EnumerationEntityRecordNotFoundError">
+        <value xml:lang="en">No records available for the field enumId="Q_TYPE" in Enumeration Entity</value>
+    </property>
+    <property key="ServiceCallingError">
+        <value xml:lang="en">Error in calling or executing the service: </value>
+    </property>
+    <property key="ErrorInFetchingData">
+        <value xml:lang="en">Error in retreving datas from the Entity</value>
+    </property>
 </resource>

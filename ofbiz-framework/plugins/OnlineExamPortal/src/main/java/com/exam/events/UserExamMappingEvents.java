@@ -24,6 +24,7 @@ import org.apache.ofbiz.service.LocalDispatcher;
 import org.apache.ofbiz.service.ServiceUtil;
 
 import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
 
 public class UserExamMappingEvents {
 	private static final String MODULE = UserExamMappingEvents.class.getName();
@@ -33,9 +34,9 @@ public class UserExamMappingEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String partyId = (String) request.getAttribute(ConstantValues.USEREXAM_PARTY_ID);
 		String examId = (String) request.getAttribute(ConstantValues.USEREXAM_EXAM_ID);
@@ -56,7 +57,7 @@ public class UserExamMappingEvents {
 		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_EXAM_ID, examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS,
 				allowedAttempts, ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempts, ConstantValues.USEREXAM_LAST_DATE, lastPerformanceDateParsed,
 				ConstantValues.USEREXAM_TIMEOUT_DAYS, timeoutDays, ConstantValues.USEREXAM_PASSWORD_CHANGE, passwordChangesAuto, ConstantValues.USEREXAM_SPLIT, canSplitExams,
-				ConstantValues.USEREXAM_SEE_RESULT, canSeeDetailedResults, ConstantValues.USEREXAM_MAX_SPLIT, maxSplitAttempts);
+				ConstantValues.USEREXAM_SEE_RESULT, canSeeDetailedResults, ConstantValues.USEREXAM_MAX_SPLIT, maxSplitAttempts,EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo(
@@ -97,7 +98,7 @@ public class UserExamMappingEvents {
 	}
 
 	public static String fetchUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> UserExamMappingdata = new ArrayList<Map<String, Object>>();
 		try {
 			List<GenericValue> listOfUserExamMappingData = EntityQuery.use(delegator).from("UserExamMapping")
@@ -145,9 +146,9 @@ public class UserExamMappingEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String partyId = (String) request.getAttribute(ConstantValues.USEREXAM_PARTY_ID);
 		String examId = (String) request.getAttribute(ConstantValues.USEREXAM_EXAM_ID);
@@ -163,7 +164,7 @@ public class UserExamMappingEvents {
 		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_EXAM_ID, examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS,
 				allowedAttempts, ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempts, ConstantValues.USEREXAM_LAST_DATE, lastPerformanceDate,
 				ConstantValues.USEREXAM_TIMEOUT_DAYS, timeoutDays, ConstantValues.USEREXAM_PASSWORD_CHANGE, passwordChangesAuto, ConstantValues.USEREXAM_SPLIT, canSplitExams,
-				ConstantValues.USEREXAM_SEE_RESULT, canSeeDetailedResults, ConstantValues.USEREXAM_MAX_SPLIT, maxSplitAttempts);
+				ConstantValues.USEREXAM_SEE_RESULT, canSeeDetailedResults, ConstantValues.USEREXAM_MAX_SPLIT, maxSplitAttempts,EntityConstants.USER_LOGIN, userLogin);
 		try {
 			Debug.logInfo(
 					"=======Updating UserExamMapping record in event using service UpdateUserExamMapping=========",
@@ -202,11 +203,11 @@ public class UserExamMappingEvents {
 	}
 
 	public static String deleteUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		String partyId = (String) request.getAttribute(ConstantValues.USEREXAM_PARTY_ID);
 		String examId=(String) request.getAttribute(ConstantValues.USEREXAM_EXAM_ID);
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
-		Map<String, Object> userExamInfo = UtilMisc.toMap(ConstantValues.USEREXAM_PARTY_ID, partyId,ConstantValues.USEREXAM_EXAM_ID,examId);
+		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		Map<String, Object> userExamInfo = UtilMisc.toMap(ConstantValues.USEREXAM_PARTY_ID, partyId,ConstantValues.USEREXAM_EXAM_ID,examId,EntityConstants.USER_LOGIN, userLogin);
 		try {
 			Debug.logInfo("=======Deleting userExamMapping record in event using service DeleteTopicMaster=========",
 					MODULE);

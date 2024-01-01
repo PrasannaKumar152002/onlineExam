@@ -23,7 +23,7 @@ function TopicModalEditSample(props) {
     } else {
       try {
         document.getElementById("topicnameerr").style.display = "none";
-        fetch("https://localhost:8443/OnlineExamPortal/control/UpdateTopicMaster", {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-topic-master", {
           method: "PUT",
           credentials: "include",
           headers: {
