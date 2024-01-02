@@ -10,6 +10,7 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.UtilMisc;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericValue;
@@ -20,6 +21,7 @@ import com.exam.util.ConstantValues;
 
 public class QuestionInfoService {
 
+	public static final Map<String,Object> emptyMap=UtilMisc.toMap("status","error");
     // Main service method to get question information
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getQuestionInfo(DispatchContext dctx, Map<String, ? extends Object> context) {
@@ -34,7 +36,7 @@ public class QuestionInfoService {
             // Validate examId
             if (UtilValidate.isEmpty(examId)) {
                 Debug.log("examId is null");
-                return null; // If examId is empty, return null
+                return emptyMap; // If examId is empty, return emptyMap
             }
 
             // Retrieve a list of topics for the given examId
@@ -43,7 +45,7 @@ public class QuestionInfoService {
 
             if (UtilValidate.isEmpty(examTopicList)) {
                 Debug.log("ExamTopicList is null or empty..."); // Log if no topics found for the exam
-                return null; // If no topics found, return null
+                return emptyMap; // If no topics found, return emptyMap
             }
 
             // Loop through each topic and select random questions
@@ -108,6 +110,6 @@ public class QuestionInfoService {
             System.out.println("Exception: " + e.getMessage()); // Log the exception message
         }
 
-        return null; // Return null in case of an exception
+        return emptyMap; // Return emptyMap in case of an exception
     }
 }

@@ -26,7 +26,7 @@ public class QuestionInformation {
 		// Retrieve the LocalDispatcher and Delegator from the request attributes
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		// Retrieve examId, noOfQuestions, and initialize sequenceNum and performanceId
 		String examId = request.getAttribute(ConstantValues.EXAM_ID).toString();
@@ -75,7 +75,7 @@ public class QuestionInformation {
 				Map<String, Object> createUserAttemptMasterresult = dispatcher.runSync("createUserAttemptMaster",
 						UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
 								ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
-								noOfAttempt,EntityConstants.USER_LOGIN, userLogin));
+								noOfAttempt, EntityConstants.USER_LOGIN, userLogin));
 
 				// Check if the service call resulted in an error
 				if (ServiceUtil.isError(createUserAttemptMasterresult)) {
@@ -131,7 +131,8 @@ public class QuestionInformation {
 							"createUserAttemptTopicMaster",
 							UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.USER_ANSWER_PERFORMANCE_ID,
 									performanceId, ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
-									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam,EntityConstants.USER_LOGIN, userLogin));
+									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam, EntityConstants.USER_LOGIN,
+									userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(createUserAttemptTopicMasterresult)) {
@@ -147,11 +148,11 @@ public class QuestionInformation {
 					}
 
 					// Call service to update UserExamMapping with noOfAttempts
-					Map<String, Object> updateUserExamMappingnoOfAttemptsresult = dispatcher
-							.runSync("updateUserExamMappingnoOfAttempts",
-									UtilMisc.toMap(ConstantValues.EXAM_ID, examId,
-											ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempt,
-											ConstantValues.USEREXAM_PARTY_ID, partyId,EntityConstants.USER_LOGIN, userLogin));
+					Map<String, Object> updateUserExamMappingnoOfAttemptsresult = dispatcher.runSync(
+							"updateUserExamMappingnoOfAttempts",
+							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
+									noOfAttempt, ConstantValues.USEREXAM_PARTY_ID, partyId, EntityConstants.USER_LOGIN,
+									userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(updateUserExamMappingnoOfAttemptsresult)) {
@@ -168,7 +169,8 @@ public class QuestionInformation {
 
 					// Call service to get question information
 					Map<String, Object> getQuestionInformationresult = dispatcher.runSync("getQuestionInformation",
-							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request,EntityConstants.USER_LOGIN, userLogin));
+							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request,
+									EntityConstants.USER_LOGIN, userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(getQuestionInformationresult)) {
@@ -199,12 +201,11 @@ public class QuestionInformation {
 						Map<String, Object> resultMap = dispatcher.runSync("createUserAttemptAnswerMaster",
 								UtilMisc.toMap(ConstantValues.QUES_ID, questionId,
 										ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId, "sequenceNum",
-										sequenceNum,EntityConstants.USER_LOGIN, userLogin));
-						
+										sequenceNum, EntityConstants.USER_LOGIN, userLogin));
+
 						// Increment sequenceNum
 						++sequenceNum;
-						if(!ServiceUtil.isSuccess(resultMap))
-						{
+						if (!ServiceUtil.isSuccess(resultMap)) {
 							String errMsg = "userattempt master is not created successfully";
 							request.setAttribute("ERROR_MESSAGE", errMsg);
 							return "error";
@@ -232,6 +233,8 @@ public class QuestionInformation {
 
 		// Set success message in the request
 		request.setAttribute("EVENT_MESSAGE", "getQuestionInformation successfully.");
+		request.getSession().setAttribute("examId", examId);
+		request.getSession().setAttribute("performanceId", performanceId);
 		return "success";
 	}
 }
