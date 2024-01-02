@@ -37,7 +37,7 @@ export default function UserExamMappingForm(props) {
     const fetchExam = async () => {
         try {
             const response = await fetch(
-                "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/FetchExamMaster",
+                "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exams",
                 {
                     method: "GET",
                     credentials: "include",
@@ -58,7 +58,7 @@ export default function UserExamMappingForm(props) {
     const userexammapping = async () => {
         try {
             const response = await fetch(
-                "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-user-exam-mapping",
+                "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-all-users",
                 {
                     method: "GET",
                     credentials: "include",
@@ -69,7 +69,7 @@ export default function UserExamMappingForm(props) {
             }
             const data = await response.json();
             console.log(data);
-            var list = data.UserExamMapping;
+            var list = data.StudentListInfo.StudentList;
             setUserExamMapping(list);
         } catch (error) {
             console.log(error);
@@ -158,7 +158,7 @@ export default function UserExamMappingForm(props) {
         ) {
             try {
                 fetch(
-                    "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-user-exam-mapping",
+                    "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-exam-for-user",
                     {
                         method: "POST",
                         credentials: "include",

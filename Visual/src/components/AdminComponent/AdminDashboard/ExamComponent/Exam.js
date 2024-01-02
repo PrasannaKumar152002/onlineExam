@@ -95,7 +95,7 @@ function Exam() {
   const fetchExam = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-master",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exams",
         {
           method: "GET",
           credentials: "include",
@@ -105,7 +105,8 @@ function Exam() {
         throw new Error();
       }
       const data = await response.json();
-      var list = data.ExamMaster;
+      console.log(data);
+      var list = data.ExamInfo.ExamList;
       setExams(list);
     } catch (error) {
       console.log(error);
@@ -201,7 +202,7 @@ function Exam() {
       )
     ) {
       // FETCH
-      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-exam-master", {
+      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-exam", {
         method: "POST",
         credentials: "include",
         headers: {

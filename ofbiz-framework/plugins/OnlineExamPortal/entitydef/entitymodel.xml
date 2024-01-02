@@ -163,7 +163,7 @@
 		<field name="optionE" type="questionoption"></field>
 		<field name="answer" type="answerlength"></field>
 		<field name="numAnswers" type="numeric"></field>
-		<field name="QuestionType" type="id"></field>
+		<field name="questionType" type="id"></field>
 		<field name="difficultyLevel" type="integer"></field>
 		<field name="answerValue" type="fixed-point"></field>
 		<field name="topicId" type="id"></field>
@@ -177,7 +177,7 @@
 		</relation>
 		<relation rel-entity-name="Enumeration" type="one"
 			fk-name="QM_ENU">
-			<key-map field-name="QuestionType" rel-field-name="enumId" />
+			<key-map field-name="questionType" rel-field-name="enumId" />
 		</relation>
 	</entity>
 	

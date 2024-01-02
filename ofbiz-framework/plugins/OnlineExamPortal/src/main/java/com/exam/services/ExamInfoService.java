@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.UtilMisc;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericValue;
@@ -17,7 +18,7 @@ import com.exam.util.EntityConstants;
 
 public class ExamInfoService {
     public static final String module = ExamInfoService.class.getName();
-
+    public static final Map<String,Object> emptyMap=UtilMisc.toMap("status","error");
     // Service method to get exam information based on user login ID
     public static Map<String, Object> getExamInfo(DispatchContext dctx, Map<String, ? extends Object> context) {
         // Retrieve user ID from the context
@@ -27,30 +28,20 @@ public class ExamInfoService {
         if (UtilValidate.isEmpty(userid)) {
             String errMsg = "Userid is required fields on the form and can't be empty.";
             Debug.log(errMsg);
-            return null; // Return early if user ID is empty
+            return emptyMap; // Return early if user ID is empty
         }
 
         Delegator delegator = (Delegator) dctx.getDelegator();
 
         try {
-            // Query UserLogin entity
-            GenericValue getparty = EntityQuery.use(delegator).from("UserLogin").where(EntityConstants.USER_LOGIN_ID, userid).queryOne();
-
-            // Check if UserLogin entity is empty
-            if (UtilValidate.isEmpty(getparty)) {
-                String errMsg = "UserLogin entity is empty.";
-                Debug.log(errMsg);
-                return null; // Return early if UserLogin entity is empty
-            }
-
             // Get partyId from UserLogin entity
-            String partyid = getparty.getString(ConstantValues.PARTY_ID);
+            String partyid = ((GenericValue)context.get("userLogin")).getString(ConstantValues.PARTY_ID);
 
             // Check if partyId is empty
             if (UtilValidate.isEmpty(partyid)) {
                 String errMsg = "Inside UserLogin entity partyId is empty.";
                 Debug.log(errMsg);
-                return null; // Return early if partyId is empty
+                return emptyMap; // Return early if partyId is empty
             }
 
             // Query UserExamMapping entity
@@ -61,7 +52,7 @@ public class ExamInfoService {
             if (UtilValidate.isEmpty(getuserExamMap)) {
                 String errMsg = "UserExamMapping entity is empty.";
                 Debug.log(errMsg);
-                return null; // Return early if UserExamMapping entity is empty
+                return emptyMap; // Return early if UserExamMapping entity is empty
             }
             List<Map<String, Object>> listExam = new ArrayList<>();
             // Process each UserExamMapping
@@ -72,7 +63,7 @@ public class ExamInfoService {
                 if (UtilValidate.isEmpty(examid)) {
                     String errMsg = "Inside UserExamMapping entity examid is empty.";
                     Debug.log(errMsg);
-                    return null; // Return early if examid is empty
+                    return emptyMap; // Return early if examid is empty
                 }
 
                 // Query ExamMaster entity
@@ -82,7 +73,7 @@ public class ExamInfoService {
                 if (UtilValidate.isEmpty(getExam)) {
                     String errMsg = "ExamMaster entity is empty.";
                     Debug.log(errMsg);
-                    return null; // Return early if ExamMaster entity is empty
+                    return emptyMap; // Return early if ExamMaster entity is empty
                 }
 
                 // Create a map to store exam details
@@ -94,7 +85,7 @@ public class ExamInfoService {
                 // Exam Name
                 String examName = (String) getExam.getString(ConstantValues.EXAM_NAME);
                 if (UtilValidate.isEmpty(examName)) {
-                    String errMsg = "examName is null.";
+                    String errMsg = "examName is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("examName", examName);
@@ -102,7 +93,7 @@ public class ExamInfoService {
                 // Description
                 String description = (String) getExam.getString(ConstantValues.EXAM_DESCRIPTION);
                 if (UtilValidate.isEmpty(description)) {
-                    String errMsg = "description is null.";
+                    String errMsg = "description is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("description", description);
@@ -110,7 +101,7 @@ public class ExamInfoService {
                 // Creation Date
                 String creationDate = (String) getExam.getString(ConstantValues.EXAM_CREATION_DATE);
                 if (UtilValidate.isEmpty(creationDate)) {
-                    String errMsg = "creationDate is null.";
+                    String errMsg = "creationDate is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("creationDate", creationDate);
@@ -118,7 +109,7 @@ public class ExamInfoService {
                 // Expiration Date
                 String expirationDate = (String) getExam.getString(ConstantValues.EXAM_EXPIRATION_DATE);
                 if (UtilValidate.isEmpty(expirationDate)) {
-                    String errMsg = "expirationDate is null.";
+                    String errMsg = "expirationDate is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("expirationDate", expirationDate);
@@ -126,7 +117,7 @@ public class ExamInfoService {
                 // No Of Questions
                 String noOfQuestions = (String) getExam.getString(ConstantValues.EXAM_TOTAL_QUES);
                 if (UtilValidate.isEmpty(noOfQuestions)) {
-                    String errMsg = "noOfQuestions is null.";
+                    String errMsg = "noOfQuestions is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("noOfQuestions", noOfQuestions);
@@ -134,7 +125,7 @@ public class ExamInfoService {
                 // Duration Minutes
                 String durationMinutes = (String) getExam.getString(ConstantValues.EXAM_DURATION);
                 if (UtilValidate.isEmpty(durationMinutes)) {
-                    String errMsg = "durationMinutes is null.";
+                    String errMsg = "durationMinutes is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("durationMinutes", durationMinutes);
@@ -142,7 +133,7 @@ public class ExamInfoService {
                 // Pass Percentage
                 String passPercentage = (String) getExam.getString(ConstantValues.EXAM_PASS_PERCENTAGE);
                 if (UtilValidate.isEmpty(passPercentage)) {
-                    String errMsg = "passPercentage is null.";
+                    String errMsg = "passPercentage is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("passPercentage", passPercentage);
@@ -150,7 +141,7 @@ public class ExamInfoService {
                 // Questions Randomized
                 String questionsRandomized = (String) getExam.getString(ConstantValues.EXAM_QUES_RANDOMIZED);
                 if (UtilValidate.isEmpty(questionsRandomized)) {
-                    String errMsg = "questionsRandomized is null.";
+                    String errMsg = "questionsRandomized is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("questionsRandomized", questionsRandomized);
@@ -158,7 +149,7 @@ public class ExamInfoService {
                 // Answers Must
                 String answersMust = (String) getExam.getString(ConstantValues.EXAM_ANS_MUST);
                 if (UtilValidate.isEmpty(answersMust)) {
-                    String errMsg = "answersMust is null.";
+                    String errMsg = "answersMust is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("answersMust", answersMust);
@@ -166,7 +157,7 @@ public class ExamInfoService {
                 // Enable Negative Mark
                 String enableNegativeMark = (String) getExam.getString(ConstantValues.EXAM_ENABLE_NEG_MARK);
                 if (UtilValidate.isEmpty(enableNegativeMark)) {
-                    String errMsg = "enableNegativeMark is null.";
+                    String errMsg = "enableNegativeMark is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("enableNegativeMark", enableNegativeMark);
@@ -174,7 +165,7 @@ public class ExamInfoService {
                 // Negative Mark Value
                 String negativeMarkValue = (String) getExam.getString(ConstantValues.EXAM_NEG_MARK);
                 if (UtilValidate.isEmpty(negativeMarkValue)) {
-                    String errMsg = "negativeMarkValue is null.";
+                    String errMsg = "negativeMarkValue is emptyMap.";
                     Debug.log(errMsg);
                 }
                 examDetailsMap.put("negativeMarkValue", negativeMarkValue);
@@ -196,6 +187,6 @@ public class ExamInfoService {
             Debug.logError(e, module);
         }
 
-        return null; // Return null if there is an exception
+        return emptyMap; // Return emptyMap if there is an exception
     }
 }

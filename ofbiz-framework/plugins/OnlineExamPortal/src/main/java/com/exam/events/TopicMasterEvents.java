@@ -36,7 +36,7 @@ public class TopicMasterEvents {
 	private static final String MODULE = TopicMasterEvents.class.getName();
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
-	public static String createTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String createTopic(HttpServletRequest request, HttpServletResponse response) {
 
 		Locale locale = UtilHttp.getLocale(request);
 
@@ -111,7 +111,7 @@ public class TopicMasterEvents {
 		}
 	}
 
-	public static String fetchTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchAllTopics(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> viewTopicList = new ArrayList<Map<String, Object>>();
 		try {
@@ -123,7 +123,9 @@ public class TopicMasterEvents {
 					topicList.put(ConstantValues.TOPIC_NAME, topic.get(ConstantValues.TOPIC_NAME));
 					viewTopicList.add(topicList);
 				}
-				request.setAttribute("TopicMaster", viewTopicList);
+				Map<String, Object> topicsInfo = new HashMap<>();
+				topicsInfo.put("TopicList", viewTopicList);
+				request.setAttribute("TopicInfo", topicsInfo);
 				return "success";
 			} else {
 				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -138,7 +140,7 @@ public class TopicMasterEvents {
 		}
 	}
 
-	public static String updateTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String updateTopic(HttpServletRequest request, HttpServletResponse response) {
 
 		Locale locale = UtilHttp.getLocale(request);
 
@@ -194,7 +196,7 @@ public class TopicMasterEvents {
 		}
 	}
 
-	public static String deleteTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String deleteTopic(HttpServletRequest request, HttpServletResponse response) {
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);

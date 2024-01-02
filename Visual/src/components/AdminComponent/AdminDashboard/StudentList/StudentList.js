@@ -28,7 +28,12 @@ function StudentList() {
     }
     getAllStudent();
   }, []);
-
+if (students === undefined || students.length === 0)
+return (
+  <div>
+  <h1 className="text-center">No Student datas</h1>
+  </div>
+)
   return (
     <>
       <div>

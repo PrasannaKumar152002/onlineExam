@@ -39,15 +39,15 @@ public class ExamTopicMappingEvents {
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	// Method to insert data into ExamTopicMapping Entity
-	public static String createExamTopicMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String createTopicForExam(HttpServletRequest request, HttpServletResponse response) {
 		Locale locale = UtilHttp.getLocale(request);
 
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
-		String examId = (String) request.getAttribute(ConstantValues.EXAMTOPIC_EXAM_ID);
-		String topicId = (String) request.getAttribute(ConstantValues.EXAMTOPIC_TOPIC_ID);
+		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
+		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		String percentage = (String) request.getAttribute(ConstantValues.EXAMTOPIC_PERCENTAGE);
 		String topicPassPercentage = (String) request.getAttribute(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE);
 		String questionsPerExam = (String) request.getAttribute(ConstantValues.EXAMTOPIC_QUES_PER_EXAM);
@@ -106,7 +106,7 @@ public class ExamTopicMappingEvents {
 	}
 
 	// Method to retrieve data's from ExamTopicMapping Entity
-	public static String fetchExamTopicMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchAllExamTopics(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> viewExamTopicMapList = new ArrayList<Map<String, Object>>();
 		try {
@@ -115,10 +115,10 @@ public class ExamTopicMappingEvents {
 			if (UtilValidate.isNotEmpty(listOfExamTopicMapData)) {
 				for (GenericValue topicOfExam : listOfExamTopicMapData) {
 					Map<String, Object> topicMapList = new HashMap<String, Object>();
-					topicMapList.put(ConstantValues.EXAMTOPIC_EXAM_ID,
-							topicOfExam.get(ConstantValues.EXAMTOPIC_EXAM_ID));
-					topicMapList.put(ConstantValues.EXAMTOPIC_TOPIC_ID,
-							topicOfExam.get(ConstantValues.EXAMTOPIC_TOPIC_ID));
+					topicMapList.put(ConstantValues.EXAM_ID,
+							topicOfExam.get(ConstantValues.EXAM_ID));
+					topicMapList.put(ConstantValues.TOPIC_ID,
+							topicOfExam.get(ConstantValues.TOPIC_ID));
 					topicMapList.put(ConstantValues.EXAMTOPIC_PERCENTAGE,
 							topicOfExam.get(ConstantValues.EXAMTOPIC_PERCENTAGE));
 					topicMapList.put(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE,
@@ -127,7 +127,9 @@ public class ExamTopicMappingEvents {
 							topicOfExam.get(ConstantValues.EXAMTOPIC_QUES_PER_EXAM));
 					viewExamTopicMapList.add(topicMapList);
 				}
-				request.setAttribute("ExamTopicMapping", viewExamTopicMapList);
+				Map<String, Object> examforTopicsInfo = new HashMap<>();
+				examforTopicsInfo.put("ExamTopicList", viewExamTopicMapList);
+				request.setAttribute("ExamTopicsInfo", examforTopicsInfo);
 				return "success";
 			}
 			String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -143,15 +145,15 @@ public class ExamTopicMappingEvents {
 	}
 
 	// Method to Update data into ExamTopicMapping Entity
-	public static String updateExamTopicMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String updateTopicForExam(HttpServletRequest request, HttpServletResponse response) {
 		Locale locale = UtilHttp.getLocale(request);
 
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
-		String examId = (String) request.getAttribute(ConstantValues.EXAMTOPIC_EXAM_ID);
-		String topicId = (String) request.getAttribute(ConstantValues.EXAMTOPIC_TOPIC_ID);
+		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
+		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		String percentage = (String) request.getAttribute(ConstantValues.EXAMTOPIC_PERCENTAGE);
 		String topicPassPercentage = (String) request.getAttribute(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE);
 		String questionsPerExam = (String) request.getAttribute(ConstantValues.EXAMTOPIC_QUES_PER_EXAM);

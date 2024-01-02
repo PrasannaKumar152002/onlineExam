@@ -37,7 +37,7 @@ public class ExamMasterEvents {
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	// Method to insert data into ExamMaster Entity
-	public static String createExamMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String createExam(HttpServletRequest request, HttpServletResponse response) {
 		Locale locale = UtilHttp.getLocale(request);
 
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
@@ -120,7 +120,7 @@ public class ExamMasterEvents {
 	}
 
 	// Method to retrieve data's from ExamMaster Entity
-	public static String fetchExamMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchAllExams(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> viewExamList = new ArrayList<Map<String, Object>>();
 		try {
@@ -143,7 +143,9 @@ public class ExamMasterEvents {
 					examList.put(ConstantValues.EXAM_NEG_MARK, exam.get(ConstantValues.EXAM_NEG_MARK));
 					viewExamList.add(examList);
 				}
-				request.setAttribute("ExamMaster", viewExamList);
+				Map<String, Object> examsInfo = new HashMap<>();
+				examsInfo.put("ExamList", viewExamList);
+				request.setAttribute("ExamInfo", examsInfo);
 				return "success";
 			}
 			String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -159,7 +161,7 @@ public class ExamMasterEvents {
 	}
 
 	// Method to Update data's into ExamMaster Entity
-	public static String updateExamMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String updateExam(HttpServletRequest request, HttpServletResponse response) {
 
 		Locale locale = UtilHttp.getLocale(request);
 

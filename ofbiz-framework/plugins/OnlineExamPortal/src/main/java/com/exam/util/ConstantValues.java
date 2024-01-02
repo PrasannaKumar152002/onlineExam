@@ -20,7 +20,7 @@ public class ConstantValues {
 	public static final String EXAM_TOTAL_QUES = "noOfQuestions";
 	public static final String EXAM_DURATION = "durationMinutes";
 	public static final String EXAM_PASS_PERCENTAGE = "passPercentage";
-	public static final String EXAM_QUES_RANDOMIZED = "questiousernsRandomized";
+	public static final String EXAM_QUES_RANDOMIZED = "questionsRandomized";
 	public static final String EXAM_ANS_MUST = "answersMust";
 	public static final String EXAM_ENABLE_NEG_MARK = "enableNegativeMark";
 	public static final String EXAM_NEG_MARK = "negativeMarkValue";

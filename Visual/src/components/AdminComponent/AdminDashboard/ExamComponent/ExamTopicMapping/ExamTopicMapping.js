@@ -16,10 +16,11 @@ export default function ExamTopicMapping() {
     fetchExam();
     fetchExamTopicMapping();
   }, []);
-  
+
   const handleChangePercentage = (e) => {
-    setSelectedQuestionsPerExam(e.target.value)
-  }
+    setPercentage(e.target.value);
+    setSelectedQuestionsPerExam(e.target.value);
+  };
   const handleSelectTopicChange = (e) => {
     setTopicChange(e.topicId);
   };
@@ -33,7 +34,9 @@ export default function ExamTopicMapping() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topic-master",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-topics",
         {
           method: "GET",
           credentials: "include",
@@ -44,7 +47,7 @@ export default function ExamTopicMapping() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.TopicMaster;
+      var list = data.TopicInfo.TopicList;
       setTopics(list);
     } catch (error) {
       console.log(error);
@@ -55,7 +58,9 @@ export default function ExamTopicMapping() {
   const fetchExam = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-master",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-exams",
         {
           method: "GET",
           credentials: "include",
@@ -66,7 +71,7 @@ export default function ExamTopicMapping() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.ExamMaster;
+      var list = data.ExamInfo.ExamList;
       setExams(list);
     } catch (error) {
       console.log(error);
@@ -77,7 +82,9 @@ export default function ExamTopicMapping() {
   const fetchExamTopicMapping = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-topic-mapping",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-all-exam-topics",
         {
           method: "GET",
           credentials: "include",
@@ -88,15 +95,13 @@ export default function ExamTopicMapping() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.ExamTopicMapping;
-      setExamTopic([...list]);
+      var list = data.ExamTopicsInfo.ExamTopicList;
+      setExamTopic(list);
     } catch (error) {
       console.log(error);
     }
   };
   console.log(exams);
-
-
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -107,7 +112,7 @@ export default function ExamTopicMapping() {
       topicId: topicChange,
       percentage: percentage,
       topicPassPercentage: formData.get("topicPassPercentage"),
-      questionsPerExam:  selectedQuestionsPerExam,
+      questionsPerExam: selectedQuestionsPerExam,
     };
     console.log(data_map);
 
@@ -147,7 +152,9 @@ export default function ExamTopicMapping() {
     ) {
       try {
         fetch(
-          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-exam-topic-mapping",
+          "https://" +
+            window.location.hostname +
+            ":8443/OnlineExamPortal/control/create-topic-for-exam",
           {
             method: "POST",
             credentials: "include",
@@ -173,6 +180,7 @@ export default function ExamTopicMapping() {
   if (examTopic === undefined) {
     <div className="d-flex justify-content-center min-vh-2 text-black">
       <ExamTopicMappingForm
+        percentage={percentage}
         topics={topics}
         submitHandler={submitHandler}
         examChange={examChange}
@@ -185,9 +193,27 @@ export default function ExamTopicMapping() {
         handleSelectCountChange={handleSelectCountChange}
         handleChangePercentage={handleChangePercentage}
       />
-    </div>
+    </div>;
   }
-
+  if (examTopic === undefined || examTopic.length === 0)
+    return (
+      <>
+        <ExamTopicMappingForm
+          percentage={percentage}
+          topics={topics}
+          submitHandler={submitHandler}
+          examChange={examChange}
+          selectedQuestionsPerExam={selectedQuestionsPerExam}
+          count={count}
+          exams={exams}
+          examId={examTopic.examId}
+          handleSelectTopicChange={handleSelectTopicChange}
+          handleSelectExamChange={handleSelectExamChange}
+          handleSelectCountChange={handleSelectCountChange}
+          handleChangePercentage={handleChangePercentage}
+        />
+      </>
+    );
   return (
     <div>
       <Table responsive>
@@ -216,6 +242,7 @@ export default function ExamTopicMapping() {
       </Table>
       <div className="d-flex justify-content-center min-vh-2 text-black">
         <ExamTopicMappingForm
+          percentage={percentage}
           topics={topics}
           submitHandler={submitHandler}
           examChange={examChange}

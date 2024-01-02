@@ -12,9 +12,9 @@ function Dashboard() {
   const fetchExams = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-master",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exams",
         {
-          method: "POST",
+          method: "GET",
           credentials: "include",
         }
       );
@@ -22,7 +22,7 @@ function Dashboard() {
         throw new Error();
       }
       const data = await response.json();
-      var list = data.ExamMaster;
+      var list = data.ExamInfo.ExamList;
       setExams(list);
     } catch (error) {
       console.log(error);
@@ -39,7 +39,7 @@ function Dashboard() {
       <div className="m-5">
         <div className="container">
           <div className="row display-flex justify-content-center">
-            {exams.map((data, i) => (
+            {exams ? exams.map((data, i) => (
               <div
                 key={i}
                 className="col-md-2 border p-4 border-dark d-flex justify-content-center m-2"
@@ -90,7 +90,7 @@ function Dashboard() {
                   )}
                 </div>
               </div>
-            ))}
+            )):<>No Exams</>}
           </div>
         </div>
       </div>

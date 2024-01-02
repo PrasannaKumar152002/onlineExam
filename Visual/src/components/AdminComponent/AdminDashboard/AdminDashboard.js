@@ -30,7 +30,7 @@ function AdminDashboard() {
         const data = await response.json();
         console.log(data);
         var list = data.StudentList;
-        setStudents([...list]);
+        setStudents(list);
       } catch (error) {
         console.log(error);
       }
