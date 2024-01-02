@@ -42,33 +42,33 @@ const Report = () => {
   console.log("wrongmark----->",wrongmark);
   console.log("total----->",total);
 
-  useEffect(() => {
-    fetchInfo();
-  }, []);
+  // useEffect(() => {
+  //   fetchInfo();
+  // }, []);
 
-  const requestBody = {correctmark,wrongmark,total};
-  const url = "https://localhost:8443/OnlineExamPortal/control/UpdateResult";
+  // const requestBody = {correctmark,wrongmark,total};
+  // const url = "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-result";
 
-  const fetchInfo = () => {
-    console.log("inside fetch...");
+  // const fetchInfo = () => {
+  //   console.log("inside fetch...");
 
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then((res) => res.json())
-      .then((fetchedData) => {
-        console.log("fetched...date",fetchedData);
+  //   fetch(url, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(requestBody),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((fetchedData) => {
+  //       console.log("fetched...date",fetchedData);
         
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        nav("/dashboard")
-      });
-  };
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data:', error);
+  //       nav("/dashboard")
+  //     });
+  // };
   return (
     <div>
         <h1>Score={correctmark}/{total}</h1>

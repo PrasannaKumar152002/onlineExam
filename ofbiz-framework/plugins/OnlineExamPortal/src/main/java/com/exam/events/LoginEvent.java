@@ -13,6 +13,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericValue;
@@ -30,13 +31,13 @@ import com.exam.util.EntityConstants;
 public class LoginEvent {
 
 	public static final String module = LoginEvent.class.getName();
-	public static String resource_error = "OnlineExamPortalUiLabels";
+	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	// Method to Login
 	public static String dologin(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		
 
 		Locale locale = UtilHttp.getLocale(request);
 		String username = request.getAttribute(EntityConstants.CAPS_USER_NAME).toString();
@@ -53,16 +54,15 @@ public class LoginEvent {
 			Set<ConstraintViolation<HibernateValidation>> errors = HibernateHelper.checkValidationErrors(Hibernet,
 					LoginFormCheck.class);
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
-					"MandatoryFieldErrMsgLoginForm", resource_error, false);
+					"MandatoryFieldErrMsgLoginForm", RES_ERR, false);
 			if (!hasFormErrors) {
 				String result = LoginWorker.login(request, response);
 				if (result.equals("success")) {
-					request.setAttribute("_EVENT_MESSAGE_", "Login succesfully.");
-					
+					String successMsg = UtilProperties.getMessage(RES_ERR, "LoginSuccessMessage", UtilHttp.getLocale(request));
+					request.setAttribute("_EVENT_MESSAGE_", successMsg);
+					GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 					// Query to retrieve data from UserLogin Entity
-					GenericValue userid = EntityQuery.use(delegator).from("UserLogin").where(EntityConstants.USER_LOGIN_ID, username)
-							.cache().queryOne();
-					String partyid = userid.getString("partyId");
+					String partyid = userLogin.getString("partyId");
 					
 					//Query to retrieve data's from PartyRole Entity
 					List<GenericValue> role = EntityQuery.use(delegator).from("PartyRole").where(ConstantValues.USEREXAM_PARTY_ID, partyid)
@@ -77,7 +77,7 @@ public class LoginEvent {
 			}
 			request.setAttribute("hibernatresult", hasFormErrors);
 		} catch (Exception e) {
-			String errMsg = "Error in calling or excecuting the service: " + e.toString();
+			String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError", UtilHttp.getLocale(request))+e.toString();//"Error in calling or excecuting the service: " + e.toString();
 			request.setAttribute("_ERROR_MESSAGE_", errMsg);
 			return "error";
 		}

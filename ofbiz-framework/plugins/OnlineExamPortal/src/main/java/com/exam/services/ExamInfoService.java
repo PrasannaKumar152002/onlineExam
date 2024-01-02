@@ -89,14 +89,7 @@ public class ExamInfoService {
                 Map<String, Object> examDetailsMap = new HashMap<>();
 
                 // Process each attribute and add it to the map
-
-                // Exam ID
-                String examId = (String) getExam.getString(ConstantValues.EXAM_ID);
-                if (UtilValidate.isEmpty(examId)) {
-                    String errMsg = "examId is null.";
-                    Debug.log(errMsg);
-                }
-                examDetailsMap.put("examId", examId);
+                examDetailsMap.put("examId", examid);
 
                 // Exam Name
                 String examName = (String) getExam.getString(ConstantValues.EXAM_NAME);

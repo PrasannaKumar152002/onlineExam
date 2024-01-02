@@ -19,7 +19,7 @@ function AdminDashboard() {
     async function getAllStudent() {
       try {
         const response = await fetch(
-          "https://localhost:8443/OnlineExamPortal/control/FetchStudentDetails",
+          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-student-details",
           {
             credentials: "include",
           }

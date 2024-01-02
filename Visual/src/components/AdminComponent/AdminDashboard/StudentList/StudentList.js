@@ -8,7 +8,7 @@ function StudentList() {
     async function getAllStudent() {
       try {
         const response = await fetch(
-          "https://localhost:8443/OnlineExamPortal/control/FetchStudentDetails",
+          "https://"+window.location.hostname+ ":8443/OnlineExamPortal/control/fetch-student-details",
           {
             method: "GET",
             credentials: "include",
@@ -18,11 +18,12 @@ function StudentList() {
           throw new Error();
         }
         const data = await response.json();
-        console.log(data);
+        console.log("studentlist",data);
         var list = data.StudentList;
         setStudents(list);
       } catch (error) {
         console.log(error);
+
       }
     }
     getAllStudent();
@@ -45,7 +46,7 @@ function StudentList() {
             </tr>
           </thead>
           <tbody>
-            {students.map((data) => {
+            {students?students.map((data) => {
               return (
                 <tr key={data.partyId}>
                   <td id="party">{data.partyId}</td>
@@ -66,7 +67,7 @@ function StudentList() {
                   </td>
                 </tr>
               );
-            })}
+            }):<h3>No Students available</h3>}
           </tbody>
         </table>
       </div >

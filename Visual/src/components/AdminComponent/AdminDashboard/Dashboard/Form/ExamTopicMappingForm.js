@@ -37,7 +37,7 @@ export default function ExamTopicMappingForm(props) {
             </div>
             <div className="col-12 col-sm-6 row mt-3 d-flex align-items-center justify-content-center">
               <label
-                htmlFor="expiratitopicIdonDate"
+                htmlFor="TopicName"
                 className="col-sm-2 mt-2"
                 style={{ fontWeight: "bolder" }}
               >

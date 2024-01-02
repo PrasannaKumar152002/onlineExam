@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
 
 const Dashboard = () => {
-  const url = "https://localhost:8443/OnlineExamPortal/control/examInfo";
+  const url = "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/exam-info";
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const { questions, setQuestions } = useContext(AppContext);
@@ -12,18 +12,16 @@ const Dashboard = () => {
   
   var user=sessionStorage.getItem("userId"); 
 console.log("=====",user);
-  const requestBody = { userLoginId: user};
 
   const fetchInfo = () => {
     
 
     fetch(url, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody),
     })
       .then((response) => response.json())
       .then((result) => {
