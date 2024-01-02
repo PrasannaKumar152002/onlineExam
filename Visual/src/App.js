@@ -18,8 +18,8 @@ function App() {
   }
   return (
     <div className="App">
-      <AdminDashboard/>
-     {/* {state==="login"?<SignIn rolestate={rolestate}/>:(state==="admin"?<Admin rolestate={()=>{rolestate("admin")}}/>:<UserPage/>)} */}
+      {/* <AdminDashboard/> */}
+     {state==="login"?<SignIn rolestate={rolestate}/>:(state==="admin"?<Admin rolestate={()=>{rolestate("admin")}}/>:<UserPage/>)}
     </div>
   );
 }
