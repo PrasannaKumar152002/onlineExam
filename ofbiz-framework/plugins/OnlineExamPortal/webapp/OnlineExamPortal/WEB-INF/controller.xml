@@ -37,7 +37,7 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<request-map uri="register">
-		<security https="true" auth="true" />
+		<security https="true" auth="false" />
 		<event type="java" path="com.exam.events.RegistrationEvent"
 			invoke="register" />
 		<response name="success" type="request" value="json" />
@@ -192,7 +192,7 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 	
-	<request-map uri="examInfo">
+	<request-map uri="exam-info">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamInformation"
 			invoke="getExamInfo" />
@@ -200,7 +200,7 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 
-	<request-map uri="questionInfo">
+	<request-map uri="question-info">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.QuestionInformation"
 			invoke="getQuestionInfo" />

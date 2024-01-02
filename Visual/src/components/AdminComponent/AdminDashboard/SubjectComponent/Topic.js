@@ -67,7 +67,7 @@ function Topic() {
       const response = await fetch(
         "https://localhost:8443/OnlineExamPortal/control/FetchTopicMaster",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );

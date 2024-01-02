@@ -10,7 +10,7 @@ function StudentList() {
         const response = await fetch(
           "https://localhost:8443/OnlineExamPortal/control/FetchStudentDetails",
           {
-            method: "GET",
+            method: "POST",
             credentials: "include",
           }
         );

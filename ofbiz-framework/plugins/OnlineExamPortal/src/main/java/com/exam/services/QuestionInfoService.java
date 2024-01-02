@@ -38,16 +38,16 @@ public class QuestionInfoService {
             }
 
             // Retrieve a list of topics for the given examId
-            List<GenericValue> examTopicList = EntityQuery.use(delegator).from("ExamTopicMapping")
+            List<GenericValue> examTopicMappingList = EntityQuery.use(delegator).from("ExamTopicMapping")
                     .where(ConstantValues.EXAM_ID, examId).queryList();
 
-            if (UtilValidate.isEmpty(examTopicList)) {
+            if (UtilValidate.isEmpty(examTopicMappingList)) {
                 Debug.log("ExamTopicList is null or empty..."); // Log if no topics found for the exam
                 return null; // If no topics found, return null
             }
 
             // Loop through each topic and select random questions
-            for (GenericValue getTopic : examTopicList) {
+            for (GenericValue getTopic : examTopicMappingList) {
                 String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
 
                 // Validate topicId
@@ -75,37 +75,38 @@ public class QuestionInfoService {
                     }
 
                     Random rd = new Random();
-                    List<GenericValue> selectedQuestions = new ArrayList<>();
+                    List<GenericValue> questionList = new ArrayList<>();
 
                     // Select random questions based on questionsPerExam
                     for (int i = 0; i < questionsPerExam; i++) {
                         int rand = rd.nextInt(topicQuestions.size());
-                        selectedQuestions.add(topicQuestions.get(rand));
+                        questionList.add(topicQuestions.get(rand));
                         topicQuestions.remove(rand);
                     }
 
                     // Add the selected questions to the map if not empty
-                    if (UtilValidate.isNotEmpty(selectedQuestions)) {
-                        question.put(topicId, selectedQuestions);
+                    if (UtilValidate.isNotEmpty(questionList)) {
+                        question.put(topicId, questionList);
                     }
                 }
             }
 
             // Prepare a list of lists containing selected questions
-            List<List<GenericValue>> topicQuestionsList = new ArrayList<>();
+            List<List<GenericValue>> questionTopicList = new ArrayList<>();
             for (Entry<String, Object> entry : question.entrySet()) {
-                topicQuestionsList.add((List<GenericValue>) entry.getValue());
+                questionTopicList.add((List<GenericValue>) entry.getValue());
             }
 
             // Add the list of selected questions to the result map and session attribute
-            if (UtilValidate.isNotEmpty(topicQuestionsList)) {
-                result.put("examquestion", topicQuestionsList);
-                request.getSession().setAttribute("selectedQuestions", topicQuestionsList);
+            if (UtilValidate.isNotEmpty(questionTopicList)) {
+                result.put("examquestion", questionTopicList);
+                request.getSession().setAttribute("selectedQuestions", questionTopicList);
             }
 
             return result; // Return the result map
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage()); // Log the exception message
+            
         }
 
         return null; // Return null in case of an exception

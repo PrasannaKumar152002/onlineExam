@@ -1,75 +1,64 @@
 import React, { useState, useEffect, useContext } from 'react';
-
 import { NavLink } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
 
 const Dashboard = () => {
-  const url = "https://localhost:8443/OnlineExamPortal/control/examInfo";
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
+  const examInfoUrl = "https:// " + window.location.hostname + ":8443/OnlineExamPortal/control/exam-info";
+  const [examData, setExamData] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
   const { questions, setQuestions } = useContext(AppContext);
   setQuestions(null);
-  
-  var user=sessionStorage.getItem("userId"); 
-console.log("=====",user);
-  const requestBody = { userLoginId: user};
 
-  const fetchInfo = () => {
-    
 
-    fetch(url, {
+
+  const fetchExamInfo = () => {
+    fetch(examInfoUrl, {
       method: "POST",
       credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
+
+
     })
       .then((response) => response.json())
       .then((result) => {
-        
         if (result.exam === undefined) {
-          
-          console.error('Error fetching data:', error);
-          setError('Error fetching data. Please try again.');
+          console.error('Error  in fetching exam data:', fetchError);
+          setFetchError('Error fetching exam data. Please try again.');
         } else {
-          console.log(result.exam.exam);
-          setData(result.exam.exam);
-        
+          console.log(result.examList.exam);
+          setExamData(result.examList.exam);
         }
-
       })
       .catch((error) => {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data. Please try again.');
+        console.error('Error  in fetching exam data:', error);
+        setFetchError('Error  in fetching exam data. Please try again.');
       });
   };
 
   useEffect(() => {
-    fetchInfo();
+    fetchExamInfo();
   }, []);
 
-  const fetchDataFromDatabase = (exam) => {
-    console.log("Entered func" + exam.examId);
+  const renderExamCard = (exam) => {
+    console.log("Entered render function for examId:", exam.examId);
     return (
-      <Card
-        key={`${exam.examId}`}
-        title={`${exam.examName}`}
-        content={`ExamId:${(exam.examId)}<br>ExamName: ${(exam.examName)}<br>Time: ${Number(exam.durationMinutes)}min<br>Description: ${exam.description}`}
-        examId={`${exam.examId}`}
-        noOfQuestion={`${exam.noOfQuestions}`}
+      <ExamCard
+        key={exam.examId}
+        title={exam.examName}
+        content={`ExamId: ${exam.examId}<br>ExamName: ${exam.examName}<br>Time: ${Number(exam.durationMinutes)}min<br>Description: ${exam.description}`}
+        examId={exam.examId}
+        noOfQuestions={exam.noOfQuestions}
       />
     );
   };
 
   return (
     <div className="container mt-4">
-      {error && <p>{error}</p>}
-      {!error && (
+      {fetchError && <p>{fetchError}</p>}
+      {!fetchError && (
         <div className="row">
-          {data.map((exam) => (
+          {examData.map((exam) => (
             <div key={exam.examId} className="col-md-4 mb-4">
-              {fetchDataFromDatabase(exam)}
+              {renderExamCard(exam)}
             </div>
           ))}
         </div>
@@ -77,20 +66,18 @@ console.log("=====",user);
     </div>
   );
 };
-const Upda=(props)=>{
+
+const SessionStorage = (props) => {
   sessionStorage.setItem("exam", props.examId);
+  sessionStorage.setItem("ques", props.noOfQuestions);
+};
 
-  sessionStorage.setItem("ques",props.noOfQuestion);
- 
-
-}
-const Card = (props) => {
- 
+const ExamCard = (props) => {
   return (
     <div className="card border border-dark">
       <div className="card-body" dangerouslySetInnerHTML={{ __html: props.content }} />
 
-      <button className='btn btn-primary mt-2' onClick={()=>{Upda(props)}}>
+      <button className='btn btn-primary mt-2' onClick={() => { SessionStorage(props) }}>
         <NavLink to="/exam" className='text-light' style={{ textDecoration: "none" }}>
           Exam
         </NavLink>

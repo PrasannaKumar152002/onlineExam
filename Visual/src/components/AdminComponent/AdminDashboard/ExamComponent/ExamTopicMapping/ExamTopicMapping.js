@@ -35,7 +35,7 @@ export default function ExamTopicMapping() {
       const response = await fetch(
         "https://localhost:8443/OnlineExamPortal/control/FetchTopicMaster",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
@@ -57,7 +57,7 @@ export default function ExamTopicMapping() {
       const response = await fetch(
         "https://localhost:8443/OnlineExamPortal/control/FetchExamMaster",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
@@ -79,7 +79,7 @@ export default function ExamTopicMapping() {
       const response = await fetch(
         "https://localhost:8443/OnlineExamPortal/control/FetchExamTopicMapping",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );

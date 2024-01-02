@@ -39,7 +39,7 @@ export default function UserExamMappingForm(props) {
             const response = await fetch(
                 "https://localhost:8443/OnlineExamPortal/control/FetchExamMaster",
                 {
-                    method: "GET",
+                    method: "POST",
                     credentials: "include",
                 }
             );
@@ -60,7 +60,7 @@ export default function UserExamMappingForm(props) {
             const response = await fetch(
                 "https://localhost:8443/OnlineExamPortal/control/FetchUserExamMapping",
                 {
-                    method: "GET",
+                    method: "POST",
                     credentials: "include",
                 }
             );

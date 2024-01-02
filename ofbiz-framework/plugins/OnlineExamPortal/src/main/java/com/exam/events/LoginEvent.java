@@ -36,7 +36,7 @@ public class LoginEvent {
 	public static String dologin(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
+//		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
 
 		Locale locale = UtilHttp.getLocale(request);
 		String username = request.getAttribute(EntityConstants.CAPS_USER_NAME).toString();

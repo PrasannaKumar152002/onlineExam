@@ -33,7 +33,7 @@
 			optional="false"></attribute>
 	</service>
 	<service name="assignPartyRole" default-entity-name="PartyRole"
-		engine="entity-auto" invoke="create" auth="true">
+		engine="entity-auto" invoke="create" auth="false">
 		<description>PartRole Form</description>
 		<auto-attributes include="pk" mode="IN"
 			optional="false" />
@@ -141,7 +141,7 @@
 		location="com.exam.services.ExamInfoService" invoke="getExamInfo"
 		auth="true">
 		<description>ExamInformation</description>
-		<attribute name="exam" type="List" mode="OUT"
+		<attribute name="examList" type="List" mode="OUT"
 			optional="false"></attribute>
 
 	</service>
