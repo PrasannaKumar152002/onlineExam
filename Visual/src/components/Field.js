@@ -129,11 +129,12 @@ function Field({ change, title, rolestate }) {
                     text: "You Have Logged In",
                     footer: "Powerful People Make Places Powerful"
                 });
-                if (data.Role == "ADMIN") {
+                console.log("role=",data);
+                if (data.Role === "ADMIN") {
                     rolestate("admin");
                     nav("/AdminDashboard");
                 }
-                else if (data.Role == "user") {
+                else if (data.Role === "user") {
                     rolestate("user");
                     nav("/dashboard");
                 }

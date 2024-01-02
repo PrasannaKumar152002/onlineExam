@@ -69,7 +69,10 @@ public class ExamTopicMappingEvents {
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
 					"Mandatory Err ExamTopicMapping Entity", RES_ERR, false);
 
-			if (!hasFormErrors) {
+			if (hasFormErrors) {
+				request.setAttribute("_ERROR_MESSAGE", errors);
+				return "error";
+			}
 				try {
 					// Calling Entity-Auto Service to Insert data into ExamTopicMapping Entity
 					Map<String, ? extends Object> createExamTopicMappingInfoResult = dispatcher
@@ -81,7 +84,8 @@ public class ExamTopicMappingEvents {
 						Debug.logError(errorMessage, MODULE);
 						return "error";
 					} else {
-						String successMessage = "Create ExamTopicMapping Service executed successfully.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, createExamTopicMappingInfoResult, successMessage);
 						request.setAttribute("_EVENT_MESSAGE_", successMessage);
 						return "success";
@@ -93,10 +97,7 @@ public class ExamTopicMappingEvents {
 					request.setAttribute("_ERROR_MESSAGE_", errMsg);
 					return "error";
 				}
-			} else {
-				request.setAttribute("_ERROR_MESSAGE", errors);
-				return "error";
-			}
+			
 		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
@@ -107,27 +108,26 @@ public class ExamTopicMappingEvents {
 	// Method to retrieve data's from ExamTopicMapping Entity
 	public static String fetchExamTopicMappingEvent(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		List<Map<String, Object>> examTopicMappingdata = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> viewExamTopicMapList = new ArrayList<Map<String, Object>>();
 		try {
 			// Query to retrieve data's from ExamTopicMapping Entity
-			List<GenericValue> listOfExamTopicMappingData = EntityQuery.use(delegator).from("ExamTopicMapping")
-					.queryList();
-			if (UtilValidate.isNotEmpty(listOfExamTopicMappingData)) {
-				for (GenericValue list : listOfExamTopicMappingData) {
-					Map<String, Object> listOfExamTopicMappingEntity = new HashMap<String, Object>();
-					listOfExamTopicMappingEntity.put(ConstantValues.EXAMTOPIC_EXAM_ID,
-							list.get(ConstantValues.EXAMTOPIC_EXAM_ID));
-					listOfExamTopicMappingEntity.put(ConstantValues.EXAMTOPIC_TOPIC_ID,
-							list.get(ConstantValues.EXAMTOPIC_TOPIC_ID));
-					listOfExamTopicMappingEntity.put(ConstantValues.EXAMTOPIC_PERCENTAGE,
-							list.get(ConstantValues.EXAMTOPIC_PERCENTAGE));
-					listOfExamTopicMappingEntity.put(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE,
-							list.get(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE));
-					listOfExamTopicMappingEntity.put(ConstantValues.EXAMTOPIC_QUES_PER_EXAM,
-							list.get(ConstantValues.EXAMTOPIC_QUES_PER_EXAM));
-					examTopicMappingdata.add(listOfExamTopicMappingEntity);
+			List<GenericValue> listOfExamTopicMapData = EntityQuery.use(delegator).from("ExamTopicMapping").queryList();
+			if (UtilValidate.isNotEmpty(listOfExamTopicMapData)) {
+				for (GenericValue topicOfExam : listOfExamTopicMapData) {
+					Map<String, Object> topicMapList = new HashMap<String, Object>();
+					topicMapList.put(ConstantValues.EXAMTOPIC_EXAM_ID,
+							topicOfExam.get(ConstantValues.EXAMTOPIC_EXAM_ID));
+					topicMapList.put(ConstantValues.EXAMTOPIC_TOPIC_ID,
+							topicOfExam.get(ConstantValues.EXAMTOPIC_TOPIC_ID));
+					topicMapList.put(ConstantValues.EXAMTOPIC_PERCENTAGE,
+							topicOfExam.get(ConstantValues.EXAMTOPIC_PERCENTAGE));
+					topicMapList.put(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE,
+							topicOfExam.get(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE));
+					topicMapList.put(ConstantValues.EXAMTOPIC_QUES_PER_EXAM,
+							topicOfExam.get(ConstantValues.EXAMTOPIC_QUES_PER_EXAM));
+					viewExamTopicMapList.add(topicMapList);
 				}
-				request.setAttribute("ExamTopicMapping", examTopicMappingdata);
+				request.setAttribute("ExamTopicMapping", viewExamTopicMapList);
 				return "success";
 			}
 			String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -188,7 +188,8 @@ public class ExamTopicMappingEvents {
 					Debug.logError(errorMessage, MODULE);
 					return "error";
 				}
-				String successMessage = "Update ExamTopicMapping Service executed successfully.";
+				String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+						UtilHttp.getLocale(request));
 				ServiceUtil.getMessages(request, updateExamTopicMappingInfoResult, successMessage);
 				request.setAttribute("_EVENT_MESSAGE_", successMessage);
 				return "success";

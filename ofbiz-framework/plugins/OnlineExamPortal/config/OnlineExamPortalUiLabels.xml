@@ -38,9 +38,21 @@ under the License.
         <value xml:lang="en">No records available for the field enumId="Q_TYPE" in Enumeration Entity</value>
     </property>
     <property key="ServiceCallingError">
-        <value xml:lang="en">Error in calling or executing the service: </value>
+        <value xml:lang="en">Error in calling or executing the service </value>
+    </property>
+    <property key="ServiceSuccessMessage">
+        <value xml:lang="en">Service executed successfully.</value>
+    </property>
+    <property key="FetchSuccessMessage">
+        <value xml:lang="en">Fetch by using service executed successfully.</value>
     </property>
     <property key="ErrorInFetchingData">
-        <value xml:lang="en">Error in retreving datas from the Entity</value>
+        <value xml:lang="en">Error in retrieving datas from the Entity</value>
+    </property>
+    <property key="LoginSuccessMessage">
+        <value xml:lang="en">Login successfully</value>
+    </property>
+    <property key="DeleteErrorMessage">
+        <value xml:lang="en">Error in deleting data</value>
     </property>
 </resource>

@@ -37,7 +37,7 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<request-map uri="register">
-		<security https="true" auth="true" />
+		<security https="true" auth="false" />
 		<event type="java" path="com.exam.events.RegistrationEvent"
 			invoke="register" />
 		<response name="success" type="request" value="json" />
@@ -70,6 +70,14 @@
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
 			invoke="fetchTopicMasterEvent" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
+	<request-map uri="fetch-one-topic">
+		<security https="true" auth="false" />
+		<event type="java" path="com.exam.events.TopicMasterEvents"
+			invoke="fetchOneTopic" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

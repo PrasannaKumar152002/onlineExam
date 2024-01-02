@@ -58,7 +58,8 @@ public class LoginEvent {
 			if (!hasFormErrors) {
 				String result = LoginWorker.login(request, response);
 				if (result.equals("success")) {
-					request.setAttribute("_EVENT_MESSAGE_", "Login succesfully.");
+					String successMsg = UtilProperties.getMessage(RES_ERR, "LoginSuccessMessage", UtilHttp.getLocale(request));
+					request.setAttribute("_EVENT_MESSAGE_", successMsg);
 					GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 					// Query to retrieve data from UserLogin Entity
 					String partyid = userLogin.getString("partyId");

@@ -36,7 +36,7 @@ public class RegistrationEvent {
 		String username = combinedMap.get(EntityConstants.CAPS_USER_NAME).toString();
 		String firstname = combinedMap.get(EntityConstants.CAPS_FIRSTNAME).toString();
 		String lastname = combinedMap.get(EntityConstants.CAPS_LASTNAME).toString();
-		String password = combinedMap.get(EntityConstants.PASSWORD).toString();
+		String password = combinedMap.get(EntityConstants.CAPS_PASSWORD).toString();
 		String confirmpassword = combinedMap.get(EntityConstants.CAPS_CONFIRMPASSWORD).toString();
 		Map<String, Object> obj = UtilMisc.toMap(EntityConstants.USER_LOGIN_ID, username, EntityConstants.FIRST_NAME,
 				firstname, EntityConstants.LAST_NAME, lastname, EntityConstants.CURRENT_PASSWORD, password,

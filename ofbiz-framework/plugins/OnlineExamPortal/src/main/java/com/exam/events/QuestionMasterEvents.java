@@ -14,6 +14,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericEntityException;
@@ -73,7 +74,10 @@ public class QuestionMasterEvents {
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
 					"Mandatory Err QuestionMaster Entity", RES_ERR, false);
 
-			if (!hasFormErrors) {
+			if (hasFormErrors) {
+				request.setAttribute("_ERROR_MESSAGE", errors);
+				return "error";
+			}
 				try {
 					Map<String, Object> questionInfo2 = UtilMisc.toMap(ConstantValues.QUES_DETAIL, questionDetail,
 							ConstantValues.QUES_OPTION_A, optionA, ConstantValues.QUES_OPTION_B, optionB,
@@ -92,20 +96,18 @@ public class QuestionMasterEvents {
 						Debug.logError(errorMessage, MODULE);
 						return "error";
 					} else {
-						String successMessage = "Create QuestionMaster Service executed successfully.";
-						ServiceUtil.getMessages(request, createQuestionMasterInfoResult, successMessage);
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						request.setAttribute("_EVENT_MESSAGE_", successMessage);
 						return "success";
 					}
 				} catch (GenericServiceException e) {
-					String errMsg = "Error setting question info: " + e.toString();
-					request.setAttribute("_ERROR_MESSAGE_", errMsg);
+					String errorMessage = UtilProperties.getMessage(RES_ERR, "ServiceCallingError",
+							UtilHttp.getLocale(request));
+					request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 					return "error";
 				}
-			} else {
-				request.setAttribute("_ERROR_MESSAGE", errors);
-				return "error";
-			}
+		
 		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
@@ -115,41 +117,42 @@ public class QuestionMasterEvents {
 
 	public static String fetchQuestionMasterEvent(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		List<Map<String, Object>> questionMasterdata = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> viewQuestionList = new ArrayList<Map<String, Object>>();
 		try {
-			List<GenericValue> listOfQuestionMasterData = EntityQuery.use(delegator).from("QuestionMaster").queryList();
-			if (UtilValidate.isNotEmpty(listOfQuestionMasterData)) {
-				for (GenericValue list : listOfQuestionMasterData) {
-					Map<String, Object> listOfQuestionMasterEntity = new HashMap<String, Object>();
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_ID, list.get(ConstantValues.QUES_ID));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_DETAIL, list.get(ConstantValues.QUES_DETAIL));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_OPTION_A,
-							list.get(ConstantValues.QUES_OPTION_A));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_OPTION_B,
-							list.get(ConstantValues.QUES_OPTION_B));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_OPTION_C,
-							list.get(ConstantValues.QUES_OPTION_C));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_OPTION_D,
-							list.get(ConstantValues.QUES_OPTION_D));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_OPTION_E,
-							list.get(ConstantValues.QUES_OPTION_E));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_ANSWER, list.get(ConstantValues.QUES_ANSWER));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_NUM_ANS, list.get(ConstantValues.QUES_NUM_ANS));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_TYPE, list.get("QuestionType"));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_DIFFICULTY_LEVEL,
-							list.get(ConstantValues.QUES_DIFFICULTY_LEVEL));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_ANS_VALUE,
-							list.get(ConstantValues.QUES_ANS_VALUE));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_TOPIC_ID,
-							list.get(ConstantValues.QUES_TOPIC_ID));
-					listOfQuestionMasterEntity.put(ConstantValues.QUES_NEG_MARK,
-							list.get(ConstantValues.QUES_NEG_MARK));
-					questionMasterdata.add(listOfQuestionMasterEntity);
+			List<GenericValue> listOfQuestions = EntityQuery.use(delegator).from("QuestionMaster").queryList();
+			if (UtilValidate.isNotEmpty(listOfQuestions)) {
+				for (GenericValue question : listOfQuestions) {
+					Map<String, Object> questionList = new HashMap<String, Object>();
+					questionList.put(ConstantValues.QUES_ID, question.get(ConstantValues.QUES_ID));
+					questionList.put(ConstantValues.QUES_DETAIL, question.get(ConstantValues.QUES_DETAIL));
+					questionList.put(ConstantValues.QUES_OPTION_A,
+							question.get(ConstantValues.QUES_OPTION_A));
+					questionList.put(ConstantValues.QUES_OPTION_B,
+							question.get(ConstantValues.QUES_OPTION_B));
+					questionList.put(ConstantValues.QUES_OPTION_C,
+							question.get(ConstantValues.QUES_OPTION_C));
+					questionList.put(ConstantValues.QUES_OPTION_D,
+							question.get(ConstantValues.QUES_OPTION_D));
+					questionList.put(ConstantValues.QUES_OPTION_E,
+							question.get(ConstantValues.QUES_OPTION_E));
+					questionList.put(ConstantValues.QUES_ANSWER, question.get(ConstantValues.QUES_ANSWER));
+					questionList.put(ConstantValues.QUES_NUM_ANS, question.get(ConstantValues.QUES_NUM_ANS));
+					questionList.put(ConstantValues.QUES_TYPE, question.get("QuestionType"));
+					questionList.put(ConstantValues.QUES_DIFFICULTY_LEVEL,
+							question.get(ConstantValues.QUES_DIFFICULTY_LEVEL));
+					questionList.put(ConstantValues.QUES_ANS_VALUE,
+							question.get(ConstantValues.QUES_ANS_VALUE));
+					questionList.put(ConstantValues.QUES_TOPIC_ID,
+							question.get(ConstantValues.QUES_TOPIC_ID));
+					questionList.put(ConstantValues.QUES_NEG_MARK,
+							question.get(ConstantValues.QUES_NEG_MARK));
+					viewQuestionList.add(questionList);
 				}
-				request.setAttribute("QuestionMaster", questionMasterdata);
+				request.setAttribute("QuestionMaster", viewQuestionList);
 				return "success";
 			} else {
-				String errorMessage = "No matched fields in QuestionMaster Entity";
+				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
+						UtilHttp.getLocale(request));
 				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 				Debug.logError(errorMessage, MODULE);
 				return "error";
@@ -200,7 +203,10 @@ public class QuestionMasterEvents {
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
 					"Mandatory Err QuestionMaster Entity", RES_ERR, false);
 
-			if (!hasFormErrors) {
+			if (hasFormErrors) {
+				request.setAttribute("_ERROR_MESSAGE", errors);
+				return "error";
+			}
 				try {
 					Map<String, Object> questionInfo2 = UtilMisc.toMap(ConstantValues.QUES_DETAIL, questionDetail,
 							ConstantValues.QUES_OPTION_A, optionA, ConstantValues.QUES_OPTION_B, optionB,
@@ -219,20 +225,19 @@ public class QuestionMasterEvents {
 						Debug.logError(errorMessage, MODULE);
 						return "error";
 					} else {
-						String successMessage = "Update QuestionMaster Service executed successfully.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, updateQuestionMasterInfoResult, successMessage);
 						request.setAttribute("_EVENT_MESSAGE_", successMessage);
 						return "success";
 					}
 				} catch (GenericServiceException e) {
-					String errMsg = "Error setting question info: " + e.toString();
+					String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError", UtilHttp.getLocale(request))
+							+ e.toString();
 					request.setAttribute("_ERROR_MESSAGE_", errMsg);
 					return "error";
 				}
-			} else {
-				request.setAttribute("_ERROR_MESSAGE", errors);
-				return "error";
-			}
+			
 		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
@@ -253,7 +258,8 @@ public class QuestionMasterEvents {
 				Map<String, ? extends Object> deleteQuestionMasterInfoResult = dispatcher
 						.runSync("DeleteQuestionMaster", questionInfo);
 				if (UtilValidate.isNotEmpty(questionInfo)) {
-					String successMessage = "delete QuestionMaster Service executed successfully.";
+					String successMessage = UtilProperties.getMessage(RES_ERR, "DeleteErrorMessage",
+							UtilHttp.getLocale(request));
 					ServiceUtil.getMessages(request, deleteQuestionMasterInfoResult, successMessage);
 					request.setAttribute("_EVENT_MESSAGE_", successMessage);
 					return "success";
@@ -264,7 +270,8 @@ public class QuestionMasterEvents {
 				}
 
 			} catch (GenericServiceException e) {
-				String errMsg = "Error deleting question info: " + e.toString();
+				String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError", UtilHttp.getLocale(request))
+						+ e.toString();
 				request.setAttribute("_ERROR_MESSAGE_", errMsg);
 				return "error";
 			}

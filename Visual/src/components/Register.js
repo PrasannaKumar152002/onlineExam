@@ -11,7 +11,8 @@ function Register({ change, title }) {
     useEffect(() => {
     });
     const nav = useNavigate();
-    var loginandvalidation = () => {
+    var loginandvalidation = (e) => {
+        e.preventDefault();
         console.log("entered validation");
         var form = document.getElementById("accesspanel");
         const formData1 = new FormData(form);
