@@ -386,9 +386,9 @@ function Question() {
         </form>
       </div>
 
-      <div>
-        <Table responsive className="table-borderless question-hide">
-          <thead>
+      <div className="container-fluid">
+        <Table responsive className="table table-striped table-hover table-light">
+          <thead className="thead-light">
             <tr>
               <th>Question ID</th>
               <th>Questions</th>
@@ -399,11 +399,11 @@ function Question() {
               <th>Option C</th>
               <th>Option D</th>
               <th>Option E</th>
-              <th>No.Of.Answers</th>
-              <th>Difficulty Level</th>
+              {/* <th>No.Of.Answers</th> */}
+              {/* <th>Difficulty Level</th> */}
               <th>Answer</th>
-              <th>Negative Mark Value</th>
-              <th>Answer Value</th>
+              {/* <th>Negative Mark Value</th> */}
+              {/* <th>Answer Value</th> */}
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -421,11 +421,11 @@ function Question() {
                   <td>{question.optionC}</td>
                   <td>{question.optionD}</td>
                   <td>{question.optionE}</td>
-                  <td>{question.numAnswers}</td>
-                  <td>{question.difficultyLevel}</td>
+                  {/* <td>{question.numAnswers}</td> */}
+                  {/* <td>{question.difficultyLevel}</td> */}
                   <td>{question.answer}</td>
-                  <td>{question.negativeMarkValue}</td>
-                  <td>{question.answerValue}</td>
+                  {/* <td>{question.negativeMarkValue}</td> */}
+                  {/* <td>{question.answerValue}</td> */}
                   <td className="border-none px-3 py-1 mt-4 mb-2 text-white rounded-0">
                     <QuestionModalSample
                       buttonName="UPDATE"

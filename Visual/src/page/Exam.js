@@ -35,6 +35,7 @@ function Exam() {
 
           if (Array.isArray(result.question.examquestion)) {
             setQuestions(result.question.examquestion);
+            console.log("questions : ",questions);
             setsequenceNumber(result.questionSequence)
 
           } else {

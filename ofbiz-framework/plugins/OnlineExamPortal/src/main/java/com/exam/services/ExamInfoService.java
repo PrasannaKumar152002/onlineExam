@@ -35,7 +35,7 @@ public class ExamInfoService {
 
         try {
             // Get partyId from UserLogin entity
-            String partyid = ((GenericValue)context.get("userLogin")).getString(ConstantValues.USEREXAM_PARTY_ID);
+            String partyid = ((GenericValue)context.get("userLogin")).getString(ConstantValues.PARTY_ID);
 
             // Check if partyId is empty
             if (UtilValidate.isEmpty(partyid)) {
@@ -46,7 +46,7 @@ public class ExamInfoService {
 
             // Query UserExamMapping entity
             List<GenericValue> getuserExamMap = EntityQuery.use(delegator).from("UserExamMapping")
-                    .where(ConstantValues.USEREXAM_PARTY_ID, partyid).queryList();
+                    .where(ConstantValues.PARTY_ID, partyid).queryList();
 
             // Check if UserExamMapping entity is empty
             if (UtilValidate.isEmpty(getuserExamMap)) {

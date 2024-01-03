@@ -132,8 +132,8 @@ function Topic() {
           <h2 align="center">Topic List</h2>
         </div>
 
-        <div className="table-responsive-sm">
-          <table className="table table-responsive-sm table-borderless">
+        <div className="table-responsive-sm container-fluid">
+          <table className="table table-striped table-hover table-light table-responsive-sm">
             <thead>
               <tr>
                 <th scope="col">Topic ID</th>

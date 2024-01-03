@@ -65,7 +65,7 @@ public class LoginEvent {
 					String partyid = userLogin.getString("partyId");
 					
 					//Query to retrieve data's from PartyRole Entity
-					List<GenericValue> role = EntityQuery.use(delegator).from("PartyRole").where(ConstantValues.USEREXAM_PARTY_ID, partyid)
+					List<GenericValue> role = EntityQuery.use(delegator).from("PartyRole").where(ConstantValues.PARTY_ID, partyid)
 							.cache().queryList();
 					request.setAttribute("Role", role.get(1).getString("roleTypeId"));
 					request.getSession().setAttribute("partyId", partyid);

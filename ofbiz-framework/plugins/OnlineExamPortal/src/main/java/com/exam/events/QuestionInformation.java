@@ -65,7 +65,7 @@ public class QuestionInformation {
 			// Process each UserExamMapping
 			for (GenericValue getUserExamInfo : userExamList) {
 				// Retrieve necessary information from UserExamMapping
-				String partyId = getUserExamInfo.getString(ConstantValues.USEREXAM_PARTY_ID);
+				String partyId = getUserExamInfo.getString(ConstantValues.PARTY_ID);
 				String noOfAttempt = getUserExamInfo.getString(ConstantValues.USEREXAM_NO_OF_ATTEMPTS);
 				String allowedAttempt = getUserExamInfo.getString(ConstantValues.USEREXAM_ALLOWED_ATTEMPTS);
 				Integer count = Integer.parseInt(noOfAttempt);
@@ -74,7 +74,7 @@ public class QuestionInformation {
 				// Call service to create a UserAttemptMaster record
 				Map<String, Object> createUserAttemptMasterresult = dispatcher.runSync("createUserAttemptMaster",
 						UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
-								ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
+								ConstantValues.PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
 								noOfAttempt, EntityConstants.USER_LOGIN, userLogin));
 
 				// Check if the service call resulted in an error
@@ -151,7 +151,7 @@ public class QuestionInformation {
 					Map<String, Object> updateUserExamMappingnoOfAttemptsresult = dispatcher.runSync(
 							"updateUserExamMappingnoOfAttempts",
 							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
-									noOfAttempt, ConstantValues.USEREXAM_PARTY_ID, partyId, EntityConstants.USER_LOGIN,
+									noOfAttempt, ConstantValues.PARTY_ID, partyId, EntityConstants.USER_LOGIN,
 									userLogin));
 
 					// Check if the service call resulted in an error

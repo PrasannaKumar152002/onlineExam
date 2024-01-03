@@ -37,26 +37,22 @@ public class UserResult {
 				for (List<Map<String, Object>> re1 : re) {
 					for (Map<String, Object> re2 : re1) {
 						if (entry.getKey().equals(re2.get("questionId"))) {
-							String selectedOption=(String) re2.get(entry.getValue());
-							System.out.println("selectedOption====="+selectedOption);
-							String quesId=(String) re2.get("questionId");
-							System.out.println("quesId====="+quesId);
+							String selectedOption = (String) re2.get(entry.getValue());
+							System.out.println("selectedOption=====" + selectedOption);
+							String quesId = (String) re2.get("questionId");
+							System.out.println("quesId=====" + quesId);
 //							Map<String, Object> result2 = dispatcher.runSync("updateUserAttemptTopicMaster",
 //									UtilMisc.toMap());
 						}
-							 
-				
-				
+
 					}
 				}
-			
-		}
-		
-		
 
-	}catch (Exception e) {
-		// TODO: handle exception
-	}
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return null;
 	}
 }
