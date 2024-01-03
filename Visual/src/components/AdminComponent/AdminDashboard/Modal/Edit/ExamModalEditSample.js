@@ -117,7 +117,7 @@ function ExamModalEditSample(props) {
       )
     ) {
       // FETCH
-      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-exam-master", {
+      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-exam", {
         method: "PUT",
         credentials: "include",
         headers: {

@@ -69,10 +69,14 @@ function Exam() {
           {['A', 'B', 'C', 'D', 'E'].map((option) => {
             const optionKey = `option${option}`;
             const optionValue = question[optionKey];
-            const que = question.QuestionType;
+            const que = question.questionType;
+            console.log("option : ",option);
+            console.log("optionValue : ",optionValue);
+
 
             switch (que) {
               case 'QT_SC':
+                console.log("QT_SC")
                 return optionValue && (
                   <div key={optionKey} className='form-check'>
                     <input

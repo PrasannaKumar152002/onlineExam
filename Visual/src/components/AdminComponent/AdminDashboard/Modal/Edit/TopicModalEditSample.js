@@ -6,32 +6,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 function TopicModalEditSample(props) {
-  const [topic, setTopic] = useState();
+  // const [topic, setTopic] = useState();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = async () => 
   {
-      try {
-        const response = await fetch(
-          "https://localhost:8443/OnlineExamPortal/control/fetch-one-topic",
-          {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({topicId:props.fetchId}),
-        })
+      // try {
+      //   const response = await fetch(
+      //     "https://localhost:8443/OnlineExamPortal/control/fetch-one-topic",
+      //     {
+      //     method: "POST",
+      //     credentials: "include",
+      //     headers: {
+      //       "content-type": "application/json",
+      //     },
+      //     body: JSON.stringify({topicId:props.fetchId}),
+      //   })
           
-        const data = await response.json();
-        console.log(data);
-        var list = data.TopicMaster.topicName;
-        console.log("------------------------" + list);
-        setTopic(list);
+      //   const data = await response.json();
+      //   console.log(data);
+      //   var list = data.TopicMaster.topicName;
+      //   console.log("------------------------" + list);
+      //   setTopic(list);
         setShow(true);
-      } catch (error) {
-        console.log(error);
-      }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     };
 
 
@@ -39,7 +39,7 @@ function TopicModalEditSample(props) {
     e.preventDefault();
     const data_map = {
       topicId: props.fetchId,
-      topicName: topic.topicName?topic.topicName:props.topicName,
+      topicName: props.changedTopic?props.changedTopic:props.topicName,
     };
     console.log(data_map);
     if (data_map.topicName === "") {
@@ -47,7 +47,7 @@ function TopicModalEditSample(props) {
     } else {
       try {
         document.getElementById("topicnameerr").style.display = "none";
-        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-topic-master", {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-topic", {
           method: "PUT",
           credentials: "include",
           headers: {

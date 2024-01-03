@@ -134,7 +134,7 @@ function QuestionModalSample(props) {
         data_map.optionE = "null";
       }
       // FETCH
-      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-question-master", {
+      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-question", {
         method: "PUT",
         credentials: "include",
         headers: {

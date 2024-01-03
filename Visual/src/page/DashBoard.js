@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
 
 const Dashboard = () => {
-  const url = "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/exam-info";
+  const url = "https://"+window.location.hostname +":8443/OnlineExamPortal/control/exam-info";
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const { questions, setQuestions } = useContext(AppContext);
@@ -26,13 +26,13 @@ console.log("=====",user);
       .then((response) => response.json())
       .then((result) => {
         
-        if (result.exam === undefined) {
+        if (result.exams === undefined) {
           
           console.error('Error fetching data:', error);
           setError('Error fetching data. Please try again.');
         } else {
-          console.log(result.exam.exam);
-          setData(result.exam.exam);
+          console.log(result.exams.exam);
+          setData(result.exams.exam);
         
         }
 

@@ -43,33 +43,33 @@
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="create-topic-master">
+	<request-map uri="create-topic">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
-			invoke="createTopicMasterEvent" />
+			invoke="createTopic" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="update-topic-master">
+	<request-map uri="update-topic">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
-			invoke="updateTopicMasterEvent" />
+			invoke="updateTopic" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="delete-topic-master">
+	<request-map uri="delete-topic">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
-			invoke="deleteTopicMasterEvent" />
+			invoke="deleteTopic" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<!-- View Mappings -->
 	<!-- <view-map name="main" type="request" page="component://onlineexam/widget/OnlineexamScreens.xml#main"/> -->
-	<request-map uri="fetch-topic-master">
+	<request-map uri="fetch-topics">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
-			invoke="fetchTopicMasterEvent" />
+			invoke="fetchAllTopics" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
@@ -82,104 +82,104 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<!-- Request Mappings -->
-	<request-map uri="create-exam-master">
+	<request-map uri="create-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamMasterEvents"
-			invoke="createExamMasterEvent" />
+			invoke="createExam" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="fetch-exam-master">
+	<request-map uri="fetch-exams">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamMasterEvents"
-			invoke="fetchExamMasterEvent" />
+			invoke="fetchAllExams" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="update-exam-master">
+	<request-map uri="update-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamMasterEvents"
-			invoke="updateExamMasterEvent" />
+			invoke="updateExam" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<!-- Request Mappings -->
-	<request-map uri="create-question-master">
+	<request-map uri="create-question">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.QuestionMasterEvents"
-			invoke="createQuestionMasterEvent" />
+			invoke="createQuestion" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="fetch-question-master">
+	<request-map uri="fetch-questions">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.QuestionMasterEvents"
-			invoke="fetchQuestionMasterEvent" />
+			invoke="fetchAllQuestions" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="update-question-master">
+	<request-map uri="update-question">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.QuestionMasterEvents"
-			invoke="updateQuestionMasterEvent" />
+			invoke="updateQuestion" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="delete-question-master">
+	<request-map uri="delete-question">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.QuestionMasterEvents"
-			invoke="deleteQuestionMasterEvent" />
+			invoke="deleteQuestion" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="create-exam-topic-mapping">
+	<request-map uri="create-topic-for-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
-			invoke="createExamTopicMappingEvent" />
+			invoke="createTopicForExam" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="fetch-exam-topic-mapping">
+	<request-map uri="fetch-all-exam-topics">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
-			invoke="fetchExamTopicMappingEvent" />
+			invoke="fetchAllExamTopics" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="update-exam-topic-mapping">
+	<request-map uri="update-topic-for-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
-			invoke="updateExamTopicMappingEvent" />
+			invoke="updateTopicForExam" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="fetch-enumeration-entity">
+	<request-map uri="fetch-ques-type">
 		<security https="true" auth="true" />
 		<event type="java"
 			path="com.exam.events.EnumerationEntityListEvent"
-			invoke="fetchEnumerationEntity" />
+			invoke="fetchQuesType" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
 	<request-map uri="fetch-student-details">
 		<security https="true" auth="true" />
-		<event type="java" path="com.exam.events.StudentListEvent"
+		<event type="java" path="com.exam.events.StudentListEvents"
 			invoke="fetchStudentList" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	<request-map uri="create-user-exam-mapping">
+	<request-map uri="create-exam-for-user">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="createUserExamMappingEvent"></event>
+			invoke="createUserForExam"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
 
-	<request-map uri="fetch-user-exam-mapping">
+	<request-map uri="fetch-all-users">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="fetchUserExamMappingEvent"></event>
+			invoke="fetchAllUsers"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
@@ -187,15 +187,7 @@
 	<request-map uri="update-user-exam-mapping">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="updateUserExamMappingEvent"></event>
-		<response name="success" type="request" value="json" />
-		<response name="error" type="request" value="json" />
-	</request-map>
-	
-	<request-map uri="delete-exam-user-mapping">
-		<security https="true" auth="true" />
-		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="deleteUserExamMappingEvent"></event>
+			invoke="updateUserForExam"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

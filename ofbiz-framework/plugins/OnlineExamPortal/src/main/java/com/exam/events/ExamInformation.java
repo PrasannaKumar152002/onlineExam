@@ -37,22 +37,22 @@ public class ExamInformation {
 			Debug.log("=======Logging in process started=========");
 
 			// Invoke the service to get exam information
-			Map<String, Object> getExamInformationServiceresult = dispatcher.runSync("getExamInformation",
+			Map<String, Object> examInformationServiceResult = dispatcher.runSync("getExamInformation",
 					UtilMisc.toMap(EntityConstants.USER_LOGIN, userLogin));
 
 			// Check if the service call resulted in an error
-			if (ServiceUtil.isError(getExamInformationServiceresult)) {
+			if (ServiceUtil.isError(examInformationServiceResult)) {
 				// Handle error scenario
-				String errorMessage = ServiceUtil.getErrorMessage(getExamInformationServiceresult);
+				String errorMessage = ServiceUtil.getErrorMessage(examInformationServiceResult);
 				request.setAttribute("ERROR_MESSAGE", errorMessage);
 				Debug.logError(errorMessage, module);
 				return "error";
 			}
 
 			// Handle success scenario
-			String successMessage = "getExamInformation successfully.";
-			ServiceUtil.getMessages(request, getExamInformationServiceresult, successMessage);
-			request.setAttribute("exam", getExamInformationServiceresult);
+			String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage", UtilHttp.getLocale(request));
+			ServiceUtil.getMessages(request, examInformationServiceResult, successMessage);
+			request.setAttribute("exams", examInformationServiceResult);
 			return "success";
 
 		} catch (Exception e) {

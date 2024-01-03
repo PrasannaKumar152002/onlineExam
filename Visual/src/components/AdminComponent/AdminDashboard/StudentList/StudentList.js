@@ -8,7 +8,7 @@ function StudentList() {
     async function getAllStudent() {
       try {
         const response = await fetch(
-          "https://"+window.location.hostname+ ":8443/OnlineExamPortal/control/fetch-student-details",
+          "https://"+window.location.hostname+":8443/OnlineExamPortal/control/fetch-student-details",
           {
             method: "GET",
             credentials: "include",
@@ -19,7 +19,7 @@ function StudentList() {
         }
         const data = await response.json();
         console.log("studentlist",data);
-        var list = data.StudentList;
+        var list = data.StudentListInfo.StudentList;
         setStudents(list);
       } catch (error) {
         console.log(error);
@@ -28,16 +28,21 @@ function StudentList() {
     }
     getAllStudent();
   }, []);
-
+if (students === undefined || students.length === 0)
+return (
+  <div>
+  <h1 className="text-center">No Student datas</h1>
+  </div>
+)
   return (
     <>
       <div>
         <h2 align="center">Student List</h2>
       </div>
 
-      <div>
-        <table className="table">
-          <thead>
+      <div className="container-fluid">
+        <table className="table table-striped table-hover table-light">
+          <thead className="thead-light">
             <tr>
               <th scope="col">Party ID</th>
               <th scope="col">User Name</th>
