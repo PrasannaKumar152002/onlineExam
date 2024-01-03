@@ -50,7 +50,7 @@ public class ExamInformation {
 			String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
 					UtilHttp.getLocale(request));
 			ServiceUtil.getMessages(request, examInformationServiceResult, successMessage);
-			request.setAttribute("exam", examInformationServiceResult);
+			request.setAttribute("exams", examInformationServiceResult);
 			return "success";
 
 		} catch (Exception e) {

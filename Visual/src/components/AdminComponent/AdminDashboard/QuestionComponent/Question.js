@@ -84,7 +84,7 @@ function Question() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topic-master",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topics",
         {
           method: "POST",
           credentials: "include",
@@ -95,7 +95,7 @@ function Question() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.TopicMaster;
+      var list = data.TopicInfo.TopicList;
       setTopics(list);
     } catch (error) {
       console.log(error);
@@ -106,7 +106,7 @@ function Question() {
   const fetchQuesType = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-enumeration-entity",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-ques-type",
         {
           method: "POST",
           credentials: "include",
@@ -117,19 +117,41 @@ function Question() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.EnumerationDatas;
+      var list = data.QuestionTypeInfo.QuestionTypeList;
       getEnum(list);
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(setEnum);
+
+  // const fetchQuestions = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-questions",
+  //       {
+  //         method: "GET",
+  //         credentials: "include",
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error();
+  //     }
+  //     const data = await response.json();
+  //     console.log(data);
+  //     setQuestions(undefined);
+  //     var list = data.QuestionInfo.QuestionList;
+  //     setQuestions(list);
+  //     console.log("-------------------------------"+list);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleDeleteQuestion = async (id) => {
     try {
       const data_map = { questionId: id.toString() };
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/delete-question-master",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/delete-question",
         {
           method: "DELETE",
           credentials: "include",
@@ -139,29 +161,8 @@ function Question() {
           body: JSON.stringify(data_map),
         }
       );
-      console.log(response);
       fetchQuestions();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchQuestions = async () => {
-    try {
-      const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-question-master",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        throw new Error();
-      }
-      const data = await response.json();
-      console.log(data);
-      var list = data.QuestionMaster;
-      setQuestions(list);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -300,7 +301,7 @@ function Question() {
       try {
         // FETCH
         fetch(
-          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-question-master",
+          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-question",
           {
             method: "POST",
             credentials: "include",

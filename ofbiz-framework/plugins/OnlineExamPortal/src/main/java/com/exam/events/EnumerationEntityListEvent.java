@@ -24,26 +24,28 @@ public class EnumerationEntityListEvent {
 	private static final String MODULE = EnumerationEntityListEvent.class.getName();
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 	// Retrieve All Values From Enumeration Entity
-	public static String fetchEnumerationEntity(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchQuesType(HttpServletRequest request, HttpServletResponse response) {
 
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		List<Map<String, Object>> enumerationData = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> viewQuesTypeList = new ArrayList<Map<String, Object>>();
 		try {
 			// Query to retrieve data's from Enumeration Entity
-			List<GenericValue> listOfEnumerationData = EntityQuery.use(delegator).from(EntityConstants.ENUMERTION)
+			List<GenericValue> listOfQuesType = EntityQuery.use(delegator).from(EntityConstants.ENUMERTION)
 					.where(ConstantValues.ENUM_TYPE_ID, "Q_TYPE").cache().queryList();
-			if (UtilValidate.isNotEmpty(listOfEnumerationData)) {
-				for (GenericValue oneEnumerationData : listOfEnumerationData) {
-					Map<String, Object> EnumerationEntityDatas = new HashMap<String, Object>();
-					EnumerationEntityDatas.put(ConstantValues.ENUM_ID, oneEnumerationData.get(ConstantValues.ENUM_ID));
-					EnumerationEntityDatas.put(ConstantValues.ENUM_SEQUENCE_ID,
-							oneEnumerationData.get(ConstantValues.ENUM_SEQUENCE_ID));
-					EnumerationEntityDatas.put(ConstantValues.ENUM_TYPE_ID, oneEnumerationData.get(ConstantValues.ENUM_TYPE_ID));
-					EnumerationEntityDatas.put(ConstantValues.ENUM_DESCRIPTION,
-							oneEnumerationData.get(ConstantValues.ENUM_DESCRIPTION));
-					enumerationData.add(EnumerationEntityDatas);
+			if (UtilValidate.isNotEmpty(listOfQuesType)) {
+				for (GenericValue quesType : listOfQuesType) {
+					Map<String, Object> ques_type_list = new HashMap<String, Object>();
+					ques_type_list.put(ConstantValues.ENUM_ID, quesType.get(ConstantValues.ENUM_ID));
+					ques_type_list.put(ConstantValues.ENUM_SEQUENCE_ID,
+							quesType.get(ConstantValues.ENUM_SEQUENCE_ID));
+					ques_type_list.put(ConstantValues.ENUM_TYPE_ID, quesType.get(ConstantValues.ENUM_TYPE_ID));
+					ques_type_list.put(ConstantValues.ENUM_DESCRIPTION,
+							quesType.get(ConstantValues.ENUM_DESCRIPTION));
+					viewQuesTypeList.add(ques_type_list);
 				}
-				request.setAttribute("EnumerationDatas", enumerationData);
+				Map<String, Object> questionTypeInfo = new HashMap<>();
+				questionTypeInfo.put("QuestionTypeList", viewQuesTypeList);
+				request.setAttribute("QuestionTypeInfo", questionTypeInfo);
 				return "success";
 			} else {
 				String errorMessage = UtilProperties.getMessage(RES_ERR, "EnumerationEntityRecordNotFoundError", UtilHttp.getLocale(request));//"No records available for the field enumId=\"Q_TYPE\" in Enumeration Entity";

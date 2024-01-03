@@ -34,7 +34,7 @@ public class QuestionMasterEvents {
 	public static final String MODULE = QuestionMasterEvents.class.getName();
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
-	public static String createQuestionMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String createQuestion(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
@@ -79,16 +79,8 @@ public class QuestionMasterEvents {
 				return "error";
 			}
 				try {
-					Map<String, Object> questionInfo2 = UtilMisc.toMap(ConstantValues.QUES_DETAIL, questionDetail,
-							ConstantValues.QUES_OPTION_A, optionA, ConstantValues.QUES_OPTION_B, optionB,
-							ConstantValues.QUES_OPTION_C, optionC, ConstantValues.QUES_OPTION_D, optionD,
-							ConstantValues.QUES_OPTION_E, optionE, ConstantValues.QUES_ANSWER, answer,
-							ConstantValues.QUES_NUM_ANS, numAnswers, "QuestionType", questionType,
-							ConstantValues.QUES_DIFFICULTY_LEVEL, difficultyLevel, ConstantValues.QUES_ANS_VALUE,
-							answerValue, ConstantValues.TOPIC_ID, topicId, ConstantValues.QUES_NEG_MARK,
-							negativeMarkValue, EntityConstants.USER_LOGIN, userLogin);
 					Map<String, ? extends Object> createQuestionMasterInfoResult = dispatcher
-							.runSync("CreateQuestionMaster", questionInfo2);
+							.runSync("CreateQuestionMaster", questionInfo);
 					ServiceUtil.getMessages(request, createQuestionMasterInfoResult, null);
 					if (ServiceUtil.isError(createQuestionMasterInfoResult)) {
 						String errorMessage = ServiceUtil.getErrorMessage(createQuestionMasterInfoResult);
@@ -115,7 +107,7 @@ public class QuestionMasterEvents {
 		}
 	}
 
-	public static String fetchQuestionMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchAllQuestions(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		List<Map<String, Object>> viewQuestionList = new ArrayList<Map<String, Object>>();
 		try {
@@ -137,7 +129,7 @@ public class QuestionMasterEvents {
 							question.get(ConstantValues.QUES_OPTION_E));
 					questionList.put(ConstantValues.QUES_ANSWER, question.get(ConstantValues.QUES_ANSWER));
 					questionList.put(ConstantValues.QUES_NUM_ANS, question.get(ConstantValues.QUES_NUM_ANS));
-					questionList.put(ConstantValues.QUES_TYPE, question.get("QuestionType"));
+					questionList.put(ConstantValues.QUES_TYPE, question.get(ConstantValues.QUES_TYPE));
 					questionList.put(ConstantValues.QUES_DIFFICULTY_LEVEL,
 							question.get(ConstantValues.QUES_DIFFICULTY_LEVEL));
 					questionList.put(ConstantValues.QUES_ANS_VALUE,
@@ -148,7 +140,9 @@ public class QuestionMasterEvents {
 							question.get(ConstantValues.QUES_NEG_MARK));
 					viewQuestionList.add(questionList);
 				}
-				request.setAttribute("QuestionMaster", viewQuestionList);
+				Map<String, Object> questionsInfo = new HashMap<>();
+				questionsInfo.put("QuestionList", viewQuestionList);
+				request.setAttribute("QuestionInfo", questionsInfo);
 				return "success";
 			} else {
 				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -163,7 +157,7 @@ public class QuestionMasterEvents {
 		}
 	}
 
-	public static String updateQuestionMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String updateQuestion(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
@@ -190,7 +184,8 @@ public class QuestionMasterEvents {
 				ConstantValues.QUES_OPTION_D, optionD, ConstantValues.QUES_OPTION_E, optionE,
 				ConstantValues.QUES_ANSWER, answer, ConstantValues.QUES_NUM_ANS, numAnswers, ConstantValues.QUES_TYPE,
 				questionType, ConstantValues.QUES_DIFFICULTY_LEVEL, difficultyLevel, ConstantValues.QUES_ANS_VALUE,
-				answerValue, ConstantValues.TOPIC_ID, topicId, ConstantValues.QUES_NEG_MARK, negativeMarkValue);
+				answerValue, ConstantValues.TOPIC_ID, topicId, ConstantValues.QUES_NEG_MARK, negativeMarkValue, EntityConstants.USER_LOGIN,
+				userLogin);
 
 		try {
 			Debug.logInfo("=======Updating QuestionMaster record in event using service UpdateQuestionMaster=========",
@@ -208,16 +203,8 @@ public class QuestionMasterEvents {
 				return "error";
 			}
 				try {
-					Map<String, Object> questionInfo2 = UtilMisc.toMap(ConstantValues.QUES_DETAIL, questionDetail,
-							ConstantValues.QUES_OPTION_A, optionA, ConstantValues.QUES_OPTION_B, optionB,
-							ConstantValues.QUES_OPTION_C, optionC, ConstantValues.QUES_OPTION_D, optionD,
-							ConstantValues.QUES_OPTION_E, optionE, ConstantValues.QUES_ANSWER, answer,
-							ConstantValues.QUES_NUM_ANS, numAnswers, "QuestionType", questionType,
-							ConstantValues.QUES_DIFFICULTY_LEVEL, difficultyLevel, ConstantValues.QUES_ANS_VALUE,
-							answerValue, ConstantValues.TOPIC_ID, topicId, ConstantValues.QUES_NEG_MARK,
-							negativeMarkValue, EntityConstants.USER_LOGIN, userLogin);
 					Map<String, ? extends Object> updateQuestionMasterInfoResult = dispatcher
-							.runSync("UpdateQuestionMaster", questionInfo2);
+							.runSync("UpdateQuestionMaster", questionInfo);
 					ServiceUtil.getMessages(request, updateQuestionMasterInfoResult, null);
 					if (ServiceUtil.isError(updateQuestionMasterInfoResult)) {
 						String errorMessage = ServiceUtil.getErrorMessage(updateQuestionMasterInfoResult);
@@ -245,7 +232,7 @@ public class QuestionMasterEvents {
 		}
 	}
 
-	public static String deleteQuestionMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String deleteQuestion(HttpServletRequest request, HttpServletResponse response) {
 		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		String questionId = (String) request.getAttribute(ConstantValues.QUES_ID);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);

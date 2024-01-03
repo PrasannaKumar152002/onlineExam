@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StudentListEvent {
+public class StudentListEvents {
 
-	private static final String MODULE = StudentListEvent.class.getName();
+	private static final String MODULE = StudentListEvents.class.getName();
 	private static final String RES_ERR = "OnlineexamUiLabels";
 	
 	public static String fetchStudentList(HttpServletRequest request, HttpServletResponse response) {
@@ -54,7 +54,9 @@ public class StudentListEvent {
 					studentlist.put(EntityConstants.USER_NAME, fullName);
 					viewStudentList.add(studentlist);
 				}
-				request.setAttribute("StudentList", viewStudentList);
+				Map<String, Object> studentListInfo = new HashMap<>();
+				studentListInfo.put("StudentList", viewStudentList);
+				request.setAttribute("StudentListInfo", studentListInfo);
 				return "success";
 			} else {
 				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",

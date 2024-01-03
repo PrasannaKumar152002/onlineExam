@@ -31,7 +31,7 @@ public class UserExamMappingEvents {
 	private static final String MODULE = UserExamMappingEvents.class.getName();
 	private static final String RES_ERR = "OnlineexamUiLabels";
 
-	public static String createUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String createExamForUser(HttpServletRequest request, HttpServletResponse response) {
 
 		Locale locale = UtilHttp.getLocale(request);
 
@@ -55,8 +55,8 @@ public class UserExamMappingEvents {
 		LocalDateTime lastPerformanceDateLocalDateTime = LocalDateTime.parse(lastPerformanceDate, inputFormatter);
 		String lastPerformanceDateParsed = lastPerformanceDateLocalDateTime.format(outputFormatter);
 
-		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.PARTY_ID, partyId,
-				ConstantValues.EXAM_ID, examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS, allowedAttempts,
+		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.PARTY_ID, partyId, ConstantValues.EXAM_ID,
+				examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS, allowedAttempts,
 				ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempts, ConstantValues.USEREXAM_LAST_DATE,
 				lastPerformanceDateParsed, ConstantValues.USEREXAM_TIMEOUT_DAYS, timeoutDays,
 				ConstantValues.USEREXAM_PASSWORD_CHANGE, passwordChangesAuto, ConstantValues.USEREXAM_SPLIT,
@@ -103,9 +103,9 @@ public class UserExamMappingEvents {
 		}
 	}
 
-	public static String fetchUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchAllUsers(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		List<Map<String, Object>> viewExamMapList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> viewUserExamMapList = new ArrayList<Map<String, Object>>();
 		try {
 			List<GenericValue> listOfUserExamMapData = EntityQuery.use(delegator).from("UserExamMapping").queryList();
 			if (UtilValidate.isNotEmpty(listOfUserExamMapData)) {
@@ -125,9 +125,11 @@ public class UserExamMappingEvents {
 					userexamList.put(ConstantValues.USEREXAM_SPLIT, user.get(ConstantValues.USEREXAM_SPLIT));
 					userexamList.put(ConstantValues.USEREXAM_SEE_RESULT, user.get(ConstantValues.USEREXAM_SEE_RESULT));
 					userexamList.put(ConstantValues.USEREXAM_MAX_SPLIT, user.get(ConstantValues.USEREXAM_MAX_SPLIT));
-					viewExamMapList.add(userexamList);
+					viewUserExamMapList.add(userexamList);
 				}
-				request.setAttribute("UserExamMapping", viewExamMapList);
+				Map<String, Object> userofExamInfo = new HashMap<>();
+				userofExamInfo.put("UserExamList", viewUserExamMapList);
+				request.setAttribute("UserExamInfo", userofExamInfo);
 				return "success";
 			} else {
 				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
@@ -142,7 +144,7 @@ public class UserExamMappingEvents {
 		}
 	}
 
-	public static String updateUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String updateUserForExam(HttpServletRequest request, HttpServletResponse response) {
 
 		Locale locale = UtilHttp.getLocale(request);
 
@@ -161,8 +163,8 @@ public class UserExamMappingEvents {
 		String canSeeDetailedResults = (String) request.getAttribute(ConstantValues.USEREXAM_SEE_RESULT);
 		String maxSplitAttempts = (String) request.getAttribute(ConstantValues.USEREXAM_MAX_SPLIT);
 
-		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.PARTY_ID, partyId,
-				ConstantValues.EXAM_ID, examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS, allowedAttempts,
+		Map<String, Object> userexamInfo = UtilMisc.toMap(ConstantValues.PARTY_ID, partyId, ConstantValues.EXAM_ID,
+				examId, ConstantValues.USEREXAM_ALLOWED_ATTEMPTS, allowedAttempts,
 				ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempts, ConstantValues.USEREXAM_LAST_DATE,
 				lastPerformanceDate, ConstantValues.USEREXAM_TIMEOUT_DAYS, timeoutDays,
 				ConstantValues.USEREXAM_PASSWORD_CHANGE, passwordChangesAuto, ConstantValues.USEREXAM_SPLIT,
@@ -207,44 +209,4 @@ public class UserExamMappingEvents {
 			return "error";
 		}
 	}
-
-	public static String deleteUserExamMappingEvent(HttpServletRequest request, HttpServletResponse response) {
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
-		String partyId = (String) request.getAttribute(ConstantValues.PARTY_ID);
-		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
-		Map<String, Object> userExamInfo = UtilMisc.toMap(ConstantValues.PARTY_ID, partyId,
-				ConstantValues.EXAM_ID, examId, EntityConstants.USER_LOGIN, userLogin);
-		try {
-			Debug.logInfo("=======Deleting userExamMapping record in event using service DeleteTopicMaster=========",
-					MODULE);
-			try {
-				Map<String, ? extends Object> deleteUserExamMappingInfoResult = dispatcher
-						.runSync("DeleteUserExamMapping", userExamInfo);
-				if (UtilValidate.isNotEmpty(userExamInfo)) {
-					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-							UtilHttp.getLocale(request));
-					ServiceUtil.getMessages(request, deleteUserExamMappingInfoResult, successMessage);
-					request.setAttribute("_EVENT_MESSAGE_", successMessage);
-					Debug.logError(successMessage, MODULE);
-					return "success";
-				} else {
-					String errorMessage = ServiceUtil.getErrorMessage(deleteUserExamMappingInfoResult);
-					request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-					Debug.logError(errorMessage, MODULE);
-					return "error";
-				}
-			} catch (GenericServiceException e) {
-				String errorMessage = UtilProperties.getMessage(RES_ERR, "DeleteErrorMessage",
-						UtilHttp.getLocale(request));
-				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-				return "error";
-			}
-		} catch (Exception e) {
-			Debug.logError(e, MODULE);
-			request.setAttribute("_ERROR_MESSAGE", e);
-			return "error";
-		}
-	}
-
 }
