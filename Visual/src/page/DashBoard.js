@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
 
 const Dashboard = () => {
-  const examInfoUrl = "https:// " + window.location.hostname + ":8443/OnlineExamPortal/control/exam-info";
+  const examInfoUrl = "https://"+ window.location.hostname +":8443/OnlineExamPortal/control/exam-info";
   const [examData, setExamData] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const { questions, setQuestions } = useContext(AppContext);
@@ -13,7 +13,7 @@ const Dashboard = () => {
 
   const fetchExamInfo = () => {
     fetch(examInfoUrl, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
 
 
@@ -24,8 +24,8 @@ const Dashboard = () => {
           console.error('Error  in fetching exam data:', fetchError);
           setFetchError('Error fetching exam data. Please try again.');
         } else {
-          console.log(result.examList.exam);
-          setExamData(result.examList.exam);
+          console.log(result.exam.examList);
+          setExamData(result.exam.examList);
         }
       })
       .catch((error) => {

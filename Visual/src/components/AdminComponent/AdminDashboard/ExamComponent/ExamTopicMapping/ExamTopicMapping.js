@@ -33,7 +33,7 @@ export default function ExamTopicMapping() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchTopicMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topic-master",
         {
           method: "POST",
           credentials: "include",
@@ -55,7 +55,7 @@ export default function ExamTopicMapping() {
   const fetchExam = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchExamMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-master",
         {
           method: "POST",
           credentials: "include",
@@ -77,7 +77,7 @@ export default function ExamTopicMapping() {
   const fetchExamTopicMapping = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchExamTopicMapping",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-topic-mapping",
         {
           method: "POST",
           credentials: "include",
@@ -147,7 +147,7 @@ export default function ExamTopicMapping() {
     ) {
       try {
         fetch(
-          "https://localhost:8443/OnlineExamPortal/control/CreateExamTopicMapping",
+          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-exam-topic-mapping",
           {
             method: "POST",
             credentials: "include",

@@ -77,7 +77,7 @@ public class ConstantValues {
 	public static final String USER_ANSWER_FLAGGED = "isFlagged";
 	
 // UserExamMapping Entity
-	public static final String USEREXAM_PARTY_ID = "partyId";
+	public static final String PARTY_ID = "partyId";
 	public static final String USEREXAM_EXAM_ID = "examId";
 	public static final String USEREXAM_ALLOWED_ATTEMPTS = "allowedAttempts";
 	public static final String USEREXAM_NO_OF_ATTEMPTS = "noOfAttempts";

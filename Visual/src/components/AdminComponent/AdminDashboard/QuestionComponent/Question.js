@@ -84,7 +84,7 @@ function Question() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchTopicMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topic-master",
         {
           method: "POST",
           credentials: "include",
@@ -106,7 +106,7 @@ function Question() {
   const fetchQuesType = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchEnumerationEntity",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-enumeration-entity",
         {
           method: "POST",
           credentials: "include",
@@ -117,7 +117,7 @@ function Question() {
       }
       const data = await response.json();
       console.log(data);
-      var list = data.EnumerationData;
+      var list = data.EnumerationDatas;
       getEnum(list);
     } catch (error) {
       console.log(error);
@@ -129,7 +129,7 @@ function Question() {
     try {
       const data_map = { questionId: id.toString() };
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/DeleteQuestionMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/delete-question-master",
         {
           method: "DELETE",
           credentials: "include",
@@ -149,7 +149,7 @@ function Question() {
   const fetchQuestions = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchQuestionMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-question-master",
         {
           method: "POST",
           credentials: "include",
@@ -300,7 +300,7 @@ function Question() {
       try {
         // FETCH
         fetch(
-          "https://localhost:8443/OnlineExamPortal/control/CreateQuestionMaster",
+          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-question-master",
           {
             method: "POST",
             credentials: "include",

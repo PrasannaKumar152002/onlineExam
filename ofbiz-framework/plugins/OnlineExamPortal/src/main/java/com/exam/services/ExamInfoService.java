@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.UtilHttp;
+import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericValue;
@@ -13,57 +18,41 @@ import org.apache.ofbiz.entity.util.EntityQuery;
 import org.apache.ofbiz.service.DispatchContext;
 
 import com.exam.util.ConstantValues;
-import com.exam.util.EntityConstants;
 
 public class ExamInfoService {
 	public static final String MODULE_NAME = ExamInfoService.class.getName();
+	public static final Map<String, Object> emptyMap = UtilMisc.toMap("status", "error");
+	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	// Service method to get exam information based on user login ID
 	public static Map<String, Object> getExamInfo(DispatchContext dispatchContext,
 			Map<String, ? extends Object> context) {
-		// Retrieve user ID from the context
-		String userLoginId = ((GenericValue) context.get("userLogin")).getString(EntityConstants.USER_LOGIN_ID);
-
-		// Check if user ID is empty
-		if (UtilValidate.isEmpty(userLoginId)) {
-			String errMsg = "User ID is required fields on the form and can't be empty.";
-			Debug.log(errMsg);
-			return null; // Return early if user ID is empty
-		}
+		HttpServletRequest request = (HttpServletRequest) context.get("request");
 
 		Delegator delegator = dispatchContext.getDelegator();
 
 		try {
-			// Query UserLogin entity
-			GenericValue userLoginEntity = EntityQuery.use(delegator).from("UserLogin")
-					.where(EntityConstants.USER_LOGIN_ID, userLoginId).cache().queryOne();
-
-			// Check if UserLogin entity is empty
-			if (UtilValidate.isEmpty(userLoginEntity)) {
-				String errMsg = "UserLogin entity is empty.";
-				Debug.log(errMsg);
-				return null; // Return early if UserLogin entity is empty
-			}
-
 			// Get partyId from UserLogin entity
-			String partyId = userLoginEntity.getString(ConstantValues.USEREXAM_PARTY_ID);
+			String partyId = ((GenericValue) context.get("userLogin")).getString(ConstantValues.PARTY_ID);
 
 			// Check if partyId is empty
 			if (UtilValidate.isEmpty(partyId)) {
-				String errMsg = "Inside UserLogin entity partyId is empty.";
+				String errMsg = "partyId "
+						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 				Debug.log(errMsg);
-				return null; // Return early if partyId is empty
+				return emptyMap; // Return early if partyId is empty
 			}
 
 			// Query UserExamMapping entity
 			List<GenericValue> userExamMappingList = EntityQuery.use(delegator).from("UserExamMapping")
-					.where(ConstantValues.USEREXAM_PARTY_ID, partyId).queryList();
+					.where(ConstantValues.PARTY_ID, partyId).queryList();
 
 			// Check if UserExamMapping entity is empty
 			if (UtilValidate.isEmpty(userExamMappingList)) {
-				String errMsg = "UserExamMapping entity is empty.";
+				String errMsg = "UserExamMapping entity"
+						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 				Debug.log(errMsg);
-				return null; // Return early if UserExamMapping entity is empty
+				return emptyMap; // Return early if UserExamMapping entity is empty
 			}
 
 			List<Map<String, Object>> examList = new ArrayList<>();
@@ -73,9 +62,10 @@ public class ExamInfoService {
 
 				// Check if examId is empty
 				if (UtilValidate.isEmpty(examId)) {
-					String errMsg = "Inside UserExamMapping entity examId is empty.";
+					String errMsg = "examId"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
-					return null; // Return early if examId is empty
+					return emptyMap; // Return early if examId is empty
 				}
 
 				// Query ExamMaster entity
@@ -84,9 +74,10 @@ public class ExamInfoService {
 
 				// Check if ExamMaster entity is empty
 				if (UtilValidate.isEmpty(examMasterEntity)) {
-					String errMsg = "ExamMaster entity is empty.";
+					String errMsg = "ExamMaster entity "
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
-					return null; // Return early if ExamMaster entity is empty
+					return emptyMap; // Return early if ExamMaster entity is empty
 				}
 
 				// Create a map to store exam details
@@ -97,88 +88,110 @@ public class ExamInfoService {
 				// Exam Name
 				String examName = (String) examMasterEntity.getString(ConstantValues.EXAM_NAME);
 				if (UtilValidate.isEmpty(examName)) {
-					String errMsg = "Exam Name is null.";
+					String errMsg = "ExamName"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("examName", examName);
 
 				// Description
 				String description = (String) examMasterEntity.getString(ConstantValues.EXAM_DESCRIPTION);
 				if (UtilValidate.isEmpty(description)) {
-					String errMsg = "Description is null.";
+					String errMsg = "Description"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("description", description);
 
 				// Creation Date
 				String creationDate = (String) examMasterEntity.getString(ConstantValues.EXAM_CREATION_DATE);
 				if (UtilValidate.isEmpty(creationDate)) {
-					String errMsg = "Creation Date is null.";
+					String errMsg = "CreationDate"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("creationDate", creationDate);
 
 				// Expiration Date
 				String expirationDate = (String) examMasterEntity.getString(ConstantValues.EXAM_EXPIRATION_DATE);
 				if (UtilValidate.isEmpty(expirationDate)) {
-					String errMsg = "Expiration Date is null.";
+					String errMsg = "ExpirationDate"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("expirationDate", expirationDate);
 
 				// No Of Questions
 				String noOfQuestions = (String) examMasterEntity.getString(ConstantValues.EXAM_TOTAL_QUES);
 				if (UtilValidate.isEmpty(noOfQuestions)) {
-					String errMsg = "Number of Questions is null.";
+					String errMsg = "NumberOfQuestions"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("noOfQuestions", noOfQuestions);
 
 				// Duration Minutes
 				String durationMinutes = (String) examMasterEntity.getString(ConstantValues.EXAM_DURATION);
 				if (UtilValidate.isEmpty(durationMinutes)) {
-					String errMsg = "Duration Minutes is null.";
+					String errMsg = "DurationMinutes"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("durationMinutes", durationMinutes);
 
 				// Pass Percentage
 				String passPercentage = (String) examMasterEntity.getString(ConstantValues.EXAM_PASS_PERCENTAGE);
 				if (UtilValidate.isEmpty(passPercentage)) {
-					String errMsg = "Pass Percentage is null.";
+					String errMsg = "PassPercentage"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("passPercentage", passPercentage);
 
 				// Questions Randomized
 				String questionsRandomized = (String) examMasterEntity.getString(ConstantValues.EXAM_QUES_RANDOMIZED);
 				if (UtilValidate.isEmpty(questionsRandomized)) {
-					String errMsg = "Questions Randomized is null.";
+					String errMsg = "QuestionsRandomized"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("questionsRandomized", questionsRandomized);
 
 				// Answers Must
 				String answersMust = (String) examMasterEntity.getString(ConstantValues.EXAM_ANS_MUST);
 				if (UtilValidate.isEmpty(answersMust)) {
-					String errMsg = "Answers Must is null.";
+					String errMsg = "AnswersMust"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("answersMust", answersMust);
 
 				// Enable Negative Mark
 				String enableNegativeMark = (String) examMasterEntity.getString(ConstantValues.EXAM_ENABLE_NEG_MARK);
 				if (UtilValidate.isEmpty(enableNegativeMark)) {
-					String errMsg = "Enable Negative Mark is null.";
+					String errMsg = "EnableNegativeMark"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("enableNegativeMark", enableNegativeMark);
 
 				// Negative Mark Value
 				String negativeMarkValue = (String) examMasterEntity.getString(ConstantValues.EXAM_NEG_MARK);
 				if (UtilValidate.isEmpty(negativeMarkValue)) {
-					String errMsg = "Negative Mark Value is null.";
+					String errMsg = "NegativeMark"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 					Debug.log(errMsg);
+					return emptyMap;
 				}
 				examDetailsMap.put("negativeMarkValue", negativeMarkValue);
 
@@ -194,8 +207,7 @@ public class ExamInfoService {
 		} catch (Exception e) {
 			// Log any exceptions that may occur
 			Debug.logError(e, MODULE_NAME);
-			Map<String, Object> errorMap = new HashMap<>();
-			return errorMap;
+			return emptyMap;
 		}
 
 	}

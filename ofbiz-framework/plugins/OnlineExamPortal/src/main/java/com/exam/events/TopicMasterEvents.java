@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericEntityException;
@@ -24,6 +25,7 @@ import com.exam.forms.HibernateValidationMaster;
 import com.exam.forms.checks.TopicMasterCheck;
 import com.exam.helper.HibernateHelper;
 import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,13 +40,14 @@ public class TopicMasterEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 
-		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_NAME, topicName);
+		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_NAME, topicName, EntityConstants.USER_LOGIN,
+				userLogin);
 
 		try {
 			Debug.logInfo("=======Creating TopicMaster record in event using service CreateTopicMaster=========",
@@ -57,31 +60,33 @@ public class TopicMasterEvents {
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
 					"Mandatory Err TopicMaster Entity", RES_ERR, false);
 
-			if (!hasFormErrors) {
-				try {
-					Map<String, ? extends Object> createTopicMasterInfoResult = dispatcher.runSync("CreateTopicMaster",
-							topicInfo);
-					ServiceUtil.getMessages(request, createTopicMasterInfoResult, null);
-					if (ServiceUtil.isError(createTopicMasterInfoResult)) {
-						String errorMessage = ServiceUtil.getErrorMessage(createTopicMasterInfoResult);
-						request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-						Debug.logError(errorMessage, MODULE);
-						return "error";
-					} else {
-						String successMessage = "Create Topic Service executed successfully.";
-						ServiceUtil.getMessages(request, createTopicMasterInfoResult, successMessage);
-						request.setAttribute("_EVENT_MESSAGE_", successMessage);
-						return "success";
-					}
-				} catch (GenericServiceException e) {
-					String errMsg = "Error setting topic info: " + e.toString();
-					request.setAttribute("_ERROR_MESSAGE_", errMsg);
-					return "error";
-				}
-			} else {
+			if (hasFormErrors) {
 				request.setAttribute("_ERROR_MESSAGE", errors);
 				return "error";
 			}
+			try {
+				Map<String, ? extends Object> createTopicMasterInfoResult = dispatcher.runSync("CreateTopicMaster",
+						topicInfo);
+				ServiceUtil.getMessages(request, createTopicMasterInfoResult, null);
+				if (ServiceUtil.isError(createTopicMasterInfoResult)) {
+					String errorMessage = ServiceUtil.getErrorMessage(createTopicMasterInfoResult);
+					request.setAttribute("_ERROR_MESSAGE_", errorMessage);
+					Debug.logError(errorMessage, MODULE);
+					return "error";
+				} else {
+					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+							UtilHttp.getLocale(request));
+					ServiceUtil.getMessages(request, createTopicMasterInfoResult, successMessage);
+					request.setAttribute("_EVENT_MESSAGE_", successMessage);
+					return "success";
+				}
+			} catch (GenericServiceException e) {
+				String errorMessage = UtilProperties.getMessage(RES_ERR, "ServiceCallingError",
+						UtilHttp.getLocale(request)) + e.toString();
+				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
+				return "error";
+			}
+
 		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
@@ -89,22 +94,40 @@ public class TopicMasterEvents {
 		}
 	}
 
-	public static String fetchTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+	public static String fetchOneTopic(HttpServletRequest request, HttpServletResponse response) {
 		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		List<Map<String, Object>> topicMasterdata = new ArrayList<Map<String, Object>>();
+
+		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		try {
-			List<GenericValue> listOfTopicMasterData = EntityQuery.use(delegator).from("TopicMaster").queryList();
-			if (UtilValidate.isNotEmpty(listOfTopicMasterData)) {
-				for (GenericValue list : listOfTopicMasterData) {
-					Map<String, Object> listOfTopicMasterEntity = new HashMap<String, Object>();
-					listOfTopicMasterEntity.put(ConstantValues.TOPIC_ID, list.get(ConstantValues.TOPIC_ID));
-					listOfTopicMasterEntity.put(ConstantValues.TOPIC_NAME, list.get(ConstantValues.TOPIC_NAME));
-					topicMasterdata.add(listOfTopicMasterEntity);
+			GenericValue fetchedTopic = EntityQuery.use(delegator).select(ConstantValues.TOPIC_NAME).from("TopicMaster")
+					.where(ConstantValues.TOPIC_ID, topicId).cache().queryOne();
+
+			request.setAttribute("TopicMaster", fetchedTopic);
+			return "success";
+
+		} catch (GenericEntityException e) {
+			request.setAttribute("Error", e);
+			return "error";
+		}
+	}
+
+	public static String fetchTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		List<Map<String, Object>> viewTopicList = new ArrayList<Map<String, Object>>();
+		try {
+			List<GenericValue> listOfTopics = EntityQuery.use(delegator).from("TopicMaster").cache().queryList();
+			if (UtilValidate.isNotEmpty(listOfTopics)) {
+				for (GenericValue topic : listOfTopics) {
+					Map<String, Object> topicList = new HashMap<String, Object>();
+					topicList.put(ConstantValues.TOPIC_ID, topic.get(ConstantValues.TOPIC_ID));
+					topicList.put(ConstantValues.TOPIC_NAME, topic.get(ConstantValues.TOPIC_NAME));
+					viewTopicList.add(topicList);
 				}
-				request.setAttribute("TopicMaster", topicMasterdata);
+				request.setAttribute("TopicMaster", viewTopicList);
 				return "success";
 			} else {
-				String errorMessage = "No matched fields in TopicMaster Entity";
+				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
+						UtilHttp.getLocale(request));
 				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 				Debug.logError(errorMessage, MODULE);
 				return "error";
@@ -119,13 +142,13 @@ public class TopicMasterEvents {
 
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
 		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
 		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.TOPIC_NAME,
-				topicName);
+				topicName, EntityConstants.USER_LOGIN, userLogin);
 
 		try {
 			Debug.logInfo("=======Updating TopicMaster record in event using service UpdateTopicMaster=========",
@@ -138,7 +161,10 @@ public class TopicMasterEvents {
 			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
 					"Mandatory Err TopicMaster Entity", RES_ERR, false);
 
-			if (!hasFormErrors) {
+			if (hasFormErrors) {
+				request.setAttribute("_ERROR_MESSAGE", errors);
+				return "error";
+			}
 				try {
 					Map<String, ? extends Object> updateTopicMasterInfoResult = dispatcher.runSync("UpdateTopicMaster",
 							topicInfo);
@@ -149,7 +175,8 @@ public class TopicMasterEvents {
 						Debug.logError(errorMessage, MODULE);
 						return "error";
 					} else {
-						String successMessage = "Update Topic Service executed successfully.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, updateTopicMasterInfoResult, successMessage);
 						request.setAttribute("_EVENT_MESSAGE_", successMessage);
 						Debug.logError(successMessage, MODULE);
@@ -160,11 +187,7 @@ public class TopicMasterEvents {
 					request.setAttribute("_ERROR_MESSAGE_", errMsg);
 					return "error";
 				}
-			} else {
-				request.setAttribute("_ERROR_MESSAGE", errors);
-				return "error";
-			}
-		} catch (Exception e) {
+			} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
 			return "error";
@@ -172,10 +195,11 @@ public class TopicMasterEvents {
 	}
 
 	public static String deleteTopicMasterEvent(HttpServletRequest request, HttpServletResponse response) {
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
 		String topicId = (String) request.getAttribute(ConstantValues.TOPIC_ID);
-		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId);
-		GenericValue userLogin=(GenericValue) request.getSession().getAttribute("userLogin");
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, EntityConstants.USER_LOGIN,
+				userLogin);
 
 		try {
 			Debug.logInfo("=======Deleting TopicMaster record in event using service DeleteTopicMaster=========",
@@ -184,7 +208,8 @@ public class TopicMasterEvents {
 				Map<String, ? extends Object> deleteTopicMasterInfoResult = dispatcher.runSync("DeleteTopicMaster",
 						topicInfo);
 				if (UtilValidate.isNotEmpty(topicInfo)) {
-					String successMessage = "delete TopicMaster Service executed successfully.";
+					String successMessage = UtilProperties.getMessage(RES_ERR, "DeleteErrorMessage",
+							UtilHttp.getLocale(request));
 					ServiceUtil.getMessages(request, deleteTopicMasterInfoResult, successMessage);
 					request.setAttribute("_EVENT_MESSAGE_", successMessage);
 					Debug.logError(successMessage, MODULE);
@@ -196,8 +221,9 @@ public class TopicMasterEvents {
 					return "error";
 				}
 			} catch (GenericServiceException e) {
-				String errMsg = "Error deleting topic info: " + e.toString();
-				request.setAttribute("_ERROR_MESSAGE_", errMsg);
+				String errorMessage = UtilProperties.getMessage(RES_ERR, "DeleteErrorMessage",
+						UtilHttp.getLocale(request)) + e.toString();
+				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 				return "error";
 			}
 		} catch (Exception e) {

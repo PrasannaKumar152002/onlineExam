@@ -12,6 +12,7 @@ function Exam() {
 
   useEffect(() => {
     if (examId) {
+      console.log("==================exam")
       const questionInfoUrl = "https://"+ window.location.hostname +":8443/OnlineExamPortal/control/question-info";
       const requestBody = { examId: examId, noOfQuestions: noOfQuestions };
 
@@ -25,9 +26,12 @@ function Exam() {
       })
         .then((response) => response.json())
         .then((result) => {
+          console.log("inside....................");
           if (Array.isArray(result.question.examquestion)) {
+            console.log("======",result.question.examquestion);
             setQuestions(result.question.examquestion);
-            setQuestionSequence(result.questionSequence);
+           console.log(result.userAttemptAnswerMaster)
+            setQuestionSequence(result.userAttemptAnswerMaster);
           } else {
             console.error('Invalid format for questions:', result.question.examquestion);
           }
@@ -44,11 +48,11 @@ function Exam() {
       [questionId]: selectedOption,
     }));
   };
-
+  var sequenceNo=1;
   const renderQuestion = (question) => (
     <div key={question.questionId} className={`card mt-3 ${answers[question.questionId] ? 'border-success' : 'border-danger'}`}>
       <div className='card-body'>
-        <h5 className='card-title'>{(questionSequence++) + ". " + question.questionDetail}</h5>
+        <h5 className='card-title'>{(sequenceNo++) + ". " + question.questionDetail}</h5>
         <div className='form-check'>
           {['A', 'B', 'C', 'D', 'E'].map((option) => {
             const optionKey = `option${option}`;

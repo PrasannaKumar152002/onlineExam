@@ -12,7 +12,7 @@ function Dashboard() {
   const fetchExams = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchExamMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exam-master",
         {
           method: "POST",
           credentials: "include",

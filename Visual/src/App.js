@@ -4,6 +4,7 @@ import Admin from './components/admin';
 import UserPage from './components/user/UserPage';
 import 'react-widgets/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AdminDashboard from './components/AdminComponent/AdminDashboard/AdminDashboard';
 
 function App() {
   var currentrole="login"
@@ -17,6 +18,7 @@ function App() {
   }
   return (
     <div className="App">
+      {/* <AdminDashboard/> */}
      {state==="login"?<SignIn rolestate={rolestate}/>:(state==="admin"?<Admin rolestate={()=>{rolestate("admin")}}/>:<UserPage/>)}
     </div>
   );

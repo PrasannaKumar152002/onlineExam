@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.ofbiz.base.util.Debug;
 import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericEntityException;
@@ -33,29 +34,31 @@ import java.util.List;
 public class StudentListEvent {
 
 	private static final String MODULE = StudentListEvent.class.getName();
-
-	public static String fetchStudentListMethod(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		List<Map<String, Object>> totalStudent = new ArrayList<Map<String, Object>>();
+	private static final String RES_ERR = "OnlineexamUiLabels";
+	
+	public static String fetchStudentList(HttpServletRequest request, HttpServletResponse response) {
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		List<Map<String, Object>> viewStudentList = new ArrayList<Map<String, Object>>();
 		try {
-			List<GenericValue> userRole = EntityQuery.use(delegator).from("PartyRole").where("roleTypeId","user").queryList();
-			if (UtilValidate.isNotEmpty(userRole)) {
-				for (GenericValue list : userRole) {
+			List<GenericValue> studentList = EntityQuery.use(delegator).from("PartyRole").where("roleTypeId","user").queryList();
+			if (UtilValidate.isNotEmpty(studentList)) {
+				for (GenericValue student : studentList) {
 					Map<String, Object> studentlist = new HashMap<String, Object>();
-					studentlist.put(ConstantValues.USEREXAM_PARTY_ID, list.getString(ConstantValues.USEREXAM_PARTY_ID));
-					GenericValue userid = EntityQuery.use(delegator).from("UserLogin").where(ConstantValues.USEREXAM_PARTY_ID,list.getString(ConstantValues.USEREXAM_PARTY_ID) )
+					studentlist.put(ConstantValues.PARTY_ID, student.getString(ConstantValues.PARTY_ID));
+					GenericValue userid = EntityQuery.use(delegator).from(EntityConstants.USER_LOGIN_ENTITY).where(ConstantValues.PARTY_ID,student.getString(ConstantValues.PARTY_ID) )
 							.cache().queryOne();
 					studentlist.put(EntityConstants.USER_LOGIN_ID, userid.getString(EntityConstants.USER_LOGIN_ID));
-					GenericValue userName = EntityQuery.use(delegator).from("Person").where(ConstantValues.USEREXAM_PARTY_ID,list.getString(ConstantValues.USEREXAM_PARTY_ID) )
+					GenericValue userName = EntityQuery.use(delegator).from("Person").where(ConstantValues.PARTY_ID,student.getString(ConstantValues.PARTY_ID) )
 							.cache().queryOne();
 					String fullName=userName.getString(EntityConstants.FIRST_NAME)+" "+userName.getString(EntityConstants.LAST_NAME);
 					studentlist.put(EntityConstants.USER_NAME, fullName);
-					totalStudent.add(studentlist);
+					viewStudentList.add(studentlist);
 				}
-				request.setAttribute("StudentList", totalStudent);
+				request.setAttribute("StudentList", viewStudentList);
 				return "success";
 			} else {
-				String errorMessage = "No matched fields in TopicMaster Entity";
+				String errorMessage = UtilProperties.getMessage(RES_ERR, "ErrorInFetchingData",
+						UtilHttp.getLocale(request));
 				request.setAttribute("_ERROR_MESSAGE_", errorMessage);
 				Debug.logError(errorMessage, MODULE);
 				return "error";

@@ -26,9 +26,9 @@ public class RegistrationEvent {
 	public static String resource_error = "OnlineExamPortalUiLabels";
 
 	public static String register(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		Locale locale = UtilHttp.getLocale(request);
 		Map<String, Object> combinedMap = UtilHttp.getCombinedMap(request);
@@ -40,7 +40,7 @@ public class RegistrationEvent {
 		String confirmpassword = combinedMap.get(EntityConstants.CAPS_CONFIRMPASSWORD).toString();
 		Map<String, Object> obj = UtilMisc.toMap(EntityConstants.USER_LOGIN_ID, username, EntityConstants.FIRST_NAME,
 				firstname, EntityConstants.LAST_NAME, lastname, EntityConstants.CURRENT_PASSWORD, password,
-				EntityConstants.CURRENT_PASSWORD_VERIFY, confirmpassword);
+				EntityConstants.CURRENT_PASSWORD_VERIFY, confirmpassword,EntityConstants.USER_LOGIN, userLogin);
 		System.out.println("UtilMap-" + obj);
 		Map<String, Object> obj2 = UtilMisc.toMap(EntityConstants.USER_LOGIN_ID, username, EntityConstants.FIRST_NAME,
 				firstname, EntityConstants.LAST_NAME, lastname, EntityConstants.PASSWORD, password,

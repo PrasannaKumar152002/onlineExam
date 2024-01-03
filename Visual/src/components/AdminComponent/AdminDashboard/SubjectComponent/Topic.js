@@ -35,7 +35,7 @@ function Topic() {
     } else {
       try {
         document.getElementById("topicnameerr").style.display = "none";
-        fetch("https://localhost:8443/OnlineExamPortal/control/CreateTopicMaster", {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-topic-master", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -65,7 +65,7 @@ function Topic() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/FetchTopicMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topic-master",
         {
           method: "POST",
           credentials: "include",
@@ -90,7 +90,7 @@ function Topic() {
     }
     try {
       const response = await fetch(
-        "https://localhost:8443/OnlineExamPortal/control/DeleteTopicMaster",
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/delete-topic-master",
         {
           method: "DELETE",
           credentials: "include",

@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.UtilHttp;
 import org.apache.ofbiz.base.util.UtilMisc;
+import org.apache.ofbiz.base.util.UtilProperties;
 import org.apache.ofbiz.base.util.UtilValidate;
 import org.apache.ofbiz.entity.Delegator;
 import org.apache.ofbiz.entity.GenericValue;
@@ -16,34 +18,40 @@ import org.apache.ofbiz.service.LocalDispatcher;
 import org.apache.ofbiz.service.ServiceUtil;
 
 import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
 
 public class QuestionInformation {
 	// Define a constant for the class name
 	public static final String MODULE_NAME = QuestionInformation.class.getName();
+	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	public static String getQuestionInfo(HttpServletRequest request, HttpServletResponse response) {
 		// Retrieve the LocalDispatcher and Delegator from the request attributes
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute("dispatcher");
-		Delegator delegator = (Delegator) request.getAttribute("delegator");
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute("userLogin");
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
 		// Retrieve examId, noOfQuestions, and initialize sequenceNum and performanceId
-		String examId = request.getAttribute(ConstantValues.EXAM_ID).toString();
+//		String examId = request.getAttribute(ConstantValues.EXAM_ID).toString();
+		String partyId=userLogin.getString("partyId");
 		String noOfQuestions = request.getAttribute(ConstantValues.EXAM_TOTAL_QUES).toString();
 		int sequenceNum = 1;
 		String performanceId = null;
 
 		try {
 			// Validate examId
-			if (UtilValidate.isEmpty(examId)) {
-				String errMsg = "Exam ID is a required field on the form and can't be empty.";
+			if (UtilValidate.isEmpty(partyId)) {
+				String errMsg = "ExamID"
+						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 				request.setAttribute("ERROR_MESSAGE", errMsg);
 				return "error";
 			}
 
 			// Validate noOfQuestions
 			if (UtilValidate.isEmpty(noOfQuestions)) {
-				String errMsg = "Number of Questions is a required field on the form and can't be empty.";
+				String errMsg = "NumberOfQuestions"
+						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
+				;
 				request.setAttribute("ERROR_MESSAGE", errMsg);
 				return "error";
 			}
@@ -52,11 +60,13 @@ public class QuestionInformation {
 
 			// Query UserExamMapping for the given examId
 			List<GenericValue> userExamList = EntityQuery.use(delegator).from("UserExamMapping")
-					.where(ConstantValues.EXAM_ID, examId).queryList();
+					.where(ConstantValues.PARTY_ID, partyId).queryList();
 
 			// Check if userExamList is empty
 			if (UtilValidate.isEmpty(userExamList)) {
-				String errMsg = "User Exam List is empty.";
+				String errMsg = "UserExamList"
+						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
+				;
 				request.setAttribute("ERROR_MESSAGE", errMsg);
 				return "error";
 			}
@@ -64,7 +74,7 @@ public class QuestionInformation {
 			// Process each UserExamMapping
 			for (GenericValue userExamInfo : userExamList) {
 				// Retrieve necessary information from UserExamMapping
-				String partyId = userExamInfo.getString(ConstantValues.USEREXAM_PARTY_ID);
+				String examId = userExamInfo.getString(ConstantValues.EXAM_ID);
 				String noOfAttempt = userExamInfo.getString(ConstantValues.USEREXAM_NO_OF_ATTEMPTS);
 				String allowedAttempt = userExamInfo.getString(ConstantValues.USEREXAM_ALLOWED_ATTEMPTS);
 				Integer attemptCount = Integer.parseInt(noOfAttempt);
@@ -73,8 +83,8 @@ public class QuestionInformation {
 				// Call service to create a UserAttemptMaster record
 				Map<String, Object> userAttemptMasterResult = dispatcher.runSync("createUserAttemptMaster",
 						UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
-								ConstantValues.USEREXAM_PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
-								noOfAttempt));
+								ConstantValues.PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempt,
+								EntityConstants.USER_LOGIN, userLogin));
 
 				// Check if the service call resulted in an error
 				if (ServiceUtil.isError(userAttemptMasterResult)) {
@@ -84,15 +94,16 @@ public class QuestionInformation {
 					return "error";
 				} else {
 					// Handle success scenario
-					String successMessage = "User Attempt Master created successfully.";
+					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+							UtilHttp.getLocale(request));
 					ServiceUtil.getMessages(request, userAttemptMasterResult, successMessage);
-					performanceId = userAttemptMasterResult.get(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID)
-							.toString();
+					performanceId = userAttemptMasterResult.get(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID).toString();
 				}
 
-				
 				if (UtilValidate.isEmpty(performanceId)) {
-					String errMsg = "Performance ID is a required field on the form and can't be empty.";
+					String errMsg = "PerformanceID"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
+					;
 					request.setAttribute("ERROR_MESSAGE", errMsg);
 					return "error";
 				}
@@ -105,7 +116,9 @@ public class QuestionInformation {
 
 				// Check if examTopicList is empty
 				if (UtilValidate.isEmpty(examTopicMapping)) {
-					String errMsg = "Exam Topic List is empty.";
+					String errMsg = "ExamTopicList"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
+					;
 					request.setAttribute("ERROR_MESSAGE", errMsg);
 					return "error";
 				}
@@ -120,7 +133,9 @@ public class QuestionInformation {
 					// Validate topic information
 					if (UtilValidate.isEmpty(topicId) || UtilValidate.isEmpty(topicPassPercentage)
 							|| UtilValidate.isEmpty(questionsPerExam)) {
-						String errMsg = "Topic information is incomplete or empty.";
+						String errMsg = "TopicInformation" + UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage",
+								UtilHttp.getLocale(request));
+						;
 						request.setAttribute("ERROR_MESSAGE", errMsg);
 						return "error";
 					}
@@ -130,7 +145,8 @@ public class QuestionInformation {
 							"createUserAttemptTopicMaster",
 							UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.USER_ANSWER_PERFORMANCE_ID,
 									performanceId, ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
-									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam));
+									ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam, EntityConstants.USER_LOGIN,
+									userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(userAttemptTopicMasterResult)) {
@@ -140,35 +156,37 @@ public class QuestionInformation {
 						return "error";
 					} else {
 						// Handle success scenario
-						String successMessage = "User Attempt Topic Master created successfully.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, userAttemptTopicMasterResult, successMessage);
 						request.setAttribute("EVENT_MESSAGE", successMessage);
 					}
 
 					// Call service to update UserExamMapping with noOfAttempts
-					Map<String, Object> userExamMappingNoOfAttemptsResult = dispatcher
-							.runSync("updateUserExamMappingnoOfAttempts",
-									UtilMisc.toMap(ConstantValues.EXAM_ID, examId,
-											ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempt,
-											ConstantValues.USEREXAM_PARTY_ID, partyId));
+					Map<String, Object> userExamMappingNoOfAttemptsResult = dispatcher.runSync(
+							"updateUserExamMappingnoOfAttempts",
+							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS,
+									noOfAttempt, ConstantValues.PARTY_ID, partyId, EntityConstants.USER_LOGIN,
+									userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(userExamMappingNoOfAttemptsResult)) {
-						String errorMessage = ServiceUtil
-								.getErrorMessage(userExamMappingNoOfAttemptsResult);
+						String errorMessage = ServiceUtil.getErrorMessage(userExamMappingNoOfAttemptsResult);
 						request.setAttribute("ERROR_MESSAGE", errorMessage);
 						Debug.logError(errorMessage, MODULE_NAME);
 						return "error";
 					} else {
 						// Handle success scenario
-						String successMessage = "Update User Exam Mapping No Of Attempts successful.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, userExamMappingNoOfAttemptsResult, successMessage);
 						request.setAttribute("EVENT_MESSAGE", successMessage);
 					}
 
 					// Call service to get question information
 					Map<String, Object> questionInformationResult = dispatcher.runSync("getQuestionInformation",
-							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request));
+							UtilMisc.toMap(ConstantValues.EXAM_ID, examId, "request", request,
+									EntityConstants.USER_LOGIN, userLogin));
 
 					// Check if the service call resulted in an error
 					if (ServiceUtil.isError(questionInformationResult)) {
@@ -178,7 +196,8 @@ public class QuestionInformation {
 						return "error";
 					} else {
 						// Handle success scenario
-						String successMessage = "Get Question Information successful.";
+						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+								UtilHttp.getLocale(request));
 						ServiceUtil.getMessages(request, questionInformationResult, successMessage);
 						request.setAttribute("question", questionInformationResult);
 					}
@@ -196,16 +215,17 @@ public class QuestionInformation {
 						String questionId = oneQuestion.getString(ConstantValues.QUES_ID);
 
 						// Call service to create a UserAttemptAnswerMaster record
-						Map<String, Object> userAttemptAnswerMasterResult = dispatcher
-								.runSync("createUserAttemptAnswerMaster",
-										UtilMisc.toMap(ConstantValues.QUES_ID, questionId,
-												ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId, "sequenceNum",
-												sequenceNum));
+						Map<String, Object> resultMap = dispatcher.runSync("createUserAttemptAnswerMaster",
+								UtilMisc.toMap(ConstantValues.QUES_ID, questionId,
+										ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId, "sequenceNum",
+										sequenceNum, EntityConstants.USER_LOGIN, userLogin));
 
 						// Increment sequenceNum
 						++sequenceNum;
-						if (!ServiceUtil.isSuccess(userAttemptAnswerMasterResult)) {
-							String errMsg = "User Attempt Answer Master not created successfully.";
+						if (!ServiceUtil.isSuccess(resultMap)) {
+							String errMsg = "userAttempt" + UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage",
+									UtilHttp.getLocale(request));
+							;
 							request.setAttribute("ERROR_MESSAGE", errMsg);
 							return "error";
 						}
@@ -214,10 +234,12 @@ public class QuestionInformation {
 
 				// Query UserAttemptAnswerMaster for the given performanceId
 				List<GenericValue> userAttemptAnswerMasterList = EntityQuery.use(delegator)
-						.from("UserAttemptAnswerMaster")
-						.where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId).queryList();
+						.from("UserAttemptAnswerMaster").where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId)
+						.queryList();
 				if (UtilValidate.isEmpty(userAttemptAnswerMasterList)) {
-					String errMsg = "User Attempt Answer Master is empty.";
+					String errMsg = "UserAttemptAnswerMaster"
+							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
+					;
 					request.setAttribute("ERROR_MESSAGE", errMsg);
 					return "error";
 				}
@@ -233,8 +255,9 @@ public class QuestionInformation {
 		}
 
 		// Set success message in the request
-		request.setAttribute("EVENT_MESSAGE", "Get Question Information successful.");
-		request.getSession().setAttribute("performanceId",performanceId);
+		request.setAttribute("EVENT_MESSAGE", "getQuestionInformation successfully.");
+//		request.getSession().setAttribute("examId", examId);
+		request.getSession().setAttribute("performanceId", performanceId);
 		return "success";
 	}
 }

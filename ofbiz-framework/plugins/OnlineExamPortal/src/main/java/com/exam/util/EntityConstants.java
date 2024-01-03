@@ -13,4 +13,9 @@ public interface EntityConstants {
 	 String CAPS_FIRSTNAME="FIRSTNAME";
 	 String CAPS_LASTNAME="LASTNAME";
 	 String CAPS_CONFIRMPASSWORD="CONFIRMPASSWORD";
+	 String DELEGATOR="delegator";
+	 String DISPATCHER="dispatcher";
+	 String USER_LOGIN="userLogin";
+	 String ENUMERTION="Enumeration";
+	 String USER_LOGIN_ENTITY="UserLogin";
 }

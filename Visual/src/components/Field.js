@@ -73,7 +73,7 @@ function Field({ change, title, rolestate }) {
     var login = (add) => {
         setLoading(true);
         console.log("entered loginserver", add);
-        fetch('https://localhost:8443/OnlineExamPortal/control/Validate', {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/validate", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
@@ -129,11 +129,12 @@ function Field({ change, title, rolestate }) {
                     text: "You Have Logged In",
                     footer: "Powerful People Make Places Powerful"
                 });
-                if (data.Role == "ADMIN") {
+                console.log("role=",data);
+                if (data.Role === "ADMIN") {
                     rolestate("admin");
                     nav("/AdminDashboard");
                 }
-                else if (data.Role == "user") {
+                else if (data.Role === "user") {
                     rolestate("user");
                     nav("/dashboard");
                 }

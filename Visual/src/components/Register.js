@@ -122,7 +122,7 @@ function Register({ change, title }) {
 
     var login = (add) => {
         console.log("entered loginserver", add);
-        fetch('https://localhost:8443/OnlineExamPortal/control/register', {
+        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/register", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
