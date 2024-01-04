@@ -97,7 +97,7 @@ function Exam() {
       const response = await fetch(
         "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-exams",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );

@@ -55,4 +55,7 @@ under the License.
     <property key="DeleteErrorMessage">
         <value xml:lang="en">Error in deleting data</value>
     </property>
+     <property key="EmptyVariableMessage">
+        <value xml:lang="en">Is Empty</value>
+    </property>
 </resource>

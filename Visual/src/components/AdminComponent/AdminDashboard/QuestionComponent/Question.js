@@ -86,7 +86,7 @@ function Question() {
       const response = await fetch(
         "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topics",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
@@ -108,7 +108,7 @@ function Question() {
       const response = await fetch(
         "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-ques-type",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );

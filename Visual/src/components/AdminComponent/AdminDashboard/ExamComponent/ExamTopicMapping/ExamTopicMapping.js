@@ -38,7 +38,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-topics",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
@@ -62,7 +62,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-exams",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
@@ -86,7 +86,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-all-exam-topics",
         {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         }
       );
