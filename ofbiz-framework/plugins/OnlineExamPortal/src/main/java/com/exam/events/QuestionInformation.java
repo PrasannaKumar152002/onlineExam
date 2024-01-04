@@ -41,7 +41,7 @@ public class QuestionInformation {
 		try {
 			// Validate examId
 			if (UtilValidate.isEmpty(partyId)) {
-				String errMsg = "ExamID"
+				String errMsg = "partyId"
 						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
 				request.setAttribute("ERROR_MESSAGE", errMsg);
 				return "error";

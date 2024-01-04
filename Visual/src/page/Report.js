@@ -6,20 +6,22 @@ const Report = () => {
 
   const { answers } = useContext(AppContext);
   const { questions } = useContext(AppContext);
+  const examId = sessionStorage.getItem("exam");
+  console.log("examid====report",examId);
 
 
 
-
-
+ 
   const selectionAnswer = () => {
     try {
-      const Array = []
+      const Array =[];
       questions.forEach(ele => {
         ele.forEach((element) => {
-
           const questionId = element.questionId;
+          var ans=element.answer;
           const answer = element[answers[element.questionId]]
-          Array.push({ questionId, answer })
+          Array.push(questionId, answer);
+         
         });
 
       });
@@ -44,14 +46,15 @@ const Report = () => {
 
   const fetchInfo = () => {
     const selectionAnswerResult = selectionAnswer();
-    console.log("inside fetch...", selectionAnswerResult);
-
+    const requestBody={questions:questions}
+    console.log("inside fetch...", selectionAnswerResult,"------",requestBody);
+  
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ selectionAnswerResult }),
+      body: JSON.stringify({selectionAnswerResult,questions:questions}),
       credentials:'include'
     })
       .then((res) => res.json())

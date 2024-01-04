@@ -20,12 +20,12 @@ const Dashboard = () => {
     })
       .then((response) => response.json())
       .then((result) => {
-        if (result.exam === undefined) {
+        if (result.exams === undefined) {
           console.error('Error  in fetching exam data:', fetchError);
           setFetchError('Error fetching exam data. Please try again.');
         } else {
-          console.log(result.exam.examList);
-          setExamData(result.exam.examList);
+          console.log(result.exams.examList);
+          setExamData(result.exams.examList);
         }
       })
       .catch((error) => {

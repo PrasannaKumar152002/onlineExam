@@ -34,14 +34,14 @@ public class EnumerationEntityListEvent {
 					.where(ConstantValues.ENUM_TYPE_ID, "Q_TYPE").cache().queryList();
 			if (UtilValidate.isNotEmpty(listOfQuesType)) {
 				for (GenericValue quesType : listOfQuesType) {
-					Map<String, Object> ques_type_list = new HashMap<String, Object>();
-					ques_type_list.put(ConstantValues.ENUM_ID, quesType.get(ConstantValues.ENUM_ID));
-					ques_type_list.put(ConstantValues.ENUM_SEQUENCE_ID,
+					Map<String, Object> quesTypeList = new HashMap<String, Object>();
+					quesTypeList.put(ConstantValues.ENUM_ID, quesType.get(ConstantValues.ENUM_ID));
+					quesTypeList.put(ConstantValues.ENUM_SEQUENCE_ID,
 							quesType.get(ConstantValues.ENUM_SEQUENCE_ID));
-					ques_type_list.put(ConstantValues.ENUM_TYPE_ID, quesType.get(ConstantValues.ENUM_TYPE_ID));
-					ques_type_list.put(ConstantValues.ENUM_DESCRIPTION,
+					quesTypeList.put(ConstantValues.ENUM_TYPE_ID, quesType.get(ConstantValues.ENUM_TYPE_ID));
+					quesTypeList.put(ConstantValues.ENUM_DESCRIPTION,
 							quesType.get(ConstantValues.ENUM_DESCRIPTION));
-					viewQuesTypeList.add(ques_type_list);
+					viewQuesTypeList.add(quesTypeList);
 				}
 				Map<String, Object> questionTypeInfo = new HashMap<>();
 				questionTypeInfo.put("QuestionTypeList", viewQuesTypeList);

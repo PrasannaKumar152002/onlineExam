@@ -57,7 +57,7 @@ function Exam() {
           {['A', 'B', 'C', 'D', 'E'].map((option) => {
             const optionKey = `option${option}`;
             const optionValue = question[optionKey];
-            const questionType = question.QuestionType;
+            const questionType = question.questionType;
 
             switch (questionType) {
               case 'QT_SC':

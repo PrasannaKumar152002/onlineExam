@@ -124,28 +124,28 @@ function Question() {
     }
   };
 
-  // const fetchQuestions = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-questions",
-  //       {
-  //         method: "GET",
-  //         credentials: "include",
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error();
-  //     }
-  //     const data = await response.json();
-  //     console.log(data);
-  //     setQuestions(undefined);
-  //     var list = data.QuestionInfo.QuestionList;
-  //     setQuestions(list);
-  //     console.log("-------------------------------"+list);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch(
+        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-questions",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error();
+      }
+      const data = await response.json();
+      console.log(data);
+      setQuestions(undefined);
+      var list = data.QuestionInfo.QuestionList;
+      setQuestions(list);
+      console.log("-------------------------------"+list);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleDeleteQuestion = async (id) => {
     try {
