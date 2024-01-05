@@ -6,7 +6,7 @@ export default function ExamTopicMapping() {
   const [exams, setExams] = useState([]);
   const [examTopic, setExamTopic] = useState([]);
   const [percentage, setPercentage] = useState();
-  const [selectedQuestionsPerExam, setSelectedQuestionsPerExam] = useState();
+  const [questionsPerExam, setQuestionsPerExam] = useState();
   const [topicChange, setTopicChange] = useState("");
   const [examChange, setExamChange] = useState("");
   const [count, setCountChange] = useState();
@@ -19,7 +19,7 @@ export default function ExamTopicMapping() {
 
   const handleChangePercentage = (e) => {
     setPercentage(e.target.value);
-    setSelectedQuestionsPerExam(e.target.value);
+    // setQuestionsPerExam(e.target.value);
   };
   const handleSelectTopicChange = (e) => {
     setTopicChange(e.topicId);
@@ -29,7 +29,7 @@ export default function ExamTopicMapping() {
     setExamChange(e.examId);
   };
   const handleSelectCountChange = (e) => {
-    setCountChange(e.target.value);
+    // setQuestionsPerExam()
   };
   const fetchTopics = async () => {
     try {
@@ -112,7 +112,7 @@ export default function ExamTopicMapping() {
       topicId: topicChange,
       percentage: percentage,
       topicPassPercentage: formData.get("topicPassPercentage"),
-      questionsPerExam: selectedQuestionsPerExam,
+      questionsPerExam: questionsPerExam,
     };
     console.log(data_map);
 
@@ -136,18 +136,19 @@ export default function ExamTopicMapping() {
     } else {
       document.getElementById("topicpasspercentageerr").style.display = "none";
     }
-    if (data_map.questionsPerExam === "") {
-      document.getElementById("questionsperexamerr").style.display = "block";
-    } else {
-      document.getElementById("questionsperexamerr").style.display = "none";
-    }
+    // if (data_map.questionsPerExam === "") {
+    //   document.getElementById("questionsperexamerr").style.display = "block";
+    // } else {
+    //   document.getElementById("questionsperexamerr").style.display = "none";
+    // }
     if (
       !(
         data_map.examId === "" ||
         data_map.topicId === "" ||
         data_map.percentage === "" ||
-        data_map.topicPassPercentage === "" ||
-        data_map.questionsPerExam === ""
+        data_map.topicPassPercentage === "" 
+        // ||
+        // data_map.questionsPerExam === ""
       )
     ) {
       try {
@@ -169,6 +170,8 @@ export default function ExamTopicMapping() {
           })
           .then((fetch_data) => {
             console.log(fetch_data);
+            var questionsPerExam = fetch_data.output;
+            setQuestionsPerExam(questionsPerExam);
             fetchExamTopicMapping();
           });
       } catch (error) {
@@ -184,7 +187,7 @@ export default function ExamTopicMapping() {
         topics={topics}
         submitHandler={submitHandler}
         examChange={examChange}
-        selectedQuestionsPerExam={selectedQuestionsPerExam}
+        questionsPerExam={questionsPerExam}
         count={count}
         exams={exams}
         examId={examTopic.examId}
@@ -203,7 +206,7 @@ export default function ExamTopicMapping() {
           topics={topics}
           submitHandler={submitHandler}
           examChange={examChange}
-          selectedQuestionsPerExam={selectedQuestionsPerExam}
+          questionsPerExam={questionsPerExam}
           count={count}
           exams={exams}
           examId={examTopic.examId}
@@ -246,7 +249,7 @@ export default function ExamTopicMapping() {
           topics={topics}
           submitHandler={submitHandler}
           examChange={examChange}
-          selectedQuestionsPerExam={selectedQuestionsPerExam}
+          questionsPerExam={questionsPerExam}
           count={count}
           exams={exams}
           examId={examTopic.examId}

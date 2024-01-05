@@ -10,7 +10,7 @@ function QuestionModalSample(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+console.log("&&&&&&&&&&&&&&&&&& " + props.changedOptionC)
   const submitHandler = (e) => {
     e.preventDefault();
     const data_map = {

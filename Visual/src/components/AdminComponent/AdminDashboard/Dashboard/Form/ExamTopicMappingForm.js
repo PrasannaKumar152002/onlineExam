@@ -113,8 +113,9 @@ export default function ExamTopicMappingForm(props) {
                   type="text"
                   name="questionsPerExam"
                   className="form-control mx-sm-5"
-                  defaultValue={props.selectedQuestionsPerExam}
-                  onChange={(value) => props.handleSelectCountChange(value)}
+                  defaultValue={props.questionsPerExam}
+// (percentage/100)*questionsPerExam
+                  // onChange={(value) => props.handleSelectCountChange(value)}
                 />
                 <div
                   className="invalid-feedback mx-sm-5"

@@ -18,9 +18,7 @@ export default function SingleChoice(props) {
                 type="text"
                 name="optionA"
                 className="form-control mx-sm-5"
-                defaultValue={
-                  props.changedoptionA ? props.changedoptionA : props.optionA
-                }
+                defaultValue={props.optionA ? props.optionA : ""}
                 onChange={(value) => props.changeOptionAHandler(value)}
               ></textarea>
               <div className="invalid-feedback mx-sm-5" id="optionaerr">
@@ -41,9 +39,7 @@ export default function SingleChoice(props) {
                 type="text"
                 name="optionB"
                 className="form-control mx-sm-5"
-                defaultValue={
-                  props.changedoptionB ? props.changedoptionB : props.optionB
-                }
+                defaultValue={props.optionB ? props.optionB : ""}
                 onChange={(value) => props.changeOptionBHandler(value)}
               ></textarea>
               <div className="invalid-feedback mx-sm-5" id="optionberr">
@@ -68,9 +64,7 @@ export default function SingleChoice(props) {
                 type="text"
                 name="optionC"
                 className="form-control mx-sm-5"
-                defaultValue={
-                  props.changedoptionC ? props.changedoptionC : props.optionC
-                }
+                defaultValue={props.optionC ? props.optionC : ""}
                 onChange={(value) => props.changeOptionCHandler(value)}
               ></textarea>
               <div className="invalid-feedback mx-sm-5" id="optioncerr">
@@ -91,9 +85,7 @@ export default function SingleChoice(props) {
                 type="text"
                 name="optionD"
                 className="form-control mx-sm-5"
-                defaultValue={
-                  props.changedoptionD ? props.changedoptionD : props.optionD
-                }
+                defaultValue={props.optionD ? props.optionD : ""}
                 onChange={(value) => props.changeOptionDHandler(value)}
               ></textarea>
               <div className="invalid-feedback mx-sm-5" id="optionderr">
@@ -118,9 +110,7 @@ export default function SingleChoice(props) {
                 type="text"
                 name="optionE"
                 className="form-control mx-sm-5"
-                defaultValue={
-                  props.changedoptionE ? props.changedoptionE : props.optionE
-                }
+                defaultValue={props.optionE ? props.optionE : ""}
                 onChange={(value) => props.changeOptionEHandler(value)}
               ></textarea>
               <div className="invalid-feedback mx-sm-5" id="optioneerr">

@@ -184,10 +184,10 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 
-	<request-map uri="update-user-exam-mapping">
+	<request-map uri="questions-per-topic">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="updateUserForExam"></event>
+			invoke="questionsPerTopic"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

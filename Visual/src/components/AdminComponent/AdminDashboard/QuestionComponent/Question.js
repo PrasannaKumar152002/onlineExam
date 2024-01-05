@@ -9,8 +9,8 @@ function Question() {
   const [questions, setQuestions] = useState([]);
   const [topics, setTopics] = useState([]);
   const [setEnum, getEnum] = useState([]);
-  const [quesType, setQuesType] = useState("");
-  const [topicChange, setTopicChange] = useState("");
+  const [quesType, setQuesType] = useState();
+  const [topicChange, setTopicChange] = useState();
   const [changedquestionDetail, setQuestionDetail] = useState("");
   const [changedoptionA, setChangedOptionA] = useState("");
   const [changedoptionB, setChangedOptionB] = useState("");
@@ -27,30 +27,72 @@ function Question() {
     fetchQuestions();
     fetchTopics();
     fetchQuesType();
-  }, []);
+  }, [changedoptionA, changedoptionB,changedoptionC,changedoptionD,changedoptionE]);
 
   const changeQuestionDetailHandler = (e) => {
     setQuestionDetail(e.target.value);
   };
 
   const changeOptionAHandler = (e) => {
+    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
+    {
+      setChangedOptionA(null);
+    }
+    else
+    {
     setChangedOptionA(e.target.value);
+    }
   };
 
   const changeOptionBHandler = (e) => {
-    setChangedOptionB(e.target.value);
+    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
+    {
+      setChangedOptionB(null);
+    }
+    else
+    {
+      setChangedOptionB(e.target.value);
+    }
+    
   };
 
   const changeOptionCHandler = (e) => {
-    setChangedOptionC(e.target.value);
+    if (e.target.value === "null" || e.target.value === "" || e.target.value === undefined)
+    {
+      setChangedOptionC(null);
+    }
+    else
+    {
+      setChangedOptionC(e.target.value);
+    }
+    console.log("*****************M"+ changedoptionC);
+    
   };
 
   const changeOptionDHandler = (e) => {
-    setChangedOptionD(e.target.value);
+    if (e.target.value === "null" || e.target.value === "" || e.target.value === undefined)
+    {
+      setChangedOptionD("null");
+    }
+    else
+    {
+      setChangedOptionD(e.target.value);
+    }
+    console.log(e.target.value);
+    
   };
 
   const changeOptionEHandler = (e) => {
-    setChangedOptionE(e.target.value);
+    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
+    {
+      setChangedOptionE(null);
+    }
+    else
+    {
+      setChangedOptionE(e.target.value);
+    }
+    console.log(e.target.value);
+    
   };
 
   const changeAnswerHandler = (e) => {
@@ -187,10 +229,10 @@ function Question() {
     const data_map = {
       questionDetail: formData.get("questionDetail"),
       optionA: changedoptionA,
-      optionB: formData.get("optionB"),
-      optionC: formData.get("optionC"),
-      optionD: formData.get("optionD"),
-      optionE: formData.get("optionE"),
+      optionB: changedoptionB,
+      optionC: changedoptionC,
+      optionD: changedoptionD,
+      optionE: changedoptionE,
       answer: formData.get("answer"),
       numAnswers: formData.get("numAnswers"),
       questionType: quesType,
@@ -280,23 +322,18 @@ function Question() {
     ) {
       if (data_map.optionA === "") {
         data_map.optionA = "null";
-        setChangedOptionA('');
       }
       if (data_map.optionB === "") {
         data_map.optionB = "null";
-        setChangedOptionB('');
       }
       if (data_map.optionC === "") {
         data_map.optionC = "null";
-        setChangedOptionC('');
       }
       if (data_map.optionD === "") {
         data_map.optionD = "null";
-        setChangedOptionD('');
       }
       if (data_map.optionE === "") {
         data_map.optionE = "null";
-        setChangedOptionE('');
       }
       try {
         // FETCH
@@ -322,7 +359,16 @@ function Question() {
         console.log(error);
       }
     }
-
+    setChangedOptionA("null");
+    setChangedOptionB("null");
+    setChangedOptionC("null");
+    setChangedOptionD("null");
+    setChangedOptionE("null");
+    setChangedAnswer("");
+    setChangedNumAnswers("");
+    setChangeddifficultyLevel("");
+    setChangedanswerValue("");
+    setChangednegativeMarkValue("");
     handleCloseQuestion();
     form.reset();
   };

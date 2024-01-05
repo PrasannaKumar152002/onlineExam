@@ -13,6 +13,8 @@ export default function QuestionForm(props) {
   const [fillup, showFillUp] = useState({ display: "none" });
   const [detail, showDetail] = useState({ display: "none" });
 
+  console.log("OOOOOOOOOOOOOOOOOOOOOOOOOO "+props.optionC)
+
   useEffect(() => {
     switch (props.quesType || props.questionType) {
       case "QT_MC":
@@ -23,6 +25,7 @@ export default function QuestionForm(props) {
         showFillUp({ display: "none" });
         break;
       case "QT_TF":
+        // props.set
         showtruefalseOption({ display: "block" });
         showMcqOption({ display: "none" });
         showsingleChoiceOption({ display: "none" });
@@ -51,7 +54,11 @@ export default function QuestionForm(props) {
         showFillUp({ display: "none" });
         break;
       default:
-        <></>;
+        showsingleChoiceOption({ display: "none" });
+        showMcqOption({ display: "none" });
+        showtruefalseOption({ display: "none" });
+        showDetail({ display: "none" });
+        showFillUp({ display: "none" });
         break;
     }
   }, [props.quesType, props.questionType]);
@@ -146,9 +153,9 @@ export default function QuestionForm(props) {
               </label>
               <div className="col-md-9">
                 <Combobox
-                  name="questionType"
+                  name="enumId"
                   data={props.setEnum}
-                  dataKey="sequenceId"
+                  dataKey="enumId"
                   textField="description"
                   onChange={(value) => props.handleSelectQuesTypeChange(value)}
                   defaultValue={
@@ -183,12 +190,22 @@ export default function QuestionForm(props) {
         </div>
         <div style={truefalseOption}>
           <TrueFalse
-            changedoptionA={props.changedoptionA}
-            changedoptionB={props.changedoptionB}
             optionA={props.optionA}
             optionB={props.optionB}
+            optionC={props.optionC}
+            optionD={props.optionD}
+            optionE={props.optionE}
+            changedoptionA={props.changedoptionA}
+            changedoptionB={props.changedoptionB}
+            changedoptionC={props.changedoptionC}
+            changedoptionD={props.changedoptionD}
+            changedoptionE={props.changedoptionE}
             changeOptionAHandler={props.changeOptionAHandler}
             changeOptionBHandler={props.changeOptionBHandler}
+            changeOptionCHandler={props.changeOptionCHandler}
+            
+            changeOptionDHandler={props.changeOptionDHandler}
+            changeOptionEHandler={props.changeOptionEHandler}
           />
         </div>
         <div style={singleChoiceOption}>
@@ -211,10 +228,42 @@ export default function QuestionForm(props) {
           />
         </div>
         <div style={fillup}>
-          <FillUp />
+          <FillUp 
+          optionA={props.optionA}
+          optionB={props.optionB}
+          optionC={props.optionC}
+          optionD={props.optionD}
+          optionE={props.optionE}
+          changedoptionA={props.changedoptionA}
+          changedoptionB={props.changedoptionB}
+          changedoptionC={props.changedoptionC}
+          changedoptionD={props.changedoptionD}
+          changedoptionE={props.changedoptionE}
+          changeOptionAHandler={props.changeOptionAHandler}
+          changeOptionBHandler={props.changeOptionBHandler}
+          changeOptionCHandler={props.changeOptionCHandler}
+          
+          changeOptionDHandler={props.changeOptionDHandler}
+          changeOptionEHandler={props.changeOptionEHandler}/>
         </div>
         <div style={detail}>
-          <Detail />
+          <Detail 
+          optionA={props.optionA}
+          optionB={props.optionB}
+          optionC={props.optionC}
+          optionD={props.optionD}
+          optionE={props.optionE}
+          changedoptionA={props.changedoptionA}
+          changedoptionB={props.changedoptionB}
+          changedoptionC={props.changedoptionC}
+          changedoptionD={props.changedoptionD}
+          changedoptionE={props.changedoptionE}
+          changeOptionAHandler={props.changeOptionAHandler}
+          changeOptionBHandler={props.changeOptionBHandler}
+          changeOptionCHandler={props.changeOptionCHandler}
+          
+          changeOptionDHandler={props.changeOptionDHandler}
+          changeOptionEHandler={props.changeOptionEHandler}/>
         </div>
         <div className="container">
           <div className="row">

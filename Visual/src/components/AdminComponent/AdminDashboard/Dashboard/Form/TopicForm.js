@@ -21,7 +21,7 @@ export default function TopicForm(props) {
             type="text"
             name="topicName"
             className="form-control mx-sm-3"
-            defaultValue={props.changedTopic?props.changedTopic:props.topicName}
+            defaultValue={props.topicName?props.topicName:""}
             onChange={(value)=>props.changeHandler(value)}
           />
           <div className="invalid-feedback mx-sm-5" id="topicnameerr">
