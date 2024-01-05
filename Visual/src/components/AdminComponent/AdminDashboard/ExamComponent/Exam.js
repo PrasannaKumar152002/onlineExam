@@ -265,9 +265,9 @@ function Exam() {
         <h2 align="center">Exam List</h2>
       </div>
 
-      <div>
-        <Table responsive className="table-borderless">
-          <thead>
+      <div className="container-fluid">
+        <Table responsive className="table table-striped table-hover table-light">
+          <thead class="thead-light">
             <tr>
               <th>Exam ID</th>
               <th>Exam Desc</th>
@@ -276,11 +276,11 @@ function Exam() {
               <th>Duration Mins</th>
               <th>Created Time</th>
               <th>Expired Time</th>
-              <th>Answers Must</th>
-              <th>Questions Randomized</th>
+              {/* <th>Answers Must</th> */}
+              {/* <th>Questions Randomized</th> */}
               <th>Pass Percentage</th>
-              <th>Enable Negative Mark</th>
-              <th>Negative Mark</th>
+              {/* <th>Enable Negative Mark</th> */}
+              {/* <th>Negative Mark</th> */}
               <th>Edit</th>
             </tr>
           </thead>
@@ -295,11 +295,11 @@ function Exam() {
                   <td>{exam.durationMinutes}</td>
                   <td>{exam.creationDate}</td>
                   <td>{exam.expirationDate}</td>
-                  <td>{exam.answersMust}</td>
-                  <td>{exam.questionsRandomized}</td>
+                  {/* <td>{exam.answersMust}</td> */}
+                  {/* <td>{exam.questionsRandomized}</td> */}
                   <td>{exam.passPercentage}</td>
-                  <td>{exam.enableNegativeMark}</td>
-                  <td>{exam.negativeMarkValue}</td>
+                  {/* <td>{exam.enableNegativeMark}</td> */}
+                  {/* <td>{exam.negativeMarkValue}</td> */}
                   <td className="border-none px-3 py-1 mt-4 mb-2 text-white rounded-0">
                     <ExamModalEditSample
                       fetchExam={fetchExam}

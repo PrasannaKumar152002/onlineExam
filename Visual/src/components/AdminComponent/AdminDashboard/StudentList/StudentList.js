@@ -19,7 +19,7 @@ function StudentList() {
         }
         const data = await response.json();
         console.log("studentlist",data);
-        var list = data.StudentList;
+        var list = data.StudentListInfo.StudentList;
         setStudents(list);
       } catch (error) {
         console.log(error);
@@ -40,9 +40,9 @@ return (
         <h2 align="center">Student List</h2>
       </div>
 
-      <div>
-        <table className="table">
-          <thead>
+      <div className="container-fluid">
+        <table className="table table-striped table-hover table-light">
+          <thead className="thead-light">
             <tr>
               <th scope="col">Party ID</th>
               <th scope="col">User Name</th>

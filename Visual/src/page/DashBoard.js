@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
+import Header from '../components/user/Header';
 
 const Dashboard = () => {
   const examInfoUrl = "https://"+ window.location.hostname +":8443/OnlineExamPortal/control/exam-info";
@@ -47,12 +48,15 @@ const Dashboard = () => {
         content={`ExamId: ${exam.examId}<br>ExamName: ${exam.examName}<br>Time: ${Number(exam.durationMinutes)}min<br>Description: ${exam.description}`}
         examId={exam.examId}
         noOfQuestions={exam.noOfQuestions}
+        durationMinutes={exam.durationMinutes}
       />
     );
   };
 
   return (
-    <div className="container mt-4">
+    <div>
+      <Header />
+      <div className='container'>
       {fetchError && <p>{fetchError}</p>}
       {!fetchError && (
         <div className="row">
@@ -63,6 +67,7 @@ const Dashboard = () => {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 };
@@ -70,6 +75,8 @@ const Dashboard = () => {
 const SessionStorage = (props) => {
   sessionStorage.setItem("exam", props.examId);
   sessionStorage.setItem("ques", props.noOfQuestions);
+  console.log("examTimeBefore : ",props.durationMinutes);
+  sessionStorage.setItem("examTime",props.durationMinutes);
 };
 
 const ExamCard = (props) => {

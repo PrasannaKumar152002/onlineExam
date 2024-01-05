@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { AppContext } from '../components/user/UserPage';
+import Header from '../components/user/Header';
 
 
 const Report = () => {
@@ -69,6 +70,7 @@ const Report = () => {
   };
   return (
     <div>
+      <Header />
       {/* <h1>Score={correctmark}/{total}</h1> */}
 
     </div>

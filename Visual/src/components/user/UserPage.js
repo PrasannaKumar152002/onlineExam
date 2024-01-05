@@ -18,8 +18,7 @@ function UserPage() {
     return (
         < AppContext.Provider value={{ answers, setAnswers, questions, setQuestions }}>
             <Router>
-                <div className="App">
-                    <Header />
+                <div>
                     <Routes>
                         <Route path="/dashboard" element={<DashBoard />} />
                         <Route path="/report" element={<Report />} />

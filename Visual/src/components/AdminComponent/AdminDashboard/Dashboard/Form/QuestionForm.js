@@ -146,9 +146,9 @@ export default function QuestionForm(props) {
               </label>
               <div className="col-md-9">
                 <Combobox
-                  name="questionType"
+                  name="enumId"
                   data={props.setEnum}
-                  dataKey="sequenceId"
+                  dataKey="enumId"
                   textField="description"
                   onChange={(value) => props.handleSelectQuesTypeChange(value)}
                   defaultValue={

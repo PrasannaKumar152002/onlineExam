@@ -31,18 +31,18 @@ public class UserResult {
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	public static String getUserResult(HttpServletRequest request, HttpServletResponse response) {
-		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
-		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
-		String performanceId = (String) request.getSession().getAttribute(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
-		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
+		// Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		// LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		// GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		// String performanceId = (String) request.getSession().getAttribute(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
+		// String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
 		
-		@SuppressWarnings("unchecked")
-		Map<String, String> answer = (Map<String, String>) request.getAttribute("selectionAnswerResult");
-		int isFlagged = 0;
-		String questionId = null;
-		String selectedAnswer = null;
-		try {
+		// @SuppressWarnings("unchecked")
+		// Map<String, String> answer = (Map<String, String>) request.getAttribute("selectionAnswerResult");
+		// int isFlagged = 0;
+		// String questionId = null;
+		// String selectedAnswer = null;
+		// try {
 //			for (Map<String, String> oneAns : answer) {
 //				Integer id = Integer.parseInt(oneAns.get("questionId"));
 //				questionId = String.valueOf(id);
@@ -65,15 +65,15 @@ public class UserResult {
 //				}
 //
 //			}
-			int truecount = 0;
-			int falsecount = 0;
-			List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")
-					.where(ConstantValues.EXAM_ID, examId).queryList();
-			Map<String, Integer> topic = new HashMap<>();
-			for (GenericValue getTopic : examTopicMapping) {
-				String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
-				topic.put(topicId, 0);
-			}
+			// int truecount = 0;
+			// int falsecount = 0;
+			// List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")
+			// 		.where(ConstantValues.EXAM_ID, examId).queryList();
+			// Map<String, Integer> topic = new HashMap<>();
+			// for (GenericValue getTopic : examTopicMapping) {
+			// 	String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
+			// 	topic.put(topicId, 0);
+			// }
 //				List<GenericValue> question = EntityQuery.use(delegator).from("QuestionMaster")
 //						.where(ConstantValues.TOPIC_ID, topicId).queryList();
 //				for (Map<String, Object> oneAns : answer) {
@@ -103,8 +103,8 @@ public class UserResult {
 //				}
 //			}
 
-			System.out.println("========truecount" + truecount);
-			System.out.println("========falsecount" + falsecount);
+			// System.out.println("========truecount" + truecount);
+			// System.out.println("========falsecount" + falsecount);
 //			List<GenericValue> userAttemptAnswerMasterList = EntityQuery.use(delegator)
 //					.from("UserAttemptAnswerMaster").where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId)
 //					.queryList();
@@ -139,18 +139,18 @@ public class UserResult {
 //					}
 //				}
 //				
-			for (String id : quesId) {
-				if (questions.get(id).equals(answer.get(id))) {
-					truecount++;
-				}
-				falsecount++;
-			}
-			System.out.println("Correct= " + truecount + " Wrong= " + falsecount);
+		// 	for (String id : quesId) {
+		// 		if (questions.get(id).equals(answer.get(id))) {
+		// 			truecount++;
+		// 		}
+		// 		falsecount++;
+		// 	}
+		// 	System.out.println("Correct= " + truecount + " Wrong= " + falsecount);
 
-		} catch (Exception e) {
+		// } catch (Exception e) {
 
-			Debug.log(e);
-		}
+		// 	Debug.log(e);
+		// }
 		return null;
 	}
 }
