@@ -12,13 +12,13 @@ function App() {
   {
     currentrole=sessionStorage.getItem("role"); 
   }
+  console.log("role-",currentrole);
   const [state, setState]  = useState(currentrole);
   const rolestate=(role)=>{
     setState(role);
   }
   return (
-    <div className="App">
-      {/* <AdminDashboard/> */}
+    <div>
      {state==="login"?<SignIn rolestate={rolestate}/>:(state==="admin"?<Admin rolestate={()=>{rolestate("admin")}}/>:<UserPage/>)}
     </div>
   );
