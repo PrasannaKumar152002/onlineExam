@@ -7,6 +7,7 @@ const Report = () => {
 
   const { answers } = useContext(AppContext);
   const { questions } = useContext(AppContext);
+  
   const examId = sessionStorage.getItem("exam");
   console.log("examid====report",examId);
 
@@ -14,6 +15,7 @@ const Report = () => {
 
  
   const selectionAnswer = () => {
+    console.log("test",answers)
     try {
       const Array =[];
       questions.forEach(ele => {

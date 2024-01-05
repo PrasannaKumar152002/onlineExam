@@ -7,10 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
 
 function QuestionPalette({ data }) {
+  var oneQues = <p>none</p>;
   const { answers, setAnswers } = useContext(AppContext);
   const { questions } = useContext(AppContext);
-  // const [sequence,setSequence]=useState(1);  
-  var sequenceNo = 1;
   const nav = useNavigate();
   var trigger = $('.hamburger'),
     overlay = $('.overlay'),
@@ -49,7 +48,7 @@ function QuestionPalette({ data }) {
     }
   };
 
-  var exTime = Number(sessionStorage.getItem("examTime"))*60;
+  var exTime = Number(sessionStorage.getItem("examTime")) * 60;
   console.log("exam time : ", exTime);
 
   const TIME_LIMIT = exTime;
@@ -59,7 +58,8 @@ function QuestionPalette({ data }) {
   let remainingPathColor = COLOR_CODES.info.color;
 
   useEffect(() => {
-    document.getElementById("app").innerHTML = `
+    if (questions) {
+      document.getElementById("app").innerHTML = `
 <div class="base-timer">
   <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <g class="base-timer__circle">
@@ -78,11 +78,12 @@ function QuestionPalette({ data }) {
     </g>
   </svg>
   <span id="base-timer-label" class="base-timer__label">${formatTime(
-      timeLeft
-    )}</span>
+        timeLeft
+      )}</span>
 </div>
 `;
-    startTimer();
+      startTimer();
+    }
   }, [])
 
 
@@ -151,16 +152,24 @@ function QuestionPalette({ data }) {
       .setAttribute("stroke-dasharray", circleDasharray);
   }
   const handleOptionChange = (questionId, selectedOption) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: selectedOption,
-    }));
+    setAnswers((prevAnswers) => {
+      const prevAnswer = prevAnswers[questionId] || [];
+      const updatedAnswer = prevAnswer.includes(selectedOption)
+        ? prevAnswer.filter((option) => option !== selectedOption)
+        : [...prevAnswer, selectedOption];
+       console.log("=====answers",answers)
+      return {
+        ...prevAnswers,
+        [questionId]: updatedAnswer,
+      };
+    });
+    console.log("kowsi......",answers);
   };
   const renderQuestion = (question) => (
    
     <div key={question.questionId} className={`card mt-3 ${answers[question.questionId] ? 'border-success' : 'border-danger'}`}>
       <div className='card-body'>
-        <h5 className='card-title'>{(sequenceNo++) + ". " + question.questionDetail}</h5>
+        <h5 className='card-title'>{(sequence) + ". " + question.questionDetail}</h5>
         <div className='form-check'>
           {['A', 'B', 'C', 'D', 'E'].map((option) => {
             const optionKey = `option${option}`;
@@ -179,7 +188,7 @@ function QuestionPalette({ data }) {
                       name={`question${question.questionId}`}
                       value={optionKey}
                       onChange={() => handleOptionChange(question.questionId, optionKey)}
-                      checked={answers[question.questionId] === optionKey}
+                     //checked={ answers[question.questionId]==optionKey}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -195,8 +204,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId + "@" + optionKey, optionKey)}
-                      checked={answers[question.questionId] && answers[question.questionId].includes(optionValue)}
+                      onChange={() => handleOptionChange(question.questionId, optionKey)}
+                     // checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -214,7 +223,7 @@ function QuestionPalette({ data }) {
                         name={`question${question.questionId}`}
                         value={optionKey}
                         onChange={() => handleOptionChange(question.questionId, optionKey)}
-                        checked={answers[question.questionId] === optionKey}
+                        //checked={answers[question.questionId] == optionKey}
                       />
                       <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                         {optionValue}
@@ -243,25 +252,11 @@ function QuestionPalette({ data }) {
       </div>
     </div>
   );
-  const[sequence,setSequence]=useState(1); 
-  const check=((question)=>{
-    data.map((datavalue)=>{
-      if(datavalue.sequenceNum==sequence){
-        if(question.questionId==data.questionId){
-           return renderQuestion(question);
-        }
-      }
-    })
-  
-  })
-   
-    
- 
- 
+  const [sequence, setSequence] = useState(1);
   const renderQuestionGroup = (questionGroup) => (
     <React.Fragment key={questionGroup[0].questionId}>
       {Array.isArray(questionGroup) ? (
-        questionGroup.map((question) => check(question))
+        questionGroup.map((question) => renderQuestion(question))
       ) : (
         <p>Error: Invalid format for questionGroup</p>
       )}
@@ -269,84 +264,113 @@ function QuestionPalette({ data }) {
   );
   return (
     <div>
-      <div className='container'>
-        <div className='row'>
-          <div className='col-3'>
-            <div id="wrapper">
-              <div className="overlay"></div>
+      {questions ? (
+        <div className='container'>
+          <div className='row'>
+            <div className='col-3'>
+              <div id="wrapper">
+                <div className="overlay"></div>
 
-              {/* <!-- Sidebar   id="sidebar-wrapper" --> */}
-              <nav className="navbar navbar-inverse fixed-top col-3" id="sidebar-wrapper" role="navigation">
-                <Trainee />
-                <div id="app"></div>
-                <div className="question-list-wrapper">
-                  <div className="question-list-inner" style={{ background: "#F5F0EF" }}>
-                    <Row style={{ padding: '5px' }}>
-                      {data.map((ques) => {
-                        return (
-                          <Col span={6} style={{ padding: '10px' }}>
-                            <button className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' style={{ background: "#B6B0AF", color: "white" }}>{ques.sequenceNum}</button>
-                          </Col>
-                        )
-                      })}
-                    </Row>
+                {/* <!-- Sidebar   id="sidebar-wrapper" --> */}
+                <nav className="navbar navbar-inverse fixed-top col-3" id="sidebar-wrapper" role="navigation">
+                  <Trainee />
+                  <div id="app"></div>
+                  <div className="question-list-wrapper">
+                    <div className="question-list-inner" style={{ background: "#F5F0EF" }}>
+                      <Row style={{ padding: '5px' }}>
+                        {data.map((ques) => {
+                          return (
+                            <Col span={6} style={{ padding: '10px' }}>
+                              <button key={ques.sequenceNum} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
+                                setSequence(ques.sequenceNum);
+                              }} style={{ background: "#B6B0AF", color: "white" }}>{ques.sequenceNum}</button>
+                            </Col>
+                          )
+                        })}
+                      </Row>
 
+                    </div>
                   </div>
-                </div>
-                <div className="End-test-container">
-                  <Popconfirm
-                    title="Are you sure to end the test"
-                    onConfirm={() => { nav("/dashboard"); window.location.reload() }}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button type="default">End Test</Button>
-                  </Popconfirm>
-                </div>
-              </nav>
-            </div>
-          </div>
-          {/* <!-- /#sidebar-wrapper --> */}
-
-          {/* <!-- Page Content  --> */}
-          <div className='col-9'>
-            <button type="button" className="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas" onClick={hamburger_cross}>
-              <span class="hamb-top"></span>
-              <span class="hamb-middle"></span>
-              <span class="hamb-bottom"></span>
-            </button>
-            <div class="container" id="page-content">
-              <div className='container mt-4'>
-                {Array.isArray(questions) ? (
-                  questions.map((questionGroup) => renderQuestionGroup(questionGroup))
-                ) : (
-                  <p>Error: No questions assigned for this exam</p>
-                )}
-
-                {questions !== null ? (
-                  <div className='mt-4'>
-                    <button
-                      className='btn btn-primary'
-                      onClick={() => {
-                        nav('/report');
-                      }}
+                  <div className="End-test-container">
+                    <Popconfirm
+                      title="Are you sure to end the test"
+                      onConfirm={() => { nav("/dashboard"); window.location.reload() }}
+                      okText="Yes"
+                      cancelText="No"
                     >
-                      Submit
-                    </button>
+                      <Button type="default">End Test</Button>
+                    </Popconfirm>
                   </div>
-                ) : (
-                  ""
-                )}
+                </nav>
               </div>
             </div>
+            {/* <!-- /#sidebar-wrapper --> */}
+
+            {/* <!-- Page Content  --> */}
+            <div className='col-9'>
+              <button type="button" className="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas" onClick={hamburger_cross}>
+                <span class="hamb-top"></span>
+                <span class="hamb-middle"></span>
+                <span class="hamb-bottom"></span>
+              </button>
+              <div class="container" id="page-content">
+                <div className='container mt-4'>
+                  {Array.isArray(questions) ? (
+                    // questions.map((questionGroup) => renderQuestionGroup(questionGroup))
+                    questions.forEach(element => {
+                      data.forEach(seq => {
+                        if (seq.sequenceNum == sequence) {
+                          element.forEach(ques => {
+                            if (seq.questionId == ques.questionId) {
+                              oneQues = renderQuestion(ques);
+                            }
+                          });
+                        }
+                      });
+                    })
+                  ) : (
+                    <p>Error: No questions assigned for this exam</p>
+                  )}
+                  {oneQues}
+
+                  {sequence !== null ? (
+                    <div class="mt-4">
+                      <button type="button" class="btn btn-secondary" onClick={
+                        () => {
+                          if (sequence > 1) {
+                            let count = sequence - 1;
+                            setSequence(count);
+                          }
+                        }
+                      }>Previous</button>
+                      {sequence == data.length ? (<button type="button" class="btn btn-success ml-5" onClick={
+                        () => {
+                          nav("/report");
+                        }
+                      }>Submit</button>) : (<button type="button" class="btn btn-success ml-5" onClick={
+                        () => {
+                          if (sequence < data.length) {
+                            let count = sequence + 1;
+                            setSequence(count);
+                          }
+                        }
+                      }>Next</button>)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* <!-- /#page-content-wrapper --> */}
+
           </div>
-          {/* <!-- /#page-content-wrapper --> */}
+          {/* <!-- /#wrapper --> */}
 
-        </div>
-        {/* <!-- /#wrapper --> */}
-
-        {/* {data.map((ques)=>(<button className='btn pl-3 pr-3 pt-2 pb-2 ml-3 mb-3 btn-light border border-dark'>{ques.Seq}</button>))} */}
-      </div>
+          {/* {data.map((ques)=>(<button className='btn pl-3 pr-3 pt-2 pb-2 ml-3 mb-3 btn-light border border-dark'>{ques.Seq}</button>))} */}
+        </div>) : <div className='container-fluid'><p>Error: No questions assigned for this exam. Click here to go back to dashboard</p><button className='btn btn-primary' onClick={() => {
+          nav("/dashboard"); window.location.reload()
+        }}>Back</button></div>}
     </div>
   )
 }
