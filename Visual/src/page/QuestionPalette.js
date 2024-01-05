@@ -5,6 +5,7 @@ import { Badge, Icon, Button, Row, Col, Popconfirm } from 'antd';
 import Trainee from './Trainee';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../components/user/UserPage';
+import Swal from 'sweetalert2';
 
 function QuestionPalette({ data }) {
   var oneQues = <p>none</p>;
@@ -57,34 +58,53 @@ function QuestionPalette({ data }) {
   let timerInterval = null;
   let remainingPathColor = COLOR_CODES.info.color;
 
+  const [activeStatus, setActiveStatus] = useState();
+  const [visitedStatus, setVisitedStatus] = useState([]);
+
   useEffect(() => {
     if (questions) {
-      document.getElementById("app").innerHTML = `
-<div class="base-timer">
-  <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <g class="base-timer__circle">
-      <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
-      <path
-        id="base-timer-path-remaining"
-        stroke-dasharray="283"
-        class="base-timer__path-remaining ${remainingPathColor}"
-        d="
-          M 50, 50
-          m -45, 0
-          a 45,45 0 1,0 90,0
-          a 45,45 0 1,0 -90,0
-        "
-      ></path>
-    </g>
-  </svg>
-  <span id="base-timer-label" class="base-timer__label">${formatTime(
-        timeLeft
-      )}</span>
-</div>
-`;
-      startTimer();
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Once you started the exam you can't able to go back without completing it",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Start"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById("app").innerHTML = `
+              <div class="base-timer">
+                <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g class="base-timer__circle">
+                    <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                    <path
+                      id="base-timer-path-remaining"
+                      stroke-dasharray="283"
+                      class="base-timer__path-remaining ${remainingPathColor}"
+                      d="
+                        M 50, 50
+                        m -45, 0
+                        a 45,45 0 1,0 90,0
+                        a 45,45 0 1,0 -90,0
+                      "
+                    ></path>
+                  </g>
+                </svg>
+                <span id="base-timer-label" class="base-timer__label">${formatTime(
+            timeLeft
+          )}</span>
+              </div>
+              `;
+          startTimer();
+        }
+        else {
+          nav("/dashboard"); window.location.reload()
+        }
+      });
     }
-  }, [])
+  }, [data])
+
 
 
 
@@ -235,7 +255,7 @@ function QuestionPalette({ data }) {
                 console.log("Entering QT_FIB case...");
                 if (option === 'A') {
                   return optionValue && (
-                    <div key={optionKey} className='form-check'>
+                    <div key={optionKey} >
                       <input
                         type="text"
                         id={`${question.questionId}in`}
@@ -281,9 +301,17 @@ function QuestionPalette({ data }) {
                         {data.map((ques) => {
                           return (
                             <Col span={6} style={{ padding: '10px' }}>
-                              <button key={ques.sequenceNum} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
-                                setSequence(ques.sequenceNum);
-                              }} style={{ background: "#B6B0AF", color: "white" }}>{ques.sequenceNum}</button>
+                              <button key={ques.sequenceNum} id={ques.sequenceNum + "btn"} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
+                                setActiveStatus(ques.sequenceNum);
+                                if (visitedStatus == null || visitedStatus == undefined) {
+                                  setVisitedStatus([ques.sequenceNum]);
+                                }
+                                else {
+                                  setVisitedStatus([...visitedStatus, ques.sequenceNum]);
+                                }
+                                setSequence(ques.sequenceNum);//
+                                // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
+                              }} style={sequence == ques.sequenceNum ? { background: "#F86F03", color: "white" } : (visitedStatus.includes(ques.sequenceNum) ? { background: "#525CEB", color: "white" } : { background: "#B6B0AF", color: "white" })}>{ques.sequenceNum}</button>
                             </Col>
                           )
                         })}
@@ -335,23 +363,36 @@ function QuestionPalette({ data }) {
 
                   {sequence !== null ? (
                     <div class="mt-4">
-                      <button type="button" class="btn btn-secondary" onClick={
+                      {sequence > 1 ? (<button type="button" class="btn btn-secondary" onClick={
                         () => {
-                          if (sequence > 1) {
-                            let count = sequence - 1;
-                            setSequence(count);
-                          }
+
+                          let count = sequence - 1;
+                          //setActiveStatus(sequence);
+                          setSequence(count);
+                          //console.log(activeStatus);
+                          setVisitedStatus([...visitedStatus, sequence]);
+                          // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
+
                         }
-                      }>Previous</button>
-                      {sequence == data.length ? (<button type="button" class="btn btn-success ml-5" onClick={
-                        () => {
-                          nav("/report");
-                        }
-                      }>Submit</button>) : (<button type="button" class="btn btn-success ml-5" onClick={
+                      }>Previous</button>) : (<button type="button" class="btn btn-success" onClick={
                         () => {
                           if (sequence < data.length) {
                             let count = sequence + 1;
+                            //setActiveStatus(sequence-1);
                             setSequence(count);
+                            setVisitedStatus([...visitedStatus, sequence]);
+                            // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
+                          }
+                        }
+                      }>Next</button>)}
+                      {sequence == data.length || sequence == 1 ? "" : (<button type="button" class="btn btn-success ml-5" onClick={
+                        () => {
+                          if (sequence < data.length) {
+                            let count = sequence + 1;
+                            //setActiveStatus(sequence-1);
+                            setSequence(count);
+                            setVisitedStatus([...visitedStatus, sequence]);
+                            // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
                           }
                         }
                       }>Next</button>)}
