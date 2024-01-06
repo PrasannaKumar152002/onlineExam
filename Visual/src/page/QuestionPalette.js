@@ -208,7 +208,7 @@ function QuestionPalette({ data }) {
                       name={`question${question.questionId}`}
                       value={optionKey}
                       onChange={() => handleOptionChange(question.questionId, optionKey)}
-                     //checked={ answers[question.questionId]==optionKey}
+                     checked={ answers[question.questionId]==optionKey}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -225,7 +225,7 @@ function QuestionPalette({ data }) {
                       name={`question${question.questionId}`}
                       value={optionKey}
                       onChange={() => handleOptionChange(question.questionId, optionKey)}
-                     // checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
+                     checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -243,7 +243,7 @@ function QuestionPalette({ data }) {
                         name={`question${question.questionId}`}
                         value={optionKey}
                         onChange={() => handleOptionChange(question.questionId, optionKey)}
-                        //checked={answers[question.questionId] == optionKey}
+                        checked={answers[question.questionId] == optionKey}
                       />
                       <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                         {optionValue}
@@ -273,15 +273,15 @@ function QuestionPalette({ data }) {
     </div>
   );
   const [sequence, setSequence] = useState(1);
-  const renderQuestionGroup = (questionGroup) => (
-    <React.Fragment key={questionGroup[0].questionId}>
-      {Array.isArray(questionGroup) ? (
-        questionGroup.map((question) => renderQuestion(question))
-      ) : (
-        <p>Error: Invalid format for questionGroup</p>
-      )}
-    </React.Fragment>
-  );
+  // const renderQuestionGroup = (questionGroup) => (
+  //   <React.Fragment key={questionGroup[0].questionId}>
+  //     {Array.isArray(questionGroup) ? (
+  //       questionGroup.map((question) => renderQuestion(question))
+  //     ) : (
+  //       <p>Error: Invalid format for questionGroup</p>
+  //     )}
+  //   </React.Fragment>
+  // );
   return (
     <div>
       {questions ? (
@@ -322,7 +322,7 @@ function QuestionPalette({ data }) {
                   <div className="End-test-container">
                     <Popconfirm
                       title="Are you sure to end the test"
-                      onConfirm={() => { nav("/dashboard"); window.location.reload() }}
+                      onConfirm={() => { nav("/report"); }}
                       okText="Yes"
                       cancelText="No"
                     >

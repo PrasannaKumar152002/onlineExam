@@ -7,24 +7,35 @@ const Report = () => {
 
   const { answers } = useContext(AppContext);
   const { questions } = useContext(AppContext);
-  
+
   const examId = sessionStorage.getItem("exam");
-  console.log("examid====report",examId);
+  console.log("examid====report", examId);
 
 
 
- 
+
   const selectionAnswer = () => {
-    console.log("test",answers)
+    console.log("test", answers)
     try {
-      const Array =[];
+      const Array = [];
       questions.forEach(ele => {
         ele.forEach((element) => {
           const questionId = element.questionId;
-          var ans=element.answer;
-          const answer = element[answers[element.questionId]]
-          Array.push(questionId, answer);
-         
+          var ans = element.answer;
+          var answer = null;
+          if (element.questionType == "QT_MC") {
+            var option = [];
+            answers[element.questionId].map((ele) => {
+              option.push(element[ele]);
+            })
+            answer = option;
+            console.log("option-",option);
+          }
+          else {
+            answer = element[answers[element.questionId]]
+          }
+          Array.push({questionId, answer});
+
         });
 
       });
@@ -49,16 +60,16 @@ const Report = () => {
 
   const fetchInfo = () => {
     const selectionAnswerResult = selectionAnswer();
-    const requestBody={questions:questions}
-    console.log("inside fetch...", selectionAnswerResult,"------",requestBody);
-  
+    const requestBody = { questions: questions }
+    console.log("inside fetch...", selectionAnswerResult, "------", requestBody);
+
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({selectionAnswerResult,questions:questions}),
-      credentials:'include'
+      body: JSON.stringify({ selectionAnswerResult, questions: questions }),
+      credentials: 'include'
     })
       .then((res) => res.json())
       .then((fetchedData) => {
