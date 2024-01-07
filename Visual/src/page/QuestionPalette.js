@@ -310,7 +310,7 @@ function QuestionPalette({ data }) {
                         {data.map((ques) => {
                           return (
                             <Col span={6} style={{ padding: '10px' }}>
-                              <button key={ques.sequenceNum} id={ques.sequenceNum + "btn"} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
+                              <button key={ques.sequenceNum} id={ques.questionId + "btn"} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
                                 setActiveStatus(ques.sequenceNum);
                                 if (visitedStatus == null || visitedStatus == undefined) {
                                   setVisitedStatus([ques.sequenceNum]);
@@ -333,8 +333,32 @@ function QuestionPalette({ data }) {
                   <div className="End-test-container">
                     <Popconfirm
                       title="Are you sure to end the test"
-                      onConfirm={() => { 
-                        nav("/report"); 
+                      onConfirm={() => {
+                        var error = 0;
+                        questions.forEach(ele => {
+                          ele.forEach((element) => {
+                            const questionId = element.questionId;
+                            if (answers[questionId] == null || answers[questionId] == undefined) {
+                              document.getElementById(questionId + "btn").style.backgroundColor = "red";
+                              error = 1;
+                            }
+                            else {
+                              document.getElementById(questionId + "btn").style.backgroundColor = "green";
+                            }
+                          });
+
+                        });
+                        if (error == 0) {
+                          nav("/report");
+                        }
+                        else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Unanswered questions",
+                            text: "You need to answer all the questions",
+                            footer: 'Incomplete Exam'
+                          });
+                        }
                       }}
                       okText="Yes"
                       cancelText="No"

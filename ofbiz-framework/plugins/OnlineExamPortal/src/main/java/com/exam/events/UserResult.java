@@ -65,7 +65,7 @@ public class UserResult {
 								wrongAnswerCount += 1;
 								wrongAnswerMark += Integer.parseInt(oneQuestion.get("negativeMarkValue").toString());
 								int topicMark = topic.get(currentQuestionTopicId)
-										+ Integer.parseInt(oneQuestion.get("answerValue").toString());
+										+ Integer.parseInt(oneQuestion.get("negativeMarkValue").toString());
 								topic.put(currentQuestionTopicId, topicMark);
 							}
 
@@ -80,8 +80,9 @@ public class UserResult {
 			return "error";
 		}
 
-		request.setAttribute("success", UtilMisc.toMap("correctAnswerCount", correctAnswerCount, "correctAnswerMark",
-				correctAnswerMark, "wrongAnswerCount", wrongAnswerCount, "wrongAnswerMark", wrongAnswerMark,"topic",topic));
+		request.setAttribute("success",
+				UtilMisc.toMap("correctAnswerCount", correctAnswerCount, "correctAnswerMark", correctAnswerMark,
+						"wrongAnswerCount", wrongAnswerCount, "wrongAnswerMark", wrongAnswerMark, "topic", topic));
 		return "success";
 	}
 }
