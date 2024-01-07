@@ -3,7 +3,7 @@ import Field from './Field';
 import Header from './Header';
 import Register from './Register';
 
-function Login2({onclk,title,rolestate}) {
+function Login2({onclk,title}) {
     const[form,setform]=useState(true);
     var pagestate=()=>{
         setform(!form);
@@ -14,7 +14,7 @@ function Login2({onclk,title,rolestate}) {
             <div className="background-wrap">
                 <div className="background"></div>
             </div>
-            {form?<Field change={pagestate} title="Log In to Your Account" rolestate={rolestate}/>:<Register change={pagestate} title="Register With Us"/>}
+            {form?<Field change={pagestate} title="Log In to Your Account"/>:<Register change={pagestate} title="Register With Us"/>}
         </div>
     )
 }

@@ -1,26 +1,38 @@
-import { useState } from 'react';
+import { createContext, useState } from 'react';
 import SignIn from './components/signIn';
 import Admin from './components/admin';
 import UserPage from './components/user/UserPage';
 import 'react-widgets/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminDashboard from './components/AdminComponent/AdminDashboard/AdminDashboard';
-
+export const StateContext = createContext(null);
 function App() {
-  var currentrole="login"
-  if(sessionStorage.getItem("role")!=null)
-  {
-    currentrole=sessionStorage.getItem("role"); 
+  const [currentRole, setCurrentRole] = useState();
+  var role = sessionStorage.getItem("role");
+  console.log("role=", role);
+  if (role === null || role === undefined) {
+    setCurrentRole("login");
+    sessionStorage.setItem("role", "login");
   }
-  console.log("role-",currentrole);
-  const [state, setState]  = useState(currentrole);
-  const rolestate=(role)=>{
-    setState(role);
+  else {
+    if (role != "login") {
+      console.log("currentRole=", currentRole);
+      if (currentRole !== "admin" && currentRole !== "user") {
+        setCurrentRole(role);
+      }
+    }
+    else {
+      if (currentRole !== "login") {
+        setCurrentRole(role);
+      }
+    }
   }
   return (
-    <div>
-     {state==="login"?<SignIn rolestate={rolestate}/>:(state==="admin"?<Admin rolestate={()=>{rolestate("admin")}}/>:<UserPage/>)}
-    </div>
+    <StateContext.Provider value={{ currentRole, setCurrentRole }}>
+      <div>
+        {currentRole === "login" ? <SignIn /> : (currentRole === "admin" ? <Admin /> : <UserPage />)}
+      </div>
+    </StateContext.Provider>
   );
 }
 

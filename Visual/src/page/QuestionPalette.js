@@ -171,22 +171,31 @@ function QuestionPalette({ data }) {
       .getElementById("base-timer-path-remaining")
       .setAttribute("stroke-dasharray", circleDasharray);
   }
-  const handleOptionChange = (questionId, selectedOption) => {
+  const handleOptionChange = (questionId, selectedOption, questionType) => {
     setAnswers((prevAnswers) => {
-      const prevAnswer = prevAnswers[questionId] || [];
-      const updatedAnswer = prevAnswer.includes(selectedOption)
-        ? prevAnswer.filter((option) => option !== selectedOption)
-        : [...prevAnswer, selectedOption];
-       console.log("=====answers",answers)
-      return {
-        ...prevAnswers,
-        [questionId]: updatedAnswer,
-      };
+      console.log("prevAnswer : ", prevAnswers);
+      if (questionType == "QT_MC") {
+        const prevAnswer = prevAnswers[questionId] || [];
+        const updatedAnswer = prevAnswer.includes(selectedOption)
+          ? prevAnswer.filter((option) => option !== selectedOption)
+          : [...prevAnswer, selectedOption];
+        console.log("=====answers", answers)
+        return {
+          ...prevAnswers,
+          [questionId]: updatedAnswer,
+        };
+      }
+      else {
+        return {
+          ...prevAnswers,
+          [questionId]: selectedOption
+        }
+      }
     });
-    console.log("kowsi......",answers);
+    console.log("kowsi......", answers);
   };
   const renderQuestion = (question) => (
-   
+
     <div key={question.questionId} className={`card mt-3 ${answers[question.questionId] ? 'border-success' : 'border-danger'}`}>
       <div className='card-body'>
         <h5 className='card-title'>{(sequence) + ". " + question.questionDetail}</h5>
@@ -207,8 +216,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId, optionKey)}
-                     checked={ answers[question.questionId]==optionKey}
+                      onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
+                      checked={answers[question.questionId] == optionKey}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -224,8 +233,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId, optionKey)}
-                     checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
+                      onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
+                      checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -242,7 +251,7 @@ function QuestionPalette({ data }) {
                         id={`${optionKey}-${question.questionId}`}
                         name={`question${question.questionId}`}
                         value={optionKey}
-                        onChange={() => handleOptionChange(question.questionId, optionKey)}
+                        onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
                         checked={answers[question.questionId] == optionKey}
                       />
                       <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
@@ -259,7 +268,7 @@ function QuestionPalette({ data }) {
                       <input
                         type="text"
                         id={`${question.questionId}in`}
-                        onChange={(e) => handleOptionChange(question.questionId, e.target.value)}
+                        onChange={(e) => handleOptionChange(question.questionId, e.target.value, questionType)}
                       />
                     </div>
                   );
@@ -324,7 +333,9 @@ function QuestionPalette({ data }) {
                   <div className="End-test-container">
                     <Popconfirm
                       title="Are you sure to end the test"
-                      onConfirm={() => { nav("/report"); }}
+                      onConfirm={() => { 
+                        nav("/report"); 
+                      }}
                       okText="Yes"
                       cancelText="No"
                     >

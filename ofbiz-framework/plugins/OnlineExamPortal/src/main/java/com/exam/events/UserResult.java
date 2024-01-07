@@ -31,126 +31,57 @@ public class UserResult {
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	public static String getUserResult(HttpServletRequest request, HttpServletResponse response) {
-		// Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		// LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
-		// GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
-		// String performanceId = (String) request.getSession().getAttribute(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
-		// String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
-		
-		// @SuppressWarnings("unchecked")
-		// Map<String, String> answer = (Map<String, String>) request.getAttribute("selectionAnswerResult");
-		// int isFlagged = 0;
-		// String questionId = null;
-		// String selectedAnswer = null;
-		// try {
-//			for (Map<String, String> oneAns : answer) {
-//				Integer id = Integer.parseInt(oneAns.get("questionId"));
-//				questionId = String.valueOf(id);
-//				selectedAnswer = (String) oneAns.get("answer");
-//				Map<String, Object> userAttemptTopicMasterResult = dispatcher.runSync("updateUserAttemptAnswerMaster",
-//						UtilMisc.toMap(ConstantValues.QUES_ID, questionId, ConstantValues.USER_TOPIC_PERFORMANCE_ID,
-//								performanceId, ConstantValues.USER_ANSWER_SUBMITTED, selectedAnswer,
-//								ConstantValues.USER_ANSWER_FLAGGED, isFlagged, EntityConstants.USER_LOGIN, userLogin));
-//				if (ServiceUtil.isError(userAttemptTopicMasterResult)) {
-//					String errorMessage = ServiceUtil.getErrorMessage(userAttemptTopicMasterResult);
-//					request.setAttribute("ERROR_MESSAGE", errorMessage);
-//					Debug.logError(errorMessage, MODULE);
-//					return "error";
-//				} else {
-//					// Handle success scenario
-//					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-//							UtilHttp.getLocale(request));
-//					ServiceUtil.getMessages(request, userAttemptTopicMasterResult, successMessage);
-//
-//				}
-//
-//			}
-			// int truecount = 0;
-			// int falsecount = 0;
-			// List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")
-			// 		.where(ConstantValues.EXAM_ID, examId).queryList();
-			// Map<String, Integer> topic = new HashMap<>();
-			// for (GenericValue getTopic : examTopicMapping) {
-			// 	String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
-			// 	topic.put(topicId, 0);
-			// }
-//				List<GenericValue> question = EntityQuery.use(delegator).from("QuestionMaster")
-//						.where(ConstantValues.TOPIC_ID, topicId).queryList();
-//				for (Map<String, Object> oneAns : answer) {
-//					for (Map<String, String> oneques : questions) {
-//						String answerValue = oneques.get(oneAns.get(topic));
-//						String userquestionId = oneques.getString(ConstantValues.QUES_ID);
-//						List<GenericValue> userAttemptAnswerMasterList = EntityQuery.use(delegator)
-//								.from("UserAttemptAnswerMaster")
-//								.where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId).queryList();
-//						for (GenericValue oneUserAttempt : userAttemptAnswerMasterList) {
-//							String userQuestionId = oneUserAttempt.getString(ConstantValues.QUES_ID);
-//							String submitAnswer = oneUserAttempt.getString(ConstantValues.USER_ANSWER_SUBMITTED);
-//							if (userquestionId.equals(userQuestionId)) {
-//								if (submitAnswer.equals(answerValue)) {
-//
-//									System.out.println("topicId=====" + topicId + "=====answer");
-//									truecount++;
-//								} else {
-//
-//									System.out.println("ranganswer=====" + topicId);
-//									falsecount++;
-//								}
-//							}
-//						}
-//
-//					}
-//				}
-//			}
+		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
+		String performanceId = (String) request.getSession().getAttribute(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
+		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
 
-			// System.out.println("========truecount" + truecount);
-			// System.out.println("========falsecount" + falsecount);
-//			List<GenericValue> userAttemptAnswerMasterList = EntityQuery.use(delegator)
-//					.from("UserAttemptAnswerMaster").where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId)
-//					.queryList();
-//			if (UtilValidate.isEmpty(userAttemptAnswerMasterList)) {
-//				String errMsg = "UserAttemptAnswerMaster"
-//						+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
-//				;
-//				request.setAttribute("ERROR_MESSAGE", errMsg);
-//				return "error";
-//			}
-//			
-//			for (GenericValue oneUserAttempt : userAttemptAnswerMasterList) {
-//				Long userQuestionId =Long.parseLong(oneUserAttempt.getString(ConstantValues.QUES_ID));
-//				String submitAnswer=oneUserAttempt.getString(ConstantValues.USER_ANSWER_SUBMITTED);
-//				System.out.println("====="+submitAnswer);
-//				List<GenericValue> question = EntityQuery.use(delegator).from("QuestionMaster")
-//						.where(ConstantValues.QUES_ID, userQuestionId).queryList();
-//				
-//				for(GenericValue oneques:question) {
-//					String answerValue=oneques.getString(ConstantValues.QUES_ANSWER);
-//					String topicId=oneques.getString(ConstantValues.TOPIC_ID);
-//					
-//					if(submitAnswer.equals(answerValue)) {
-//						
-//						System.out.println("topicId====="+topicId+"=====answer");
-//						truecount++;
-//					}
-//					else {
-//						
-//						System.out.println("ranganswer====="+topicId);
-//						falsecount++;
-//					}
-//				}
-//				
-		// 	for (String id : quesId) {
-		// 		if (questions.get(id).equals(answer.get(id))) {
-		// 			truecount++;
-		// 		}
-		// 		falsecount++;
-		// 	}
-		// 	System.out.println("Correct= " + truecount + " Wrong= " + falsecount);
+		List<Map<String, Object>> answer = (List<Map<String, Object>>) request.getAttribute("selectionAnswerResult");
+		List<List<Map<String, Object>>> questions = (List<List<Map<String, Object>>>) request.getAttribute("questions");
+		System.out.println("user result///////////////////////////////////////////////////////////////////////////");
+		System.out.println("questions-" + questions + "answer-" + answer);
+		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0;
+		Map<String, Integer> topic = new HashMap<>();
+		try {
+			List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")
+					.where(ConstantValues.EXAM_ID, examId).queryList();
+			for (GenericValue getTopic : examTopicMapping) {
+				String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
+				topic.put(topicId, 0);
+			}
+			for (Map<String, Object> oneAnswer : answer) {
+				for (List<Map<String, Object>> questionList : questions) {
+					for (Map<String, Object> oneQuestion : questionList) {
+						if (oneAnswer.get("questionId").toString().equals(oneQuestion.get("questionId").toString())) {
+							String currentQuestionTopicId = oneQuestion.get("topicId").toString();
+							if (oneAnswer.get("answer").toString().equals(oneQuestion.get("answer"))) {
+								correctAnswerCount += 1;
+								correctAnswerMark += Integer.parseInt(oneQuestion.get("answerValue").toString());
+								int topicMark = topic.get(currentQuestionTopicId)
+										+ Integer.parseInt(oneQuestion.get("answerValue").toString());
+								topic.put(currentQuestionTopicId, topicMark);
+							} else {
+								wrongAnswerCount += 1;
+								wrongAnswerMark += Integer.parseInt(oneQuestion.get("negativeMarkValue").toString());
+								int topicMark = topic.get(currentQuestionTopicId)
+										+ Integer.parseInt(oneQuestion.get("answerValue").toString());
+								topic.put(currentQuestionTopicId, topicMark);
+							}
 
-		// } catch (Exception e) {
+						}
+					}
+				}
+			}
+		} catch (GenericEntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			request.setAttribute("_ERROR_", e);
+			return "error";
+		}
 
-		// 	Debug.log(e);
-		// }
-		return null;
+		request.setAttribute("success", UtilMisc.toMap("correctAnswerCount", correctAnswerCount, "correctAnswerMark",
+				correctAnswerMark, "wrongAnswerCount", wrongAnswerCount, "wrongAnswerMark", wrongAnswerMark,"topic",topic));
+		return "success";
 	}
 }

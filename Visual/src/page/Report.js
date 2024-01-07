@@ -11,9 +11,6 @@ const Report = () => {
   const examId = sessionStorage.getItem("exam");
   console.log("examid====report", examId);
 
-
-
-
   const selectionAnswer = () => {
     console.log("test", answers)
     try {
@@ -29,12 +26,15 @@ const Report = () => {
               option.push(element[ele]);
             })
             answer = option;
-            console.log("option-",option);
+            console.log("option-", option);
+          }
+          else if (element.questionType == "QT_FIB") {
+            answer = answers[element.questionId];
           }
           else {
             answer = element[answers[element.questionId]]
           }
-          Array.push({questionId, answer});
+          Array.push({ questionId, answer });
 
         });
 
@@ -55,7 +55,6 @@ const Report = () => {
 
 
 
-
   const url = "https://" + window.location.hostname + ":8443/OnlineExamPortal/control/update-result";
 
   const fetchInfo = () => {
@@ -68,7 +67,7 @@ const Report = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ selectionAnswerResult, questions: questions }),
+      body: JSON.stringify({ selectionAnswerResult, questions: questions, examId: examId }),
       credentials: 'include'
     })
       .then((res) => res.json())
