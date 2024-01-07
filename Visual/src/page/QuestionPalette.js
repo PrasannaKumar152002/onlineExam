@@ -172,12 +172,21 @@ function QuestionPalette({ data }) {
       .setAttribute("stroke-dasharray", circleDasharray);
   }
   const handleOptionChange = (questionId, selectedOption) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: selectedOption,
-    }));
+    setAnswers((prevAnswers) => {
+      const prevAnswer = prevAnswers[questionId] || [];
+      const updatedAnswer = prevAnswer.includes(selectedOption)
+        ? prevAnswer.filter((option) => option !== selectedOption)
+        : [...prevAnswer, selectedOption];
+       console.log("=====answers",answers)
+      return {
+        ...prevAnswers,
+        [questionId]: updatedAnswer,
+      };
+    });
+    console.log("kowsi......",answers);
   };
   const renderQuestion = (question) => (
+   
     <div key={question.questionId} className={`card mt-3 ${answers[question.questionId] ? 'border-success' : 'border-danger'}`}>
       <div className='card-body'>
         <h5 className='card-title'>{(sequence) + ". " + question.questionDetail}</h5>
@@ -199,7 +208,7 @@ function QuestionPalette({ data }) {
                       name={`question${question.questionId}`}
                       value={optionKey}
                       onChange={() => handleOptionChange(question.questionId, optionKey)}
-                      checked={answers[question.questionId] === optionKey}
+                     checked={ answers[question.questionId]==optionKey}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -215,8 +224,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId + "@" + optionKey, optionKey)}
-                      checked={answers[question.questionId] && answers[question.questionId].includes(optionValue)}
+                      onChange={() => handleOptionChange(question.questionId, optionKey)}
+                     checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -234,7 +243,7 @@ function QuestionPalette({ data }) {
                         name={`question${question.questionId}`}
                         value={optionKey}
                         onChange={() => handleOptionChange(question.questionId, optionKey)}
-                        checked={answers[question.questionId] === optionKey}
+                        checked={answers[question.questionId] == optionKey}
                       />
                       <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                         {optionValue}
@@ -264,15 +273,15 @@ function QuestionPalette({ data }) {
     </div>
   );
   const [sequence, setSequence] = useState(1);
-  const renderQuestionGroup = (questionGroup) => (
-    <React.Fragment key={questionGroup[0].questionId}>
-      {Array.isArray(questionGroup) ? (
-        questionGroup.map((question) => renderQuestion(question))
-      ) : (
-        <p>Error: Invalid format for questionGroup</p>
-      )}
-    </React.Fragment>
-  );
+  // const renderQuestionGroup = (questionGroup) => (
+  //   <React.Fragment key={questionGroup[0].questionId}>
+  //     {Array.isArray(questionGroup) ? (
+  //       questionGroup.map((question) => renderQuestion(question))
+  //     ) : (
+  //       <p>Error: Invalid format for questionGroup</p>
+  //     )}
+  //   </React.Fragment>
+  // );
   return (
     <div>
       {questions ? (
@@ -315,7 +324,7 @@ function QuestionPalette({ data }) {
                   <div className="End-test-container">
                     <Popconfirm
                       title="Are you sure to end the test"
-                      onConfirm={() => { nav("/dashboard"); window.location.reload() }}
+                      onConfirm={() => { nav("/report"); }}
                       okText="Yes"
                       cancelText="No"
                     >
