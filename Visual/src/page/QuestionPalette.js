@@ -296,9 +296,11 @@ function QuestionPalette({ data }) {
                                 setActiveStatus(ques.sequenceNum);
                                 if (visitedStatus == null || visitedStatus == undefined) {
                                   setVisitedStatus([ques.sequenceNum]);
+                                  setVisitedStatus([...visitedStatus, sequence]);
                                 }
                                 else {
                                   setVisitedStatus([...visitedStatus, ques.sequenceNum]);
+                                  setVisitedStatus([...visitedStatus, sequence]);
                                 }
                                 setSequence(ques.sequenceNum);//
                                 // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
