@@ -21,11 +21,11 @@ const Report = () => {
           var ans = element.answer;
           var answer = null;
           if (element.questionType == "QT_MC") {
-            var option = [];
+            var option = "";
             answers[element.questionId].map((ele) => {
-              option.push(element[ele]);
+              option+=(element[ele]+",");
             })
-            answer = option;
+            answer = option.substring(0,option.length-1);
             console.log("option-", option);
           }
           else if (element.questionType == "QT_FIB") {
