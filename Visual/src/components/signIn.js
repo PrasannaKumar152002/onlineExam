@@ -7,7 +7,7 @@ function SignIn({rolestate}) {
     <div className="App">
       <Router>
         <Routes>
-          <Route path='/login' element={<Login2 title="Home" rolestate={rolestate}/>}/>
+          <Route path='/login' element={<Login2 title="Home"/>}/>
           <Route path='/' element={<Welcome/>}/>
         </Routes>
       </Router>

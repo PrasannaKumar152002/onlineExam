@@ -171,13 +171,31 @@ function QuestionPalette({ data }) {
       .getElementById("base-timer-path-remaining")
       .setAttribute("stroke-dasharray", circleDasharray);
   }
-  const handleOptionChange = (questionId, selectedOption) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: selectedOption,
-    }));
+  const handleOptionChange = (questionId, selectedOption, questionType) => {
+    setAnswers((prevAnswers) => {
+      console.log("prevAnswer : ", prevAnswers);
+      if (questionType == "QT_MC") {
+        const prevAnswer = prevAnswers[questionId] || [];
+        const updatedAnswer = prevAnswer.includes(selectedOption)
+          ? prevAnswer.filter((option) => option !== selectedOption)
+          : [...prevAnswer, selectedOption];
+        console.log("=====answers", answers)
+        return {
+          ...prevAnswers,
+          [questionId]: updatedAnswer,
+        };
+      }
+      else {
+        return {
+          ...prevAnswers,
+          [questionId]: selectedOption
+        }
+      }
+    });
+    console.log("kowsi......", answers);
   };
   const renderQuestion = (question) => (
+
     <div key={question.questionId} className={`card mt-3 ${answers[question.questionId] ? 'border-success' : 'border-danger'}`}>
       <div className='card-body'>
         <h5 className='card-title'>{(sequence) + ". " + question.questionDetail}</h5>
@@ -198,8 +216,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId, optionKey)}
-                      checked={answers[question.questionId] === optionKey}
+                      onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
+                      checked={answers[question.questionId] == optionKey}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -215,8 +233,8 @@ function QuestionPalette({ data }) {
                       id={`${optionKey}-${question.questionId}`}
                       name={`question${question.questionId}`}
                       value={optionKey}
-                      onChange={() => handleOptionChange(question.questionId + "@" + optionKey, optionKey)}
-                      checked={answers[question.questionId] && answers[question.questionId].includes(optionValue)}
+                      onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
+                      checked={answers[question.questionId] && answers[question.questionId].includes(optionKey)}
                     />
                     <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                       {optionValue}
@@ -233,8 +251,8 @@ function QuestionPalette({ data }) {
                         id={`${optionKey}-${question.questionId}`}
                         name={`question${question.questionId}`}
                         value={optionKey}
-                        onChange={() => handleOptionChange(question.questionId, optionKey)}
-                        checked={answers[question.questionId] === optionKey}
+                        onChange={() => handleOptionChange(question.questionId, optionKey, questionType)}
+                        checked={answers[question.questionId] == optionKey}
                       />
                       <label className='form-check-label' htmlFor={`${optionKey}-${question.questionId}`}>
                         {optionValue}
@@ -250,7 +268,7 @@ function QuestionPalette({ data }) {
                       <input
                         type="text"
                         id={`${question.questionId}in`}
-                        onChange={(e) => handleOptionChange(question.questionId, e.target.value)}
+                        onChange={(e) => handleOptionChange(question.questionId, e.target.value, questionType)}
                       />
                     </div>
                   );
@@ -264,15 +282,15 @@ function QuestionPalette({ data }) {
     </div>
   );
   const [sequence, setSequence] = useState(1);
-  const renderQuestionGroup = (questionGroup) => (
-    <React.Fragment key={questionGroup[0].questionId}>
-      {Array.isArray(questionGroup) ? (
-        questionGroup.map((question) => renderQuestion(question))
-      ) : (
-        <p>Error: Invalid format for questionGroup</p>
-      )}
-    </React.Fragment>
-  );
+  // const renderQuestionGroup = (questionGroup) => (
+  //   <React.Fragment key={questionGroup[0].questionId}>
+  //     {Array.isArray(questionGroup) ? (
+  //       questionGroup.map((question) => renderQuestion(question))
+  //     ) : (
+  //       <p>Error: Invalid format for questionGroup</p>
+  //     )}
+  //   </React.Fragment>
+  // );
   return (
     <div>
       {questions ? (
@@ -292,13 +310,15 @@ function QuestionPalette({ data }) {
                         {data.map((ques) => {
                           return (
                             <Col span={6} style={{ padding: '10px' }}>
-                              <button key={ques.sequenceNum} id={ques.sequenceNum + "btn"} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
+                              <button key={ques.sequenceNum} id={ques.questionId + "btn"} className='btn  pl-3 pr-3 pt-2 pb-2 ml-2  btn-light border border-dark' onClick={() => {
                                 setActiveStatus(ques.sequenceNum);
                                 if (visitedStatus == null || visitedStatus == undefined) {
                                   setVisitedStatus([ques.sequenceNum]);
+                                  setVisitedStatus([...visitedStatus, sequence]);
                                 }
                                 else {
                                   setVisitedStatus([...visitedStatus, ques.sequenceNum]);
+                                  setVisitedStatus([...visitedStatus, sequence]);
                                 }
                                 setSequence(ques.sequenceNum);//
                                 // document.getElementById(sequence+"btn").style.backgroundColor="#525CEB";
@@ -313,7 +333,33 @@ function QuestionPalette({ data }) {
                   <div className="End-test-container">
                     <Popconfirm
                       title="Are you sure to end the test"
-                      onConfirm={() => { nav("/dashboard"); window.location.reload() }}
+                      onConfirm={() => {
+                        var error = 0;
+                        questions.forEach(ele => {
+                          ele.forEach((element) => {
+                            const questionId = element.questionId;
+                            if (answers[questionId] == null || answers[questionId] == undefined) {
+                              document.getElementById(questionId + "btn").style.backgroundColor = "red";
+                              error = 1;
+                            }
+                            else {
+                              document.getElementById(questionId + "btn").style.backgroundColor = "green";
+                            }
+                          });
+
+                        });
+                        if (error == 0) {
+                          nav("/report");
+                        }
+                        else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Unanswered questions",
+                            text: "You need to answer all the questions",
+                            footer: 'Incomplete Exam'
+                          });
+                        }
+                      }}
                       okText="Yes"
                       cancelText="No"
                     >

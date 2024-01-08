@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import './style.css';
 import Swal from 'sweetalert2';
+import { StateContext } from '../App';
 
-function Field({ change, title, rolestate }) {
-    var username=null;
+function Field({ change, title }) {
+    const {currentRole, setCurrentRole} = useContext(StateContext);
+    var username = null;
     var element = null;
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -52,7 +54,7 @@ function Field({ change, title, rolestate }) {
                 if (passregex.test(password)) {
                     document.getElementById('error2').innerHTML = '';
                     document.getElementById('exampleInputPassword1').style.borderColor = 'black';
-                    username=email;
+                    username = email;
                     login(map);
                 }
                 else {
@@ -73,12 +75,12 @@ function Field({ change, title, rolestate }) {
     var login = (add) => {
         setLoading(true);
         console.log("entered loginserver", add);
-        fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/validate", {
+        fetch("https://" + window.location.hostname + ":8443/OnlineExamPortal/control/validate", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
             },
-            credentials:'include',
+            credentials: 'include',
             body: JSON.stringify(add)
 
         }).then(response => response.json()).then(data => {
@@ -121,21 +123,23 @@ function Field({ change, title, rolestate }) {
 
             }
             else {
-              
-                sessionStorage.setItem("userId",username);
+
+                sessionStorage.setItem("userId", username);
                 Swal.fire({
                     icon: "success",
                     title: "Welcome",
                     text: "You Have Logged In",
                     footer: "Powerful People Make Places Powerful"
                 });
-                console.log("role=",data);
+                console.log("role=", data);
                 if (data.Role === "ADMIN") {
-                    rolestate("admin");
+                    sessionStorage.setItem("role","admin");
+                    setCurrentRole("admin");
                     nav("/AdminDashboard");
                 }
                 else if (data.Role === "user") {
-                    rolestate("user");
+                    sessionStorage.setItem("role","user");
+                    setCurrentRole("user");
                     nav("/dashboard");
                 }
             }
@@ -166,7 +170,7 @@ function Field({ change, title, rolestate }) {
     }
     return (
         <div className='container-fluid'>
-            {loading ? <img style={{ marginLeft: 280,height:550 }} src='loading.gif' /> : (
+            {loading ? <img style={{ marginLeft: 280, height: 550 }} src='loading.gif' /> : (
                 <form className='mx-auto field' id='accesspanel' onSubmit={loginandvalidation} >
                     <h4 className='text-center'>{title}</h4>
                     <div className="mb-3 mt-5">
