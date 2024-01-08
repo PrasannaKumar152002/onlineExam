@@ -213,4 +213,23 @@
 		<auto-attributes include="nonpk" mode="IN"
 			optional="true" />
 	</service>
+	
+	<service name="updateUserAttemptTopicMaster"
+		default-entity-name="UserAttemptTopicMaster" engine="entity-auto"
+		invoke="update" auth="true">
+		<description>Question Form</description>
+		<auto-attributes include="pk" mode="IN"
+			optional="false" />
+		<auto-attributes include="nonpk" mode="IN"
+			optional="true" />
+	</service>
+	<service name="updateUserAttemptMaster"
+		default-entity-name="updateUserAttemptMaster" engine="entity-auto"
+		invoke="update" auth="true">
+		<description>Question Form</description>
+		<auto-attributes include="pk" mode="IN"
+			optional="false" />
+		<auto-attributes include="nonpk" mode="IN"
+			optional="true" />
+	</service>
 </services>
