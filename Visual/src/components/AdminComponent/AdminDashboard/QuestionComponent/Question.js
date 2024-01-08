@@ -9,8 +9,8 @@ function Question() {
   const [questions, setQuestions] = useState([]);
   const [topics, setTopics] = useState([]);
   const [setEnum, getEnum] = useState([]);
-  const [quesType, setQuesType] = useState();
-  const [topicChange, setTopicChange] = useState();
+  const [quesType, setQuesType] = useState("CHOOSE ONE");
+  const [topicChange, setTopicChange] = useState("CHOOSE ONE");
   const [changedquestionDetail, setQuestionDetail] = useState("");
   const [changedoptionA, setChangedOptionA] = useState("");
   const [changedoptionB, setChangedOptionB] = useState("");
@@ -22,77 +22,48 @@ function Question() {
   const [changeddifficultyLevel, setChangeddifficultyLevel] = useState("");
   const [changedanswerValue, setChangedanswerValue] = useState("");
   const [changednegativeMarkValue, setChangednegativeMarkValue] = useState("");
+  // const [options, setOptions] = useState({
+  //   optionA: props.optionA,
+  //   optionB: props.optionB,
+  //   optionC: props.optionC,
+  //   optionD: props.optionD,
+  //   optionE: props.optionE,
+  // });
+  // const updateOptions = (newOptions) => {
+  //   setOptions({
+  //     ...options,
+  //     ...newOptions,
+  //   });
+  // };
 
   useEffect(() => {
     fetchQuestions();
     fetchTopics();
     fetchQuesType();
-  }, [changedoptionA, changedoptionB,changedoptionC,changedoptionD,changedoptionE]);
+  }, []);
 
   const changeQuestionDetailHandler = (e) => {
     setQuestionDetail(e.target.value);
   };
 
   const changeOptionAHandler = (e) => {
-    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
-    {
-      setChangedOptionA(null);
-    }
-    else
-    {
     setChangedOptionA(e.target.value);
-    }
   };
 
   const changeOptionBHandler = (e) => {
-    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
-    {
-      setChangedOptionB(null);
-    }
-    else
-    {
-      setChangedOptionB(e.target.value);
-    }
-    
+    setChangedOptionB(e.target.value);
   };
 
   const changeOptionCHandler = (e) => {
-    if (e.target.value === "null" || e.target.value === "" || e.target.value === undefined)
-    {
-      setChangedOptionC(null);
-    }
-    else
-    {
-      setChangedOptionC(e.target.value);
-    }
-    console.log("*****************M"+ changedoptionC);
-    
+    setChangedOptionC(e.target.value);
   };
 
   const changeOptionDHandler = (e) => {
-    if (e.target.value === "null" || e.target.value === "" || e.target.value === undefined)
-    {
-      setChangedOptionD("null");
-    }
-    else
-    {
-      setChangedOptionD(e.target.value);
-    }
-    console.log(e.target.value);
-    
+    setChangedOptionD(e.target.value);
   };
 
   const changeOptionEHandler = (e) => {
-    if (e.target.value === null || e.target.value === "" || e.target.value === undefined)
-    {
-      setChangedOptionE(null);
-    }
-    else
-    {
-      setChangedOptionE(e.target.value);
-    }
-    console.log(e.target.value);
-    
+    setChangedOptionE(e.target.value);
   };
 
   const changeAnswerHandler = (e) => {
@@ -126,7 +97,9 @@ function Question() {
   const fetchTopics = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-topics",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-topics",
         {
           method: "POST",
           credentials: "include",
@@ -148,7 +121,9 @@ function Question() {
   const fetchQuesType = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-ques-type",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-ques-type",
         {
           method: "POST",
           credentials: "include",
@@ -169,7 +144,9 @@ function Question() {
   const fetchQuestions = async () => {
     try {
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/fetch-questions",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-questions",
         {
           method: "GET",
           credentials: "include",
@@ -183,7 +160,7 @@ function Question() {
       setQuestions(undefined);
       var list = data.QuestionInfo.QuestionList;
       setQuestions(list);
-      console.log("-------------------------------"+list);
+      console.log("-------------------------------" + list);
     } catch (error) {
       console.log(error);
     }
@@ -193,7 +170,9 @@ function Question() {
     try {
       const data_map = { questionId: id.toString() };
       const response = await fetch(
-        "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/delete-question",
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/delete-question",
         {
           method: "DELETE",
           credentials: "include",
@@ -219,6 +198,15 @@ function Question() {
   }
 
   function handleCloseQuestion(e) {
+    setChangedOptionA("");
+    setChangedOptionB("");
+    setChangedOptionC("");
+    setChangedOptionD("");
+    setChangedOptionE("");
+    // setQuesType("");
+    setTopicChange("CHOOSE ONE");
+    // setQuesType(!quesType);
+    // setQuesType("CHOOSE ONE")
     setDisplay({ display: "none" });
   }
 
@@ -283,7 +271,7 @@ function Question() {
     } else {
       document.getElementById("numanserr").style.display = "none";
     }
-    if (data_map.questionType === "") {
+    if (data_map.questionType === undefined) {
       document.getElementById("questiontypeerr").style.display = "block";
     } else {
       document.getElementById("questiontypeerr").style.display = "none";
@@ -298,7 +286,7 @@ function Question() {
     } else {
       document.getElementById("answervalueerr").style.display = "none";
     }
-    if (data_map.topicId === "") {
+    if (data_map.topicId === undefined) {
       document.getElementById("topiciderr").style.display = "block";
     } else {
       document.getElementById("topiciderr").style.display = "none";
@@ -313,10 +301,10 @@ function Question() {
         data_map.questionDetail === "" ||
         data_map.answer === "" ||
         data_map.numAnswers === "" ||
-        data_map.questionType === "" ||
+        data_map.questionType === undefined ||
         data_map.difficultyLevel === "" ||
         data_map.answerValue === "" ||
-        data_map.topicId === "" ||
+        data_map.topicId === undefined ||
         data_map.negativeMarkValue === ""
       )
     ) {
@@ -338,7 +326,9 @@ function Question() {
       try {
         // FETCH
         fetch(
-          "https://"+window.location.hostname + ":8443/OnlineExamPortal/control/create-question",
+          "https://" +
+            window.location.hostname +
+            ":8443/OnlineExamPortal/control/create-question",
           {
             method: "POST",
             credentials: "include",
@@ -352,25 +342,29 @@ function Question() {
             return response.json();
           })
           .then((fetch_data) => {
-            console.log(fetch_data);
+            setQuestionDetail("");
+            setChangedOptionA("");
+            setChangedOptionB("");
+            setChangedOptionC("");
+            setChangedOptionD("");
+            setChangedOptionE("");
+            setChangedAnswer("");
+            setChangedNumAnswers("");
+            setChangeddifficultyLevel("");
+            setChangedanswerValue("");
+            setChangednegativeMarkValue("");
+            setQuesType("CHOOSE ONE");
+            setTopicChange("CHOOSE ONE");
+            console.log(topicChange);
+            handleCloseQuestion();
+            console.log(fetch_data);            
+            form.reset();
             fetchQuestions();
           });
       } catch (error) {
         console.log(error);
       }
     }
-    setChangedOptionA("null");
-    setChangedOptionB("null");
-    setChangedOptionC("null");
-    setChangedOptionD("null");
-    setChangedOptionE("null");
-    setChangedAnswer("");
-    setChangedNumAnswers("");
-    setChangeddifficultyLevel("");
-    setChangedanswerValue("");
-    setChangednegativeMarkValue("");
-    handleCloseQuestion();
-    form.reset();
   };
 
   if (questions === undefined || questions.length === 0)
@@ -379,6 +373,7 @@ function Question() {
         <div>
           <div className="d-flex justify-content-center min-vh-2 text-black">
             <QuestionForm
+              display={display}
               fetchQuestions={fetchQuestions}
               buttonName="CREATE"
               submitHandler={submitHandler}
@@ -434,7 +429,10 @@ function Question() {
       </div>
 
       <div className="container-fluid">
-        <Table responsive className="table table-striped table-hover table-light">
+        <Table
+          responsive
+          className="table table-striped table-hover table-light"
+        >
           <thead className="thead-light">
             <tr>
               <th>Question ID</th>
@@ -482,6 +480,7 @@ function Question() {
                       Queskey={question.topicId}
                       questionDetail={question.questionDetail}
                       topicChange={topicChange}
+                      quesType={quesType}
                       questionType={question.questionType}
                       topicId={question.topicId}
                       optionA={question.optionA}
@@ -497,8 +496,8 @@ function Question() {
                       setEnum={setEnum}
                       topics={topics}
                       submitHandler={submitHandler}
+                      handleCloseQuestion={handleCloseQuestion}
                       handleSelectQuesTypeChange={handleSelectQuesTypeChange}
-                      quesType={quesType}
                       handleSelectTopicChange={handleSelectTopicChange}
                       changedquestionDetail={changedquestionDetail}
                       changedoptionA={changedoptionA}

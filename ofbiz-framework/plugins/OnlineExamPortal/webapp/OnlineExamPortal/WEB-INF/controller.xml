@@ -132,6 +132,15 @@
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
+	
+	<request-map uri="calculate-percentage">
+		<security https="true" auth="true" />
+		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
+			invoke="calculatePercentage" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
 	<request-map uri="create-topic-for-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamTopicMappingEvents"

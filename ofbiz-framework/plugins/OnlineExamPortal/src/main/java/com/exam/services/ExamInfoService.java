@@ -86,7 +86,7 @@ public class ExamInfoService {
 				examDetailsMap.put("examId", examId);
 
 				// Exam Name
-				String examName = (String) examMasterEntity.getString(ConstantValues.EXAM_NAME);
+				String examName = examMasterEntity.getString(ConstantValues.EXAM_NAME);
 				if (UtilValidate.isEmpty(examName)) {
 					String errMsg = "ExamName"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -96,7 +96,7 @@ public class ExamInfoService {
 				examDetailsMap.put("examName", examName);
 
 				// Description
-				String description = (String) examMasterEntity.getString(ConstantValues.EXAM_DESCRIPTION);
+				String description =  examMasterEntity.getString(ConstantValues.EXAM_DESCRIPTION);
 				if (UtilValidate.isEmpty(description)) {
 					String errMsg = "Description"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -106,7 +106,7 @@ public class ExamInfoService {
 				examDetailsMap.put("description", description);
 
 				// Creation Date
-				String creationDate = (String) examMasterEntity.getString(ConstantValues.EXAM_CREATION_DATE);
+				String creationDate = examMasterEntity.getString(ConstantValues.EXAM_CREATION_DATE);
 				if (UtilValidate.isEmpty(creationDate)) {
 					String errMsg = "CreationDate"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -116,7 +116,7 @@ public class ExamInfoService {
 				examDetailsMap.put("creationDate", creationDate);
 
 				// Expiration Date
-				String expirationDate = (String) examMasterEntity.getString(ConstantValues.EXAM_EXPIRATION_DATE);
+				String expirationDate =  examMasterEntity.getString(ConstantValues.EXAM_EXPIRATION_DATE);
 				if (UtilValidate.isEmpty(expirationDate)) {
 					String errMsg = "ExpirationDate"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -126,7 +126,7 @@ public class ExamInfoService {
 				examDetailsMap.put("expirationDate", expirationDate);
 
 				// No Of Questions
-				String noOfQuestions = (String) examMasterEntity.getString(ConstantValues.EXAM_TOTAL_QUES);
+				String noOfQuestions =  examMasterEntity.getString(ConstantValues.EXAM_TOTAL_QUES);
 				if (UtilValidate.isEmpty(noOfQuestions)) {
 					String errMsg = "NumberOfQuestions"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -136,7 +136,7 @@ public class ExamInfoService {
 				examDetailsMap.put("noOfQuestions", noOfQuestions);
 
 				// Duration Minutes
-				String durationMinutes = (String) examMasterEntity.getString(ConstantValues.EXAM_DURATION);
+				String durationMinutes =  examMasterEntity.getString(ConstantValues.EXAM_DURATION);
 				if (UtilValidate.isEmpty(durationMinutes)) {
 					String errMsg = "DurationMinutes"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -146,7 +146,7 @@ public class ExamInfoService {
 				examDetailsMap.put("durationMinutes", durationMinutes);
 
 				// Pass Percentage
-				String passPercentage = (String) examMasterEntity.getString(ConstantValues.EXAM_PASS_PERCENTAGE);
+				String passPercentage =  examMasterEntity.getString(ConstantValues.EXAM_PASS_PERCENTAGE);
 				if (UtilValidate.isEmpty(passPercentage)) {
 					String errMsg = "PassPercentage"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -156,7 +156,7 @@ public class ExamInfoService {
 				examDetailsMap.put("passPercentage", passPercentage);
 
 				// Questions Randomized
-				String questionsRandomized = (String) examMasterEntity.getString(ConstantValues.EXAM_QUES_RANDOMIZED);
+				String questionsRandomized =  examMasterEntity.getString(ConstantValues.EXAM_QUES_RANDOMIZED);
 				if (UtilValidate.isEmpty(questionsRandomized)) {
 					String errMsg = "QuestionsRandomized"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -166,7 +166,7 @@ public class ExamInfoService {
 				examDetailsMap.put("questionsRandomized", questionsRandomized);
 
 				// Answers Must
-				String answersMust = (String) examMasterEntity.getString(ConstantValues.EXAM_ANS_MUST);
+				String answersMust = examMasterEntity.getString(ConstantValues.EXAM_ANS_MUST);
 				if (UtilValidate.isEmpty(answersMust)) {
 					String errMsg = "AnswersMust"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -176,7 +176,7 @@ public class ExamInfoService {
 				examDetailsMap.put("answersMust", answersMust);
 
 				// Enable Negative Mark
-				String enableNegativeMark = (String) examMasterEntity.getString(ConstantValues.EXAM_ENABLE_NEG_MARK);
+				String enableNegativeMark = examMasterEntity.getString(ConstantValues.EXAM_ENABLE_NEG_MARK);
 				if (UtilValidate.isEmpty(enableNegativeMark)) {
 					String errMsg = "EnableNegativeMark"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));
@@ -186,7 +186,7 @@ public class ExamInfoService {
 				examDetailsMap.put("enableNegativeMark", enableNegativeMark);
 
 				// Negative Mark Value
-				String negativeMarkValue = (String) examMasterEntity.getString(ConstantValues.EXAM_NEG_MARK);
+				String negativeMarkValue =  examMasterEntity.getString(ConstantValues.EXAM_NEG_MARK);
 				if (UtilValidate.isEmpty(negativeMarkValue)) {
 					String errMsg = "NegativeMark"
 							+ UtilProperties.getMessage(RES_ERR, "EmptyVariableMessage", UtilHttp.getLocale(request));

@@ -23,7 +23,7 @@ export default function ExamTopicMappingForm(props) {
               </label>
               <div className="col col-sm-7">
                 <Combobox
-                name="examIDerr"
+                  name="examIDerr"
                   data={props.exams}
                   dataKey="examId"
                   textField="examName"
@@ -70,12 +70,23 @@ export default function ExamTopicMappingForm(props) {
                   name="percentage"
                   className="form-control mx-sm-5"
                   defaultValue={props.percentage}
-                  onChange={(value)=>props.handleChangePercentage(value)}
+                  onChange={(value) => props.handleChangePercentage(value)}
                 />
                 <div className="invalid-feedback mx-sm-5" id="percentageerr">
                   Please Enter Percentage
                 </div>
               </div>
+              <input
+              className="col-3 ms-5"
+                type="button"
+                value="CALCULATE"
+                onClick={props.calculatePercentage}
+                style={{
+                  fontWeight: "bolder",color:"white",
+                  background:
+                    "radial-gradient(circle at 48.7% 44.3%, rgb(30, 144, 231) 0%, rgb(56, 113, 209) 22.9%, rgb(38, 76, 140) 76.7%, rgb(31, 63, 116) 100.2%)",
+                }}
+              />
             </div>
             <div className="col-12 col-sm-6 row mt-3 d-flex align-items-center justify-content-center">
               <label
@@ -114,7 +125,7 @@ export default function ExamTopicMappingForm(props) {
                   name="questionsPerExam"
                   className="form-control mx-sm-5"
                   defaultValue={props.questionsPerExam}
-// (percentage/100)*questionsPerExam
+                  // (percentage/100)*questionsPerExam
                   // onChange={(value) => props.handleSelectCountChange(value)}
                 />
                 <div

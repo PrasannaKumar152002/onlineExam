@@ -61,7 +61,7 @@ export default function QuestionForm(props) {
         showFillUp({ display: "none" });
         break;
     }
-  }, [props.quesType, props.questionType]);
+  },[props.quesType || props.questionType]);
 
   return (
     <div>
@@ -153,13 +153,15 @@ export default function QuestionForm(props) {
               </label>
               <div className="col-md-9">
                 <Combobox
+                disabled={props.questionType?true:false}
                   name="enumId"
                   data={props.setEnum}
                   dataKey="enumId"
                   textField="description"
                   onChange={(value) => props.handleSelectQuesTypeChange(value)}
                   defaultValue={
-                    props.questionType ? props.questionType : "Choose ONE"
+                    // props.quesType==="CHOOSE ONE"?props.questionType:props.quesType
+                    props.questionType?props.questionType:"CHOOSE ONE"
                   }
 />
                 <div className="invalid-feedback mx-sm-5" id="questiontypeerr">
@@ -328,12 +330,13 @@ export default function QuestionForm(props) {
               </label>
               <div className="col-md-9">
                 <Combobox
+                disabled={props.topicId?true:false}
                   name="topicId"
                   data={props.topics}
                   dataKey="topicId"
                   textField="topicName"
                   onChange={(value) => props.handleSelectTopicChange(value)}
-                  defaultValue={props.topicId ? props.topicId : "Choose ONE"}
+                  defaultValue={props.topicId?props.topicId:props.topicChange}
                 />
                 <div className="invalid-feedback mx-sm-5" id="topiciderr">
                   Please Choose Topic ID
@@ -381,7 +384,8 @@ export default function QuestionForm(props) {
                 "radial-gradient(circle at 48.7% 44.3%, rgb(30, 144, 231) 0%, rgb(56, 113, 209) 22.9%, rgb(38, 76, 140) 76.7%, rgb(31, 63, 116) 100.2%)",
             }}
           />
-          <button
+          <input
+          type="button"
             onClick={props.handleCloseQuestion}
             style={{
               fontWeight: "bolder",
@@ -389,9 +393,8 @@ export default function QuestionForm(props) {
                 "radial-gradient(circle at 48.7% 44.3%, rgb(30, 144, 231) 0%, rgb(56, 113, 209) 22.9%, rgb(38, 76, 140) 76.7%, rgb(31, 63, 116) 100.2%)",
             }}
             className="border-none px-3 py-1 mt-4 mb-2 text-white"
-          >
-            Close
-          </button>
+        value="Close"
+          />
         </div>
       </form>
     </div>
