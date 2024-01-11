@@ -1,5 +1,6 @@
 package com.exam.events;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,16 +48,58 @@ public class ExamTopicMappingEvents {
 
 		String examId = (String) combinedMap.get(ConstantValues.EXAM_ID);
 		String percentage = (String) combinedMap.get(ConstantValues.EXAM_TOPIC_PERCENTAGE);
+		Integer percentageForExam = 0;
+		Integer updatedPercentageForExam = Integer.parseInt(percentage);
+		String questionsPerTopic = (String) combinedMap.get(ConstantValues.TOPIC_QUES_PER_EXAM);
+		Integer questionsForExam = 0;
 		GenericValue exam = EntityQuery.use(delegator).from("ExamMaster").where(ConstantValues.EXAM_ID, examId)
 				.queryOne();
 		Debug.log("Exam: " + exam);
 		String examQues = exam.getString(ConstantValues.EXAM_TOTAL_QUES);
 		Debug.log("--------------------- " + examQues + " " + (Integer.valueOf(examQues)));
 		Debug.log("Percentage: " + percentage + " " + Integer.valueOf(percentage));
-		Integer questionsPerExam = (int) ((Float.valueOf(percentage) / 100) * Integer.valueOf(examQues));
+		Integer updatedQuestions = 0;
+		Integer topicQuestionsPerExam = (int) ((Float.valueOf(percentage) / 100) * Integer.valueOf(examQues));
 		Debug.log("TopicPerExamQuestions: " + ((Integer.valueOf(percentage) / 100) * Integer.valueOf(examQues)));
-		Debug.log("=============" + questionsPerExam);
-		request.setAttribute("output", questionsPerExam);
+		Debug.log("=============" + topicQuestionsPerExam);
+
+		List<GenericValue> examForTopics = EntityQuery.use(delegator).from("ExamTopicMapping")
+				.where(ConstantValues.EXAM_ID, examId).queryList();
+		Debug.log("" + examForTopics);
+		if (UtilValidate.isNotEmpty(examForTopics)) {
+			for (GenericValue topicPerExam : examForTopics) {
+				String percentageCount = topicPerExam.getString(ConstantValues.EXAM_TOPIC_PERCENTAGE);
+				String questionsCount = topicPerExam.getString(ConstantValues.TOPIC_QUES_PER_EXAM);
+				Debug.log("--------" + percentageCount);
+				questionsForExam = questionsForExam + Integer.parseInt(questionsCount);
+				percentageForExam = percentageForExam + new BigDecimal(percentageCount).intValue();
+				updatedPercentageForExam = updatedPercentageForExam + new BigDecimal(percentageCount).intValue();
+			}
+			if (updatedPercentageForExam > 100) {
+				String warningMessage = UtilProperties.getMessage(RES_ERR, "PercentageWarningMessage",
+						UtilHttp.getLocale(request));
+				percentageForExam = 100 - percentageForExam;
+				Debug.log(warningMessage + "" + percentageForExam);
+				request.setAttribute("message", warningMessage);
+				request.setAttribute("percentage", percentageForExam);
+			} else {
+				String successMessage = UtilProperties.getMessage(RES_ERR, "PercentageSuccessMessage",
+						UtilHttp.getLocale(request));
+				Debug.log(successMessage + "" + updatedPercentageForExam);
+				request.setAttribute("message", successMessage);
+				request.setAttribute("percentage", updatedPercentageForExam);
+			}
+			updatedQuestions = Integer.parseInt(examQues) - questionsForExam;
+			request.setAttribute("questions", updatedQuestions);
+		} else {
+			request.setAttribute("message", "No previous records found for this examID.");
+			percentageForExam = Integer.parseInt(percentage);
+			updatedQuestions = Integer.parseInt(examQues) - Integer.parseInt(questionsPerTopic);
+			request.setAttribute("percentage", percentageForExam);
+			request.setAttribute("questions", updatedQuestions);
+		}
+
+		request.setAttribute("topicQuestionsPerExam", topicQuestionsPerExam);
 		return "success";
 	}
 
@@ -69,12 +112,14 @@ public class ExamTopicMappingEvents {
 		Delegator delegator = (Delegator) combinedMap.get(EntityConstants.DELEGATOR);
 		LocalDispatcher dispatcher = (LocalDispatcher) combinedMap.get(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
-		Integer questionsForExam = 0;
 		String examId = (String) combinedMap.get(ConstantValues.EXAM_ID);
 		String topicId = (String) combinedMap.get(ConstantValues.TOPIC_ID);
 		String percentage = (String) combinedMap.get(ConstantValues.EXAM_TOPIC_PERCENTAGE);
 		String topicPassPercentage = (String) combinedMap.get(ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE);
 		String questionsPerTopic = (String) combinedMap.get(ConstantValues.TOPIC_QUES_PER_EXAM);
+		Integer percentageForExam = 0;
+		Integer updatedPercentageForExam = Integer.parseInt(percentage);
+		Integer questionsForExam = 0;
 		GenericValue exam = EntityQuery.use(delegator).from("ExamMaster").where(ConstantValues.EXAM_ID, examId)
 				.queryOne();
 		Debug.log("Exam: " + exam);
@@ -84,92 +129,61 @@ public class ExamTopicMappingEvents {
 				topicPassPercentage, ConstantValues.TOPIC_QUES_PER_EXAM, questionsPerTopic, EntityConstants.USER_LOGIN,
 				userLogin);
 		Debug.log("EXAMTOPIC: " + examTopicInfo);
+		List<GenericValue> questionsPerTopicList = EntityQuery.use(delegator).from("ExamTopicMapping")
+				.where(ConstantValues.EXAM_ID, examId).queryList();
 		try {
 			Integer examQues = Integer.parseInt(exam.getString(ConstantValues.EXAM_TOTAL_QUES));
 			Debug.log("*********************" + examQues);
-			List<GenericValue> questionsPerTopicList = EntityQuery.use(delegator).from("ExamTopicMapping")
-					.where(ConstantValues.EXAM_ID, examId).queryList();
 			Debug.log("List\n" + questionsPerTopicList);
-			if (UtilValidate.isEmpty(questionsPerTopicList)) {
+//			Debug.log("PercentageForExam: " + percentageForExam);
+//			request.setAttribute("message", percentageForExam);
+			for (GenericValue questionPerTopic : questionsPerTopicList) {
+				String questionsCount = questionPerTopic.getString(ConstantValues.TOPIC_QUES_PER_EXAM);
+				Debug.logInfo("Percentage", questionsCount);
+				questionsForExam = questionsForExam + Integer.parseInt(questionsCount);
+			}
 
-				Map<String, ? extends Object> createExamTopicMappingInfoResult = dispatcher
-						.runSync("CreateExamTopicMapping", examTopicInfo);
-				Debug.log("Result " + createExamTopicMappingInfoResult);
-			} else {
-				for (GenericValue questionPerTopic : questionsPerTopicList) {
-					String questionsCount = questionPerTopic.getString(ConstantValues.TOPIC_QUES_PER_EXAM);
-					Debug.log("--------" + questionsCount);
-					questionsForExam = questionsForExam + Integer.parseInt(questionsCount);
-				}
-				Integer checkQuestionsCount = questionsForExam + Integer.parseInt(questionsPerTopic);
-				Debug.log("QuestionForExam:" + questionsForExam);
-				Debug.log("TotalQuesPerCount:" + checkQuestionsCount);
-				if (checkQuestionsCount <= examQues) {
-					Map<String, ? extends Object> createExamTopicMappingInfoResult = dispatcher
-							.runSync("CreateExamTopicMapping", examTopicInfo);
-					Debug.log("Result " + createExamTopicMappingInfoResult);
+			for (GenericValue percentagePerTopic : questionsPerTopicList) {
+				String percentageCount = percentagePerTopic.getString(ConstantValues.EXAM_TOPIC_PERCENTAGE);
+				Debug.log("--------" + percentageCount);
+				percentageForExam = percentageForExam + new BigDecimal(percentageCount).intValue();
+				updatedPercentageForExam = updatedPercentageForExam + new BigDecimal(percentageCount).intValue();
+			}
+			Debug.log("PercentageForExam: " + percentageForExam);
+			Integer checkQuestionsCount = questionsForExam + Integer.parseInt(questionsPerTopic);
+			Integer updatedQuestions = examQues - questionsForExam - Integer.parseInt(questionsPerTopic);
+
+			if (checkQuestionsCount <= examQues) {
+				Map<String, Object> createExamTopicMappingInfoResult = dispatcher.runSync("CreateExamTopicMapping",
+						examTopicInfo);
+				Debug.log("" + createExamTopicMappingInfoResult);
+				ServiceUtil.getMessages(request, createExamTopicMappingInfoResult, null);
+				if (ServiceUtil.isError(createExamTopicMappingInfoResult)) {
+					String errorMessage = ServiceUtil.getErrorMessage(createExamTopicMappingInfoResult);
+					request.setAttribute("message", errorMessage);
+					Debug.log("Percentage:", percentageForExam);
+					request.setAttribute("percentage", percentageForExam);
+					return "error";
 				} else {
-					Debug.log("You can't create more questions for topics in this exam...");
+					String successMessage = UtilProperties.getMessage(RES_ERR, "ExamForTopicSuccessMessage",
+							UtilHttp.getLocale(request));
+					ServiceUtil.getMessages(request, createExamTopicMappingInfoResult, successMessage);
+					request.setAttribute("message", successMessage);
+					request.setAttribute("percentage", updatedPercentageForExam);
+					request.setAttribute("questions", updatedQuestions);
+					return "success";
 				}
+			} else {
+				String errMessage = UtilProperties.getMessage(RES_ERR, "ExamForTopicWarningMessage",
+						UtilHttp.getLocale(request));
+				request.setAttribute("message", errMessage);
+				return "error";
 			}
 		} catch (GenericServiceException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
+			return "success";
 		}
-
-//		Map<String, Object> examtopicinfo = UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.TOPIC_ID,
-//				topicId, ConstantValues.EXAMTOPIC_PERCENTAGE, percentage,
-//				ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
-//				EntityConstants.USER_LOGIN, userLogin);
-//
-//		try {
-//			Debug.logInfo(
-//					"=======Creating ExamTopicMapping record in event using service UpdateExamTopicMapping=========",
-//					MODULE);
-//			HibernateValidationMaster hibernate = HibernateHelper.populateBeanFromMap(examtopicinfo,
-//					HibernateValidationMaster.class);
-//
-//			Set<ConstraintViolation<HibernateValidationMaster>> errors = HibernateHelper
-//					.checkValidationErrors(hibernate, ExamTopicMappingCheck.class);
-//			boolean hasFormErrors = HibernateHelper.validateFormSubmission(delegator, errors, request, locale,
-//					"Mandatory Err ExamTopicMapping Entity", RES_ERR, false);
-//
-//			if (hasFormErrors) {
-//				request.setAttribute("_ERROR_MESSAGE", errors);
-//				return "error";
-//			}
-//				try {
-//					// Calling Entity-Auto Service to Insert data into ExamTopicMapping Entity
-//					Map<String, ? extends Object> createExamTopicMappingInfoResult = dispatcher
-//							.runSync("CreateExamTopicMapping", examtopicinfo);
-//					ServiceUtil.getMessages(request, createExamTopicMappingInfoResult, null);
-//					if (ServiceUtil.isError(createExamTopicMappingInfoResult)) {
-//						String errorMessage = ServiceUtil.getErrorMessage(createExamTopicMappingInfoResult);
-//						request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-//						Debug.logError(errorMessage, MODULE);
-//						return "error";
-//					} else {
-//						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-//								UtilHttp.getLocale(request));
-//						ServiceUtil.getMessages(request, createExamTopicMappingInfoResult, successMessage);
-//						request.setAttribute("_EVENT_MESSAGE_", successMessage);
-//						return "success";
-//					}
-//				} catch (GenericServiceException e) {
-//					String errMsg = UtilProperties.getMessage(RES_ERR, "ServiceCallingError",
-//							UtilHttp.getLocale(request)) + e.toString();// "Error setting exam_topic_mapping info: " +
-//																		// e.toString();
-//					request.setAttribute("_ERROR_MESSAGE_", errMsg);
-//					return "error";
-//				}
-//			
-//		} catch (Exception e) {
-//			Debug.logError(e, MODULE);
-//			request.setAttribute("_ERROR_MESSAGE", e);
-//			return "error";
-//		}
-		request.setAttribute("output", questionsForExam);
-		return "onprocess";
 	}
 
 	// Method to retrieve data's from ExamTopicMapping Entity

@@ -9,7 +9,7 @@ function Question() {
   const [questions, setQuestions] = useState([]);
   const [topics, setTopics] = useState([]);
   const [setEnum, getEnum] = useState([]);
-  const [quesType, setQuesType] = useState("CHOOSE ONE");
+  const [questionType, setQuesType] = useState("CHOOSE ONE");
   const [topicChange, setTopicChange] = useState("CHOOSE ONE");
   const [changedquestionDetail, setQuestionDetail] = useState("");
   const [changedoptionA, setChangedOptionA] = useState("");
@@ -22,19 +22,6 @@ function Question() {
   const [changeddifficultyLevel, setChangeddifficultyLevel] = useState("");
   const [changedanswerValue, setChangedanswerValue] = useState("");
   const [changednegativeMarkValue, setChangednegativeMarkValue] = useState("");
-  // const [options, setOptions] = useState({
-  //   optionA: props.optionA,
-  //   optionB: props.optionB,
-  //   optionC: props.optionC,
-  //   optionD: props.optionD,
-  //   optionE: props.optionE,
-  // });
-  // const updateOptions = (newOptions) => {
-  //   setOptions({
-  //     ...options,
-  //     ...newOptions,
-  //   });
-  // };
 
   useEffect(() => {
     fetchQuestions();
@@ -86,7 +73,7 @@ function Question() {
     setChangednegativeMarkValue(e.target.value);
   };
 
-  const handleSelectQuesTypeChange = (e) => {
+  var handleSelectQuesTypeChange = (e) => {
     setQuesType(e.enumId);
   };
 
@@ -198,16 +185,29 @@ function Question() {
   }
 
   function handleCloseQuestion(e) {
+    var form = document.getElementById("question");
     setChangedOptionA("");
     setChangedOptionB("");
     setChangedOptionC("");
     setChangedOptionD("");
     setChangedOptionE("");
-    // setQuesType("");
+    setQuesType("CHOOSE ONE");
     setTopicChange("CHOOSE ONE");
-    // setQuesType(!quesType);
-    // setQuesType("CHOOSE ONE")
     setDisplay({ display: "none" });
+    document.getElementById("questiondetailerr").style.display = "none";
+    document.getElementById("optionaerr").style.display = "none";
+    document.getElementById("optionberr").style.display = "none";
+    document.getElementById("optioncerr").style.display = "none";
+    document.getElementById("optionderr").style.display = "none";
+    document.getElementById("optioneerr").style.display = "none";
+    document.getElementById("answererr").style.display = "none";
+    document.getElementById("numanserr").style.display = "none";
+    document.getElementById("questiontypeerr").style.display = "none";
+    document.getElementById("difficultylevelerr").style.display = "none";
+    document.getElementById("answervalueerr").style.display = "none";
+    document.getElementById("topiciderr").style.display = "none";
+    document.getElementById("negativemarkvalueeerr").style.display = "none";
+    form.reset();
   }
 
   const submitHandler = (e) => {
@@ -223,7 +223,7 @@ function Question() {
       optionE: changedoptionE,
       answer: formData.get("answer"),
       numAnswers: formData.get("numAnswers"),
-      questionType: quesType,
+      questionType: questionType,
       difficultyLevel: formData.get("difficultyLevel"),
       answerValue: formData.get("answerValue"),
       topicId: topicChange,
@@ -271,7 +271,7 @@ function Question() {
     } else {
       document.getElementById("numanserr").style.display = "none";
     }
-    if (data_map.questionType === undefined) {
+    if (questionType === "CHOOSE ONE") {
       document.getElementById("questiontypeerr").style.display = "block";
     } else {
       document.getElementById("questiontypeerr").style.display = "none";
@@ -286,7 +286,7 @@ function Question() {
     } else {
       document.getElementById("answervalueerr").style.display = "none";
     }
-    if (data_map.topicId === undefined) {
+    if (topicChange === "CHOOSE ONE") {
       document.getElementById("topiciderr").style.display = "block";
     } else {
       document.getElementById("topiciderr").style.display = "none";
@@ -301,10 +301,10 @@ function Question() {
         data_map.questionDetail === "" ||
         data_map.answer === "" ||
         data_map.numAnswers === "" ||
-        data_map.questionType === undefined ||
+        questionType === "CHOOSE ONE" ||
         data_map.difficultyLevel === "" ||
         data_map.answerValue === "" ||
-        data_map.topicId === undefined ||
+        topicChange === "CHOOSE ONE" ||
         data_map.negativeMarkValue === ""
       )
     ) {
@@ -357,7 +357,7 @@ function Question() {
             setTopicChange("CHOOSE ONE");
             console.log(topicChange);
             handleCloseQuestion();
-            console.log(fetch_data);            
+            console.log(fetch_data);
             form.reset();
             fetchQuestions();
           });
@@ -367,18 +367,27 @@ function Question() {
     }
   };
 
+  const resetQuestionType = () => {
+    setQuesType("CHOOSE ONE");
+  };
+
+  const resetTopic = () => {
+    setTopicChange("CHOOSE ONE");
+  };
+
   if (questions === undefined || questions.length === 0)
     return (
       <>
         <div>
           <div className="d-flex justify-content-center min-vh-2 text-black">
             <QuestionForm
-              display={display}
+              resetQuestionType={resetQuestionType}
+              resetTopic={resetTopic}
               fetchQuestions={fetchQuestions}
               buttonName="CREATE"
               submitHandler={submitHandler}
               handleSelectQuesTypeChange={handleSelectQuesTypeChange}
-              quesType={quesType}
+              questionType={questionType}
               setEnum={setEnum}
               handleSelectTopicChange={handleSelectTopicChange}
               topicChange={topicChange}
@@ -473,16 +482,17 @@ function Question() {
                   {/* <td>{question.answerValue}</td> */}
                   <td className="border-none px-3 py-1 mt-4 mb-2 text-white rounded-0">
                     <QuestionModalSample
+                      display="block"
+                      resetQuestionType={resetQuestionType}
+                      resetTopic={resetTopic}
                       buttonName="UPDATE"
                       fetchQuestions={fetchQuestions}
                       fetchId={question.questionId}
                       Enumkey={i}
                       Queskey={question.topicId}
                       questionDetail={question.questionDetail}
-                      topicChange={topicChange}
-                      quesType={quesType}
                       questionType={question.questionType}
-                      topicId={question.topicId}
+                      topicChange={question.topicId}
                       optionA={question.optionA}
                       optionB={question.optionB}
                       optionC={question.optionC}
@@ -555,11 +565,13 @@ function Question() {
       <div style={display} className="mt-3">
         <div className="d-flex justify-content-center min-vh-2 text-black">
           <QuestionForm
+            resetQuestionType={resetQuestionType}
+            resetTopic={resetTopic}
             fetchQuestions={fetchQuestions}
             buttonName="CREATE"
             submitHandler={submitHandler}
             handleSelectQuesTypeChange={handleSelectQuesTypeChange}
-            quesType={quesType}
+            questionType={questionType}
             setEnum={setEnum}
             handleSelectTopicChange={handleSelectTopicChange}
             topicChange={topicChange}

@@ -27,7 +27,7 @@ export default function ExamTopicMappingForm(props) {
                   data={props.exams}
                   dataKey="examId"
                   textField="examName"
-                  defaultValue={props.examId ? props.examId : "Choose ONE"}
+                 value={props.examID}
                   onChange={(value) => props.handleSelectExamChange(value)}
                 />
                 <div className="invalid-feedback mx-sm-5" id="examIDerr">
@@ -48,7 +48,7 @@ export default function ExamTopicMappingForm(props) {
                   data={props.topics}
                   dataKey="topicId"
                   textField="topicName"
-                  defaultValue={props.topicId ? props.topicId : "Choose ONE"}
+                  value={props.topicChange}
                   onChange={(value) => props.handleSelectTopicChange(value)}
                 />
                 <div className="invalid-feedback mx-sm-5" id="topicIDerr">
@@ -68,12 +68,12 @@ export default function ExamTopicMappingForm(props) {
                 <input
                   type="text"
                   name="percentage"
-                  className="form-control mx-sm-5"
+                  className="form-control mx-sm-1"
                   defaultValue={props.percentage}
                   onChange={(value) => props.handleChangePercentage(value)}
                 />
                 <div className="invalid-feedback mx-sm-5" id="percentageerr">
-                  Please Enter Percentage
+                  Please Enter Percentage divisible by 5 or 10
                 </div>
               </div>
               <input
@@ -100,7 +100,7 @@ export default function ExamTopicMappingForm(props) {
                 <input
                   type="text"
                   name="topicPassPercentage"
-                  className="form-control mx-sm-5"
+                  className="form-control mx-sm-1"
                   defaultValue={props.topicPassPercentage}
                 />
                 <div
@@ -120,14 +120,16 @@ export default function ExamTopicMappingForm(props) {
                 Questions Per Exam
               </label>
               <div className="col col-sm-7">
-                <input
+                {/* <input
                   type="text"
                   name="questionsPerExam"
                   className="form-control mx-sm-5"
                   defaultValue={props.questionsPerExam}
                   // (percentage/100)*questionsPerExam
                   // onChange={(value) => props.handleSelectCountChange(value)}
-                />
+                /> */}
+                <label className="form-control mx-sm-1">
+                  {props.questionsPerExam}</label>
                 <div
                   className="invalid-feedback mx-sm-5"
                   id="questionsperexamerr"
@@ -139,6 +141,10 @@ export default function ExamTopicMappingForm(props) {
           </div>
         </div>
         <div className="container">
+          <h5 style={{color:"red"}} className="text-center">{props.message}</h5>
+          <br/>
+          <h4 style={{color:"blue", fontWeight:"bolder"}} className="text-center">{props.message.startsWith("N") ?<span style={{color:"black"}}>CoveredPercentage: {props.showPercentage}</span>:props.message.startsWith("Exceeding")?<span style={{color:"black"}}>{props.message} Remaining Percentage: {props.showPercentage}<span style={{color:"navy"}}>%</span><span style={{color:"navy"}}>%</span></span>:<span style={{color:"black"}}></span>}</h4>
+          <h4 className="text-center">{props.questions===0 || props.questions===undefined?"No remaining questions":props.message.startsWith("Exceeding") || props.message.startsWith("Covered")?"":props.questions?"Remaining Questions:"+ props.questions:""}</h4>
           <div className="row">
             <div
               className="mx-auto d-flex justify-content-center p-5"
@@ -146,7 +152,6 @@ export default function ExamTopicMappingForm(props) {
             >
               <input
                 type="submit"
-                name="submit"
                 value="CREATE"
                 className="border-none px-3 py-1 mt-4 mb-2 text-white"
                 style={{

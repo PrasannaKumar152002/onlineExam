@@ -16,7 +16,7 @@ export default function QuestionForm(props) {
   console.log("OOOOOOOOOOOOOOOOOOOOOOOOOO "+props.optionC)
 
   useEffect(() => {
-    switch (props.quesType || props.questionType) {
+    switch (props.questionType) {
       case "QT_MC":
         showMcqOption({ display: "block" });
         showtruefalseOption({ display: "none" });
@@ -61,7 +61,7 @@ export default function QuestionForm(props) {
         showFillUp({ display: "none" });
         break;
     }
-  },[props.quesType || props.questionType]);
+  },[props.questionType]);
 
   return (
     <div>
@@ -98,10 +98,10 @@ export default function QuestionForm(props) {
             </div>
           </div>
         </div>
-        <div className="col-12 row mt-3 d-flex align-items-center justify-content-center">
+        <div className="col-6 row mt-3 d-flex align-items-center justify-content-center">
           <label
             htmlFor="answer"
-            className="col-sm-2 mt-2"
+            className="col-sm-2 mt-3"
             style={{ fontWeight: "bolder" }}
           >
             Answer
@@ -151,21 +151,26 @@ export default function QuestionForm(props) {
               >
                 Question Type
               </label>
-              <div className="col-md-9">
+              <div className="col-md-8">
                 <Combobox
-                disabled={props.questionType?true:false}
+                className="ms-sm-5 w-100 mx-sm-5"
+                disabled={props.questionType==="CHOOSE ONE"?false:true}
                   name="enumId"
                   data={props.setEnum}
                   dataKey="enumId"
                   textField="description"
+                  id="questionType"
                   onChange={(value) => props.handleSelectQuesTypeChange(value)}
-                  defaultValue={
-                    // props.quesType==="CHOOSE ONE"?props.questionType:props.quesType
-                    props.questionType?props.questionType:"CHOOSE ONE"
+                  value={
+                    props.questionType
                   }
 />
                 <div className="invalid-feedback mx-sm-5" id="questiontypeerr">
                   Please Enter Question Type
+                </div>
+                <div className="mx-sm-5 mt-2"
+                style={{display:props.display}}>
+                <input type="button" className={props.questionType==="CHOOSE ONE"?"btn btn-success":props.questionType?"btn btn-success":"d-none"} value="CLEAR" onClick={props.resetQuestionType}/>
                 </div>
               </div>
             </div>
@@ -328,19 +333,24 @@ export default function QuestionForm(props) {
               >
                 Topic Name
               </label>
-              <div className="col-md-9">
+              <div className="col-md-8">
                 <Combobox
-                disabled={props.topicId?true:false}
+                className="ms-sm-5 w-100 mx-sm-5"
+                // style={{fontSize: "1vw"}}
+                disabled={props.topicChange==="CHOOSE ONE"?false:true}
                   name="topicId"
                   data={props.topics}
                   dataKey="topicId"
                   textField="topicName"
                   onChange={(value) => props.handleSelectTopicChange(value)}
-                  defaultValue={props.topicId?props.topicId:props.topicChange}
+                  value={props.topicChange}
                 />
                 <div className="invalid-feedback mx-sm-5" id="topiciderr">
-                  Please Choose Topic ID
+                  Please Choose Topic Name
                 </div>
+                <div className="mx-sm-5 mt-2" style={{display:props.display}}>
+                <input type="button" className={props.topicChange==="CHOOSE ONE"?"btn btn-success":props.topicChange?"btn btn-success":"d-none"} value="CLEAR" onClick={props.resetTopic}/>
+                  </div>
               </div>
             </div>
             <div className="col-6 row mt-3 ms-3 d-flex align-items-center justify-content-center">

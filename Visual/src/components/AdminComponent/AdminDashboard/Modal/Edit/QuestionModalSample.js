@@ -39,7 +39,7 @@ function QuestionModalSample(props) {
       answerValue: props.changedanswerValue
         ? props.changedanswerValue
         : props.answerValue.toString(),
-      topicId: props.topicChange ? props.topicChange : props.topicId,
+      topicId: props.topicChange,
       negativeMarkValue: props.changednegativeMarkValue
         ? props.changednegativeMarkValue
         : props.negativeMarkValue.toString(),
@@ -90,6 +90,8 @@ function QuestionModalSample(props) {
         </Modal.Header>
         <Modal.Body>
           <QuestionForm
+          display="none"
+          setQuesType={props.setQuesType}
             buttonName={props.buttonName}
             handleCloseQuestion={handleClose}
             submitHandler={submitHandler}
@@ -100,7 +102,7 @@ function QuestionModalSample(props) {
             topicChange={props.topicChange}
             topics={props.topics}
             questionDetail={props.questionDetail}
-            topicId={props.topicId}
+            // topicId={props.topicId}
             questionType={props.questionType}
             optionA={props.optionA}
             optionB={props.optionB}
