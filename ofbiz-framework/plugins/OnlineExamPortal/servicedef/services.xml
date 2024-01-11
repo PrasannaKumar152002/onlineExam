@@ -78,7 +78,7 @@
 		<auto-attributes mode="IN" include="pk"
 			optional="false" />
 		<auto-attributes mode="IN" include="nonpk"
-			optional="false" />
+			optional="true" />
 	</service>
 	<service name="CreateUserExamMapping"
 		default-entity-name="UserExamMapping" engine="entity-auto"
@@ -231,5 +231,22 @@
 			optional="false" />
 		<auto-attributes include="nonpk" mode="IN"
 			optional="true" />
+	</service>
+	<service name="fetchExamResult" engine="java"
+		location="com.exam.services.ReportService" invoke="fetchUserReport"
+		auth="true">
+		<description>Exam Result</description>
+		<attribute name="combinedMap" type="Object" mode="IN"
+			optional="false"></attribute>
+		<attribute name="userAttemptMasterMap" type="Map" mode="OUT"
+			optional="false"></attribute>
+		<attribute name="userAttemptTopicMasterList" type="List"
+			mode="OUT" optional="false"></attribute>
+		<attribute name="userAttemptAnswerMasterList" type="List"
+			mode="OUT" optional="false"></attribute>
+		<attribute name="questions" type="List"
+			mode="OUT" optional="false"></attribute>
+			<attribute name="examList" type="List"
+			mode="OUT" optional="false"></attribute>
 	</service>
 </services>

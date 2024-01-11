@@ -35,7 +35,7 @@ const Dashboard = () => {
       });
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchExamInfo();
   }, []);
 

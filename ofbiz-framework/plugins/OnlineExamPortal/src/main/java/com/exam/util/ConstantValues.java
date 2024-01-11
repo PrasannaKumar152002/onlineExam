@@ -6,6 +6,8 @@ public class ConstantValues {
 	public static final String ENUM_SEQUENCE_ID = "sequenceId";
 	public static final String ENUM_TYPE_ID = "enumTypeId";
 	public static final String ENUM_DESCRIPTION = "description";
+	public static final String THRESHOLD_DATE="thresholdDate";
+	public static final String FROM_DATE="fromDate";
 
 //	TopicMaster Entity
 	public static final String TOPIC_ID = "topicId";
