@@ -6,10 +6,13 @@ export default function ExamTopicMapping() {
   const [exams, setExams] = useState([]);
   const [examTopic, setExamTopic] = useState([]);
   const [percentage, setPercentage] = useState();
-  const [selectedQuestionsPerExam, setSelectedQuestionsPerExam] = useState();
-  const [topicChange, setTopicChange] = useState("");
-  const [examChange, setExamChange] = useState("");
-  const [count, setCountChange] = useState();
+  const [questionsPerExam, setQuestionsPerExam] = useState();
+  const [topicChange, setTopicChange] = useState("CHOOSE ONE");
+  const [examID, setExamID] = useState("CHOOSE ONE");
+  const [message, setMessage] = useState("");
+  const [showPercentage, setShowPercentage] = useState("");
+  const [questions, setQuestions] = useState("");
+  const [reloadComponent, setReloadComponent] = useState(false);
 
   useEffect(() => {
     fetchTopics();
@@ -18,18 +21,22 @@ export default function ExamTopicMapping() {
   }, []);
 
   const handleChangePercentage = (e) => {
+    if (e.target.value % 5 !== 0 || e.target.value % 10 !== 0) {
+      setPercentage(e.target.value);
+    } else {
     setPercentage(e.target.value);
-    setSelectedQuestionsPerExam(e.target.value);
+    }
+    // setQuestionsPerExam(e.target.value);
   };
   const handleSelectTopicChange = (e) => {
     setTopicChange(e.topicId);
   };
 
   const handleSelectExamChange = (e) => {
-    setExamChange(e.examId);
+    setExamID(e.examId);
   };
   const handleSelectCountChange = (e) => {
-    setCountChange(e.target.value);
+    // setQuestionsPerExam()
   };
   const fetchTopics = async () => {
     try {
@@ -38,7 +45,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-topics",
         {
-          method: "POST",
+          method: "GET",
           credentials: "include",
         }
       );
@@ -62,7 +69,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-exams",
         {
-          method: "POST",
+          method: "GET",
           credentials: "include",
         }
       );
@@ -86,7 +93,7 @@ export default function ExamTopicMapping() {
           window.location.hostname +
           ":8443/OnlineExamPortal/control/fetch-all-exam-topics",
         {
-          method: "POST",
+          method: "GET",
           credentials: "include",
         }
       );
@@ -103,30 +110,93 @@ export default function ExamTopicMapping() {
   };
   console.log(exams);
 
+  const calculatePercentage = (e) => {
+    e.preventDefault();
+    const data_map = {
+      examId: examID,
+      topicId: topicChange,
+      percentage: percentage,
+      questionsPerExam: questionsPerExam ? questionsPerExam.toString() : "0",
+    };
+    console.log(data_map);
+    if (examID === "CHOOSE ONE") {
+      document.getElementById("examIDerr").style.display = "block";
+    } else {
+      document.getElementById("examIDerr").style.display = "none";
+    }
+    if (topicChange === "CHOOSE ONE") {
+      document.getElementById("topicIDerr").style.display = "block";
+    } else {
+      document.getElementById("topicIDerr").style.display = "none";
+    }
+    if (data_map.percentage === undefined) {
+      document.getElementById("percentageerr").style.display = "block";
+    } else {
+      document.getElementById("percentageerr").style.display = "none";
+    }
+    try {
+      if (!(examID === "CHOOSE ONE" || topicChange === "CHOOSE ONE" || data_map.percentage === undefined)) {
+        fetch(
+          "https://" +
+            window.location.hostname +
+            ":8443/OnlineExamPortal/control/calculate-percentage",
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(data_map),
+          }
+        )
+          .then((response) => {
+            return response.json();
+          })
+          .then((fetch_data) => {
+            // console.log(fetch_data.output);
+            var topicQuestionsPerExam = fetch_data.topicQuestionsPerExam;
+            console.log(topicQuestionsPerExam);
+            // var message = fetch_data.message;
+            // setMessage(message);
+            console.log(fetch_data.message);
+            setMessage(fetch_data.message);
+            setShowPercentage(fetch_data.percentage);
+            console.log(fetch_data.percentage)
+            setQuestions(fetch_data.questions);
+            setQuestionsPerExam(topicQuestionsPerExam);
+            fetchExamTopicMapping();
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
     var form = document.getElementById("examtopping");
     const formData = new FormData(form);
     const data_map = {
-      examId: examChange,
+      examId: examID,
       topicId: topicChange,
       percentage: percentage,
       topicPassPercentage: formData.get("topicPassPercentage"),
-      questionsPerExam: selectedQuestionsPerExam,
+      questionsPerExam: questionsPerExam ? questionsPerExam.toString() : "0",
     };
     console.log(data_map);
+    console.log(examID === "CHOOSE ONE");
 
-    if (data_map.examId === "") {
+    if (examID === "CHOOSE ONE") {
       document.getElementById("examIDerr").style.display = "block";
     } else {
       document.getElementById("examIDerr").style.display = "none";
     }
-    if (data_map.topicId === "") {
+    if (topicChange === "CHOOSE ONE") {
       document.getElementById("topicIDerr").style.display = "block";
     } else {
       document.getElementById("topicIDerr").style.display = "none";
     }
-    if (data_map.percentage === "") {
+    if (data_map.percentage === undefined) {
       document.getElementById("percentageerr").style.display = "block";
     } else {
       document.getElementById("percentageerr").style.display = "none";
@@ -136,18 +206,14 @@ export default function ExamTopicMapping() {
     } else {
       document.getElementById("topicpasspercentageerr").style.display = "none";
     }
-    if (data_map.questionsPerExam === "") {
-      document.getElementById("questionsperexamerr").style.display = "block";
-    } else {
-      document.getElementById("questionsperexamerr").style.display = "none";
-    }
     if (
       !(
-        data_map.examId === "" ||
-        data_map.topicId === "" ||
-        data_map.percentage === "" ||
-        data_map.topicPassPercentage === "" ||
-        data_map.questionsPerExam === ""
+        (
+          examID === "CHOOSE ONE" ||
+          topicChange === "CHOOSE ONE" ||
+          data_map.percentage === undefined ||
+          data_map.topicPassPercentage === ""
+        )
       )
     ) {
       try {
@@ -168,8 +234,18 @@ export default function ExamTopicMapping() {
             return response.json();
           })
           .then((fetch_data) => {
-            console.log(fetch_data);
+            console.log(fetch_data.message);
+            var message = fetch_data.message;
+            setMessage(message);
+            setShowPercentage(fetch_data.percentage);
+            setQuestions(fetch_data.questions);
+            setPercentage("");
+            setQuestionsPerExam("");
             fetchExamTopicMapping();
+            setExamID("CHOOSE ONE");
+            setTopicChange("CHOOSE ONE");
+            setReloadComponent(!reloadComponent);
+            console.log(reloadComponent);
           });
       } catch (error) {
         console.log(error);
@@ -180,18 +256,21 @@ export default function ExamTopicMapping() {
   if (examTopic === undefined) {
     <div className="d-flex justify-content-center min-vh-2 text-black">
       <ExamTopicMappingForm
+        questions={questions}
+        message={message}
         percentage={percentage}
         topics={topics}
         submitHandler={submitHandler}
-        examChange={examChange}
-        selectedQuestionsPerExam={selectedQuestionsPerExam}
-        count={count}
+        examID={examID}
+        topicChange={topicChange}
+        questionsPerExam={questionsPerExam}
         exams={exams}
-        examId={examTopic.examId}
+        showPercentage={showPercentage}
         handleSelectTopicChange={handleSelectTopicChange}
         handleSelectExamChange={handleSelectExamChange}
         handleSelectCountChange={handleSelectCountChange}
         handleChangePercentage={handleChangePercentage}
+        calculatePercentage={calculatePercentage}
       />
     </div>;
   }
@@ -199,18 +278,21 @@ export default function ExamTopicMapping() {
     return (
       <>
         <ExamTopicMappingForm
+          questions={questions}
+          message={message}
           percentage={percentage}
           topics={topics}
           submitHandler={submitHandler}
-          examChange={examChange}
-          selectedQuestionsPerExam={selectedQuestionsPerExam}
-          count={count}
+          examID={examID}
+          topicChange={topicChange}
+          questionsPerExam={questionsPerExam}
           exams={exams}
-          examId={examTopic.examId}
+          showPercentage={showPercentage}
           handleSelectTopicChange={handleSelectTopicChange}
           handleSelectExamChange={handleSelectExamChange}
           handleSelectCountChange={handleSelectCountChange}
           handleChangePercentage={handleChangePercentage}
+          calculatePercentage={calculatePercentage}
         />
       </>
     );
@@ -242,18 +324,21 @@ export default function ExamTopicMapping() {
       </Table>
       <div className="d-flex justify-content-center min-vh-2 text-black">
         <ExamTopicMappingForm
+          questions={questions}
+          message={message}
           percentage={percentage}
           topics={topics}
           submitHandler={submitHandler}
-          examChange={examChange}
-          selectedQuestionsPerExam={selectedQuestionsPerExam}
-          count={count}
+          examID={examID}
+          topicChange={topicChange}
+          questionsPerExam={questionsPerExam}
           exams={exams}
-          examId={examTopic.examId}
+          showPercentage={showPercentage}
           handleSelectTopicChange={handleSelectTopicChange}
           handleSelectExamChange={handleSelectExamChange}
           handleSelectCountChange={handleSelectCountChange}
           handleChangePercentage={handleChangePercentage}
+          calculatePercentage={calculatePercentage}
         />
       </div>
     </div>

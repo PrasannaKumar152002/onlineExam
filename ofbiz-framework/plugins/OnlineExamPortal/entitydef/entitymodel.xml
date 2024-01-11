@@ -36,8 +36,8 @@
 		<field name="answersMust" type="indicator"></field>
 		<field name="enableNegativeMark" type="indicator"></field>
 		<field name="negativeMarkValue" type="fixed-point"></field>
-		<field name="fromDate" type="date-time"></field>
-		<field name="thresholdDate" type="date-time"></field>
+<!-- 		<field name="fromDate" type="date-time"></field>
+		<field name="thresholdDate" type="date-time"></field>-->
 		<prim-key field="examId" />
 	</entity>
 

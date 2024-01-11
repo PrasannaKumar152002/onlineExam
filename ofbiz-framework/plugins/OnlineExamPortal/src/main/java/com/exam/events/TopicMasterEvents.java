@@ -37,14 +37,15 @@ public class TopicMasterEvents {
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
 	public static String createTopic(HttpServletRequest request, HttpServletResponse response) {
-
+		
+		Map<String, Object> combinedMap = UtilHttp.getCombinedMap(request);
 		Locale locale = UtilHttp.getLocale(request);
 
-		Delegator delegator = (Delegator) request.getAttribute(EntityConstants.DELEGATOR);
-		LocalDispatcher dispatcher = (LocalDispatcher) request.getAttribute(EntityConstants.DISPATCHER);
+		Delegator delegator = (Delegator) combinedMap.get(EntityConstants.DELEGATOR);
+		LocalDispatcher dispatcher = (LocalDispatcher) combinedMap.get(EntityConstants.DISPATCHER);
 		GenericValue userLogin = (GenericValue) request.getSession().getAttribute(EntityConstants.USER_LOGIN);
 
-		String topicName = (String) request.getAttribute(ConstantValues.TOPIC_NAME);
+		String topicName = (String) combinedMap.get(ConstantValues.TOPIC_NAME);
 
 		Map<String, Object> topicInfo = UtilMisc.toMap(ConstantValues.TOPIC_NAME, topicName, EntityConstants.USER_LOGIN,
 				userLogin);
@@ -167,29 +168,29 @@ public class TopicMasterEvents {
 				request.setAttribute("_ERROR_MESSAGE", errors);
 				return "error";
 			}
-				try {
-					Map<String, ? extends Object> updateTopicMasterInfoResult = dispatcher.runSync("UpdateTopicMaster",
-							topicInfo);
-					ServiceUtil.getMessages(request, updateTopicMasterInfoResult, null);
-					if (ServiceUtil.isError(updateTopicMasterInfoResult)) {
-						String errorMessage = ServiceUtil.getErrorMessage(updateTopicMasterInfoResult);
-						request.setAttribute("_ERROR_MESSAGE_", errorMessage);
-						Debug.logError(errorMessage, MODULE);
-						return "error";
-					} else {
-						String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-								UtilHttp.getLocale(request));
-						ServiceUtil.getMessages(request, updateTopicMasterInfoResult, successMessage);
-						request.setAttribute("_EVENT_MESSAGE_", successMessage);
-						Debug.logError(successMessage, MODULE);
-						return "success";
-					}
-				} catch (GenericServiceException e) {
-					String errMsg = "Error setting topic info: " + e.toString();
-					request.setAttribute("_ERROR_MESSAGE_", errMsg);
+			try {
+				Map<String, ? extends Object> updateTopicMasterInfoResult = dispatcher.runSync("UpdateTopicMaster",
+						topicInfo);
+				ServiceUtil.getMessages(request, updateTopicMasterInfoResult, null);
+				if (ServiceUtil.isError(updateTopicMasterInfoResult)) {
+					String errorMessage = ServiceUtil.getErrorMessage(updateTopicMasterInfoResult);
+					request.setAttribute("_ERROR_MESSAGE_", errorMessage);
+					Debug.logError(errorMessage, MODULE);
 					return "error";
+				} else {
+					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+							UtilHttp.getLocale(request));
+					ServiceUtil.getMessages(request, updateTopicMasterInfoResult, successMessage);
+					request.setAttribute("_EVENT_MESSAGE_", successMessage);
+					Debug.logError(successMessage, MODULE);
+					return "success";
 				}
-			} catch (Exception e) {
+			} catch (GenericServiceException e) {
+				String errMsg = "Error setting topic info: " + e.toString();
+				request.setAttribute("_ERROR_MESSAGE_", errMsg);
+				return "error";
+			}
+		} catch (Exception e) {
 			Debug.logError(e, MODULE);
 			request.setAttribute("_ERROR_MESSAGE", e);
 			return "error";
