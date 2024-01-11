@@ -244,9 +244,11 @@
 			mode="OUT" optional="false"></attribute>
 		<attribute name="userAttemptAnswerMasterList" type="List"
 			mode="OUT" optional="false"></attribute>
-		<attribute name="questions" type="List"
-			mode="OUT" optional="false"></attribute>
-			<attribute name="examList" type="List"
-			mode="OUT" optional="false"></attribute>
+		<attribute name="questions" type="List" mode="OUT"
+			optional="false"></attribute>
+		<attribute name="examList" type="List" mode="OUT"
+			optional="false"></attribute>
+		<attribute name="TopicNameList" type="List" mode="OUT"
+			optional="false"></attribute>
 	</service>
 </services>

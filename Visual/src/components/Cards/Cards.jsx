@@ -4,21 +4,25 @@ import { cardsData } from "../../Data/Data";
 
 import Card from "../Card/Card";
 import img from "../../components/image/user.png"
+import useStateRef from "react-usestateref";
+import { log } from "util";
 
 const Cards = () => {
   var card = []
   var topic = []
+  var topicName=[]
   const [answers, setAnswers] = useState();
   const [questions, setQuestions] = useState();
   const [score, setScore] = useState(100);
-  const [exams, setExam] = useState();
-  const [topicList, setTopicList] = useState();
+  const [exams, setExam] = useStateRef();
+  const [topicList, setTopicList] = useStateRef();
+  const [topicNames, setTopicNames] = useStateRef();
   useEffect(() => {
     console.log("Cardfetch called...");
     fetchResult();
 
   }, []);
-  console.log("window location=",window.location.hostname);
+  // console.log("window location=",window.location.hostname);
   const url = "https://" + window.location.hostname + ":8443/OnlineExamPortal/control/fetch-user-report";
   const fetchResult = () => {
     fetch(url, {
@@ -38,8 +42,10 @@ const Cards = () => {
         console.log(fetchedData.userAttemptTopicMasterList);
         fetchedData.userAttemptTopicMasterList.map((oneTopic) => {
           topic.push(Number(oneTopic.userTopicPercentage))
+          // topicName.push(oneTopic.topicId)
         })
         setTopicList(topic);
+        setTopicNames(fetchedData.TopicNameList);
         fetchedData.examList.map((oneExam) => {
           var info = {
             title: oneExam.examId,
@@ -47,12 +53,11 @@ const Cards = () => {
               backGround: "linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
               boxShadow: "0px 10px 20px 0px #e0c6f5",
             },
-            barValue: Number(fetchedData.userAttemptMasterMap.score),
+            barValue: (Number(fetchedData.userAttemptMasterMap.score)/Number(oneExam.noOfQuestions))*100,
             value: oneExam.examName,
-            png: null,
             series: [
               {
-                name: "TopicPercentage",
+                name: "TopicPercentages",
                 data: topicList,
               },
             ],
@@ -66,8 +71,8 @@ const Cards = () => {
         console.error('Error fetching data:', error);
       });
   }
-  card=exams;
-  console.log("outCard-",card);
+  // card=exams;
+  console.log("outCard-",exams);
 
   
   const cards = {
@@ -88,7 +93,7 @@ const Cards = () => {
   }
   return (
     <div className="Cards">
-      {card.map((card, id) => {
+      {exams ? exams.map((card, id) => {
         return (
           <div key={id}>
             <Card
@@ -96,12 +101,12 @@ const Cards = () => {
               color={card.color}
               barValue={card.barValue}
               value={card.value}
-              png={card.png}
               series={card.series}
+              topic={topicNames}
             />
           </div>
         );
-      })}
+      }):console.log("exams empty")}
     </div>
   );
 };
