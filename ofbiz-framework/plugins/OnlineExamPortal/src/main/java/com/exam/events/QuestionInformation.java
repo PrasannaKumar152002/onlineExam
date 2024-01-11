@@ -59,7 +59,7 @@ public class QuestionInformation {
 			Debug.log("=======Logging in process started=========");
 
 			// Query UserExamMapping for the given examId
-			GenericValue userExamList = EntityQuery.use(delegator).from("UserExamMapping")
+			GenericValue userExam = EntityQuery.use(delegator).from("UserExamMapping")
 					.where(ConstantValues.EXAM_ID, examId, ConstantValues.PARTY_ID, partyId).queryOne();
 //
 //			// Check if userExamList is empty
@@ -74,8 +74,8 @@ public class QuestionInformation {
 			// Process each UserExamMapping
 
 			// Retrieve necessary information from UserExamMapping
-			String noOfAttempt = userExamList.getString(ConstantValues.USEREXAM_NO_OF_ATTEMPTS);
-			String allowedAttempt = userExamList.getString(ConstantValues.USEREXAM_ALLOWED_ATTEMPTS);
+			String noOfAttempt = userExam.getString(ConstantValues.USEREXAM_NO_OF_ATTEMPTS);
+			String allowedAttempt = userExam.getString(ConstantValues.USEREXAM_ALLOWED_ATTEMPTS);
 			Integer attemptCount = Integer.parseInt(noOfAttempt);
 			noOfAttempt = String.valueOf(attemptCount + 1);
 

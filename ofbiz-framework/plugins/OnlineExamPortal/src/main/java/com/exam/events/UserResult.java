@@ -1,6 +1,10 @@
 package com.exam.events;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,17 +47,16 @@ public class UserResult {
 		String performanceId = (String) request.getSession().getAttribute(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
 		String examId = (String) request.getAttribute(ConstantValues.EXAM_ID);
 
-		List<Map<String, Object>> answer = (List<Map<String, Object>>) request.getAttribute("selectionAnswerResult");
+		List<Map<String, Object>> answers = (List<Map<String, Object>>) request.getAttribute("selectionAnswerResult");
 
 		List<List<Map<String, Object>>> questions = (List<List<Map<String, Object>>>) request.getAttribute("questions");
 		System.out.println("user result///////////////////////////////////////////////////////////////////////////");
-		System.out.println("questions-" + questions + "answer-" + answer);
-		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0,
-				totalExamMarks = 0;
-		;
+		System.out.println("questions-" + questions + "answer-" + answers);
+		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0, totalExamMarks=0;
+				
+		
 		Map<String, Integer> topic = new HashMap<>();
-		// key===topicID===2===5
-		// VALUE===ANSWER ==3
+		
 		try {
 			List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")
 					.where(ConstantValues.EXAM_ID, examId).queryList();
@@ -61,7 +64,7 @@ public class UserResult {
 				String topicId = getTopic.getString(ConstantValues.TOPIC_ID);
 				topic.put(topicId, 0);
 			}
-			for (Map<String, Object> oneAnswer : answer) {
+			for (Map<String, Object> oneAnswer : answers) {
 
 				for (List<Map<String, Object>> questionList : questions) {
 					for (Map<String, Object> oneQuestion : questionList) {
@@ -111,25 +114,33 @@ public class UserResult {
 						}
 					}
 				}
+				
 			}
 			if (!UtilValidate.isEmpty(topic)) {
-				for (Entry<String, Integer> getTopic : topic.entrySet()) {
-					String topicId = getTopic.getKey();
+				for (Entry<String, Integer> getOneTopic : topic.entrySet()) {
+					String topicId = getOneTopic.getKey();
 
 					List<GenericValue> userAttemptTopicMaster = EntityQuery.use(delegator)
 							.from("UserAttemptTopicMaster").where(ConstantValues.TOPIC_ID, topicId).queryList();
 					for (GenericValue oneUserTopicInformation : userAttemptTopicMaster) {
-						Integer totalQuestionsInThisTopic = (Integer) oneUserTopicInformation
-								.get("totalQuestionsInThisTopic");
+						Float totalQuestionsInThisTopic = Float.valueOf(oneUserTopicInformation
+								.get("totalQuestionsInThisTopic").toString());
 
-						Integer correctQuestionsInThisTopic = getTopic.getValue();
+						Float correctQuestionsInThisTopic = Float.valueOf(getOneTopic.getValue());
 						String correctQuestionsTopic = String.valueOf(correctQuestionsInThisTopic);
-						Integer topicPassPercentage = (Integer) oneUserTopicInformation.get("topicPassPercentage");
-						Integer userTopicPercentage = ((correctQuestionsInThisTopic / totalQuestionsInThisTopic) * 100);
+						String topicPassPercentageBigDecimal = oneUserTopicInformation.get("topicPassPercentage")
+								.toString();
+						Integer topicPassPercentage = new BigDecimal(topicPassPercentageBigDecimal).intValue();
+						Float userTopicPercentageCalculate = (correctQuestionsInThisTopic
+								/ totalQuestionsInThisTopic) * 100;
+
 						String userPassedThisTopic = "N";
-						if (userTopicPercentage >= topicPassPercentage) {
+						if (userTopicPercentageCalculate >= topicPassPercentage) {
+
 							userPassedThisTopic = "Y";
+
 						}
+						BigDecimal userTopicPercentage = BigDecimal.valueOf(userTopicPercentageCalculate);
 						Map<String, Object> userAttemptTopicMasterResult = dispatcher.runSync(
 								"updateUserAttemptTopicMaster",
 								UtilMisc.toMap(ConstantValues.USER_TOPIC_PERFORMANCE_ID, performanceId,
@@ -161,16 +172,19 @@ public class UserResult {
 			for (GenericValue oneExamInfo : examMasterResult) {
 				int totalMarks = correctAnswerMark + wrongAnswerMark;
 				Integer userMarkPercentage = (correctAnswerMark / totalMarks) * 100;
-				Integer examPassPercentage = (Integer) oneExamInfo.get(ConstantValues.EXAM_PASS_PERCENTAGE);
+				String examPassPercentageString = oneExamInfo.get(ConstantValues.EXAM_PASS_PERCENTAGE).toString();
+				Integer examPassPercentageCalculate = new BigDecimal(examPassPercentageString).intValue();
 				String userPassed = "N";
-				if (userMarkPercentage > examPassPercentage) {
+				if (userMarkPercentage > examPassPercentageCalculate) {
 					userPassed = "Y";
 				}
-				String completedDate = LocalDateTime.now().toString();
-				Map<String, Object> userAttemptMasterResult = dispatcher.runSync("UserAttemptMaster",
+				LocalDateTime completedDate = LocalDateTime.now();
+				
+				//UtilMisc.toMap(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID,userAttemptMasterEntries.getString(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID) 
+				Map<String, Object> userAttemptMasterResult = dispatcher.runSync("updateUserAttemptMaster",
 						UtilMisc.toMap(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID, performanceId,
-								ConstantValues.USER_ATTEMPT_SCORE, ConstantValues.USER_ANSWER_SUBMITTED,
-								correctAnswerMark, ConstantValues.USER_ATTEMPT_COMPLETED_DATE, completedDate,
+								ConstantValues.USER_ATTEMPT_SCORE, correctAnswerMark,
+								ConstantValues.USER_ATTEMPT_COMPLETED_DATE, Timestamp.valueOf(completedDate),
 								ConstantValues.USER_ATTEMPT_TOTAL_CORRECT, correctAnswerCount,
 								ConstantValues.USER_ATTEMPT_TOTAL_WRONG, wrongAnswerCount,
 								ConstantValues.USER_ATTEMPT_PASSED, userPassed, EntityConstants.USER_LOGIN, userLogin));

@@ -143,7 +143,7 @@
 		<description>ExamInformation</description>
 		<attribute name="examList" type="List" mode="OUT"
 			optional="false"></attribute>
-			<attribute name="request" type="Object" mode="IN"
+		<attribute name="request" type="Object" mode="IN"
 			optional="false"></attribute>
 
 	</service>
@@ -202,8 +202,8 @@
 		<auto-attributes mode="IN" include="pk"
 			optional="false" />
 	</service>
-	
-	
+
+
 	<service name="updateUserAttemptAnswerMaster"
 		default-entity-name="UserAttemptAnswerMaster" engine="entity-auto"
 		invoke="update" auth="true">
@@ -213,7 +213,6 @@
 		<auto-attributes include="nonpk" mode="IN"
 			optional="true" />
 	</service>
-	
 	<service name="updateUserAttemptTopicMaster"
 		default-entity-name="UserAttemptTopicMaster" engine="entity-auto"
 		invoke="update" auth="true">
@@ -224,7 +223,7 @@
 			optional="true" />
 	</service>
 	<service name="updateUserAttemptMaster"
-		default-entity-name="updateUserAttemptMaster" engine="entity-auto"
+		default-entity-name="UserAttemptMaster" engine="entity-auto"
 		invoke="update" auth="true">
 		<description>Question Form</description>
 		<auto-attributes include="pk" mode="IN"
