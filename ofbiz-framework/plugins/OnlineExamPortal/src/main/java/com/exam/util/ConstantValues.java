@@ -6,6 +6,8 @@ public class ConstantValues {
 	public static final String ENUM_SEQUENCE_ID = "sequenceId";
 	public static final String ENUM_TYPE_ID = "enumTypeId";
 	public static final String ENUM_DESCRIPTION = "description";
+	public static final String THRESHOLD_DATE="thresholdDate";
+	public static final String FROM_DATE="fromDate";
 
 //	TopicMaster Entity
 	public static final String TOPIC_ID = "topicId";
@@ -44,9 +46,9 @@ public class ConstantValues {
 // ExamTopicMapping Entity
 	public static final String EXAMTOPIC_EXAM_ID = "examId";
 	public static final String EXAMTOPIC_TOPIC_ID = "topicId";
-	public static final String EXAMTOPIC_PERCENTAGE = "percentage";
-	public static final String EXAMTOPIC_TOPIC_PASS_PERCENTAGE = "topicPassPercentage";
-	public static final String EXAMTOPIC_QUES_PER_EXAM = "questionsPerExam";
+	public static final String EXAM_TOPIC_PERCENTAGE = "percentage";
+	public static final String EXAM_TOPIC_PASS_PERCENTAGE = "topicPassPercentage";
+	public static final String TOPIC_QUES_PER_EXAM = "questionsPerExam";
 
 // UserAttemptMaster Entity
 	public static final String USER_ATTEMPT_PERFORMANCE_ID = "performanceId";

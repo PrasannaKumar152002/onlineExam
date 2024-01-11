@@ -126,8 +126,8 @@ public class QuestionInformation {
 			for (GenericValue oneExamTopic : examTopicMapping) {
 				// Retrieve necessary information from ExamTopicMapping
 				String topicId = oneExamTopic.getString(ConstantValues.TOPIC_ID);
-				String topicPassPercentage = oneExamTopic.getString(ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE);
-				String questionsPerExam = oneExamTopic.getString(ConstantValues.EXAMTOPIC_QUES_PER_EXAM);
+				String topicPassPercentage = oneExamTopic.getString(ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE);
+				String questionsPerExam = oneExamTopic.getString(ConstantValues.TOPIC_QUES_PER_EXAM);
 
 				// Validate topic information
 				if (UtilValidate.isEmpty(topicId) || UtilValidate.isEmpty(topicPassPercentage)
@@ -142,7 +142,7 @@ public class QuestionInformation {
 				// Call service to create a UserAttemptTopicMaster record
 				Map<String, Object> userAttemptTopicMasterResult = dispatcher.runSync("createUserAttemptTopicMaster",
 						UtilMisc.toMap(ConstantValues.TOPIC_ID, topicId, ConstantValues.USER_ANSWER_PERFORMANCE_ID,
-								performanceId, ConstantValues.EXAMTOPIC_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
+								performanceId, ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE, topicPassPercentage,
 								ConstantValues.USER_TOPIC_TOTAL_QUES, questionsPerExam, EntityConstants.USER_LOGIN,
 								userLogin));
 

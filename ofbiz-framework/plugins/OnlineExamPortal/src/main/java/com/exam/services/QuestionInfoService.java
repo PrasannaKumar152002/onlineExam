@@ -69,7 +69,7 @@ public class QuestionInfoService {
 				}
 
 				// Get the number of questions to be selected for the current topic
-				Integer questionsPerExam = Integer.parseInt(getTopic.getString(ConstantValues.EXAMTOPIC_QUES_PER_EXAM));
+				Integer questionsPerExam = Integer.parseInt(getTopic.getString(ConstantValues.TOPIC_QUES_PER_EXAM));
 
 				// Validate questionsPerExam
 				if (UtilValidate.isEmpty(questionsPerExam)) {

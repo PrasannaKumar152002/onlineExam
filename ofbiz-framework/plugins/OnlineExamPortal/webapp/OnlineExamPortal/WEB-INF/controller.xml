@@ -73,7 +73,7 @@
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	
+
 	<request-map uri="fetch-one-topic">
 		<security https="true" auth="false" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
@@ -132,6 +132,15 @@
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
+	
+	<request-map uri="calculate-percentage">
+		<security https="true" auth="true" />
+		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
+			invoke="calculatePercentage" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
 	<request-map uri="create-topic-for-exam">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
@@ -184,14 +193,14 @@
 		<response name="error" type="request" value="json" />
 	</request-map>
 
-	<request-map uri="update-user-exam-mapping">
+	<request-map uri="questions-per-topic">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="updateUserForExam"></event>
+			invoke="questionsPerTopic"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-	
+
 	<request-map uri="exam-info">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.ExamInformation"
@@ -221,6 +230,14 @@
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserResult"
 			invoke="getUserResult" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
+	<request-map uri="fetch-user-report">
+		<security https="true" auth="true" />
+		<event type="java" path="com.exam.events.ReportEvent"
+			invoke="fetchResults" />
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

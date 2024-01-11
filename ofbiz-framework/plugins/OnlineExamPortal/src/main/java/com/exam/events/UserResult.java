@@ -69,7 +69,7 @@ public class UserResult {
 				for (List<Map<String, Object>> questionList : questions) {
 					for (Map<String, Object> oneQuestion : questionList) {
 
-						if (oneAnswer.get("questionId").toString().equals(oneQuestion.get("questionId").toString())) {
+						if (oneAnswer.get("questionId").toString().trim().equalsIgnoreCase(oneQuestion.get("questionId").toString().trim())) {
 							Integer questionIdInt = (Integer) oneAnswer.get("questionId");
 							String questionId = String.valueOf(questionIdInt);
 							String selectedAnswer = oneAnswer.get("answer").toString();
@@ -104,6 +104,7 @@ public class UserResult {
 										+ Integer.parseInt(oneQuestion.get("answerValue").toString());
 								topic.put(currentQuestionTopicId, topicMark);
 							} else {
+								System.out.println(oneQuestion.get("negativeMarkValue"));
 								wrongAnswerCount += 1;
 								wrongAnswerMark += Integer.parseInt(oneQuestion.get("negativeMarkValue").toString());
 								int topicMark = topic.get(currentQuestionTopicId)
@@ -123,16 +124,16 @@ public class UserResult {
 					List<GenericValue> userAttemptTopicMaster = EntityQuery.use(delegator)
 							.from("UserAttemptTopicMaster").where(ConstantValues.TOPIC_ID, topicId).queryList();
 					for (GenericValue oneUserTopicInformation : userAttemptTopicMaster) {
-						Float totalQuestionsInThisTopic = Float.valueOf(oneUserTopicInformation
-								.get("totalQuestionsInThisTopic").toString());
+						Float totalQuestionsInThisTopic = Float
+								.valueOf(oneUserTopicInformation.get("totalQuestionsInThisTopic").toString());
 
 						Float correctQuestionsInThisTopic = Float.valueOf(getOneTopic.getValue());
 						String correctQuestionsTopic = String.valueOf(correctQuestionsInThisTopic);
 						String topicPassPercentageBigDecimal = oneUserTopicInformation.get("topicPassPercentage")
 								.toString();
 						Integer topicPassPercentage = new BigDecimal(topicPassPercentageBigDecimal).intValue();
-						Float userTopicPercentageCalculate = (correctQuestionsInThisTopic
-								/ totalQuestionsInThisTopic) * 100;
+						Float userTopicPercentageCalculate = (correctQuestionsInThisTopic / totalQuestionsInThisTopic)
+								* 100;
 
 						String userPassedThisTopic = "N";
 						if (userTopicPercentageCalculate >= topicPassPercentage) {
@@ -166,43 +167,48 @@ public class UserResult {
 
 				}
 			}
-			List<GenericValue> examMasterResult = EntityQuery.use(delegator).from("ExamMaster")
-					.where(ConstantValues.EXAM_ID, examId).queryList();
+			GenericValue oneExamInfo = EntityQuery.use(delegator).from("ExamMaster")
+					.where(ConstantValues.EXAM_ID, examId).queryOne();
+			if (UtilValidate.isEmpty(oneExamInfo)) {
+				request.setAttribute("_ERROR_MESSAGE_", "No examInfo is empty");
+				return "error";
+			}
+			int totalMarks = correctAnswerMark + wrongAnswerMark;
+			Integer userMarkPercentage = (correctAnswerMark / totalMarks) * 100;
+			String examPassPercentageString = oneExamInfo.get(ConstantValues.EXAM_PASS_PERCENTAGE).toString();
+			Integer examPassPercentageCalculate = new BigDecimal(examPassPercentageString).intValue();
+			String userPassed = "N";
+			if (userMarkPercentage > examPassPercentageCalculate) {
+				userPassed = "Y";
+			}
+			LocalDateTime completedDate = LocalDateTime.now();
 
-			for (GenericValue oneExamInfo : examMasterResult) {
-				int totalMarks = correctAnswerMark + wrongAnswerMark;
-				Integer userMarkPercentage = (correctAnswerMark / totalMarks) * 100;
-				String examPassPercentageString = oneExamInfo.get(ConstantValues.EXAM_PASS_PERCENTAGE).toString();
-				Integer examPassPercentageCalculate = new BigDecimal(examPassPercentageString).intValue();
-				String userPassed = "N";
-				if (userMarkPercentage > examPassPercentageCalculate) {
-					userPassed = "Y";
-				}
-				LocalDateTime completedDate = LocalDateTime.now();
-				
-				//UtilMisc.toMap(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID,userAttemptMasterEntries.getString(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID) 
-				Map<String, Object> userAttemptMasterResult = dispatcher.runSync("updateUserAttemptMaster",
-						UtilMisc.toMap(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID, performanceId,
-								ConstantValues.USER_ATTEMPT_SCORE, correctAnswerMark,
-								ConstantValues.USER_ATTEMPT_COMPLETED_DATE, Timestamp.valueOf(completedDate),
-								ConstantValues.USER_ATTEMPT_TOTAL_CORRECT, correctAnswerCount,
-								ConstantValues.USER_ATTEMPT_TOTAL_WRONG, wrongAnswerCount,
-								ConstantValues.USER_ATTEMPT_PASSED, userPassed, EntityConstants.USER_LOGIN, userLogin));
+			Map<String, Object> userAttemptMasterResult = dispatcher.runSync("updateUserAttemptMaster",
+					UtilMisc.toMap(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID, performanceId,
+							ConstantValues.USER_ATTEMPT_SCORE, correctAnswerMark,
+							ConstantValues.USER_ATTEMPT_COMPLETED_DATE, Timestamp.valueOf(completedDate),
+							ConstantValues.USER_ATTEMPT_TOTAL_CORRECT, correctAnswerCount,
+							ConstantValues.USER_ATTEMPT_TOTAL_WRONG, wrongAnswerCount,
+							ConstantValues.USER_ATTEMPT_PASSED, userPassed, EntityConstants.USER_LOGIN, userLogin));
 
-				if (ServiceUtil.isError(userAttemptMasterResult)) {
-					String errorMessage = ServiceUtil.getErrorMessage(userAttemptMasterResult);
-					request.setAttribute("ERROR_MESSAGE", errorMessage);
-					Debug.logError(errorMessage, MODULE);
-					return "error";
-				} else {
-					// Handle success scenario
-					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-							UtilHttp.getLocale(request));
-					ServiceUtil.getMessages(request, userAttemptMasterResult, successMessage);
-
-				}
+			if (ServiceUtil.isError(userAttemptMasterResult)) {
+				String errorMessage = ServiceUtil.getErrorMessage(userAttemptMasterResult);
+				request.setAttribute("ERROR_MESSAGE", errorMessage);
+				Debug.logError(errorMessage, MODULE);
+				return "error";
+			} else {
+				// Handle success scenario
+				String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+						UtilHttp.getLocale(request));
+				ServiceUtil.getMessages(request, userAttemptMasterResult, successMessage);
 
 			}
+
+			Map<String, Object> updateResult = dispatcher.runSync("UpdateExamMaster",
+					UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.FROM_DATE,
+							Timestamp.valueOf(oneExamInfo.getString(ConstantValues.EXAM_CREATION_DATE)),
+							ConstantValues.THRESHOLD_DATE, Timestamp.valueOf(LocalDateTime.now()),
+							EntityConstants.USER_LOGIN, userLogin));
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

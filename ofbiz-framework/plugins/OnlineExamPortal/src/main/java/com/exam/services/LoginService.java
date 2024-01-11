@@ -16,6 +16,10 @@ import org.apache.ofbiz.entity.util.EntityUtilProperties;
 import org.apache.ofbiz.service.DispatchContext;
 import org.apache.ofbiz.service.ServiceUtil;
 import org.apache.ofbiz.webapp.control.LoginWorker;
+
+import com.exam.util.ConstantValues;
+import com.exam.util.EntityConstants;
+
 import org.apache.ofbiz.entity.model.ModelField;
 import org.apache.ofbiz.common.login.LoginServices;
 
@@ -29,7 +33,7 @@ public class LoginService {
 	
 		String userLoginId = (String) context.get("username");
 		String pass = (String) context.get("password");
-		Delegator delegator = (Delegator) context.get("delegator");
+		Delegator delegator = (Delegator) context.get(EntityConstants.DELEGATOR);
 		try {
 			GenericValue userLogin = EntityQuery.use(delegator).from("UserLogin").where("userLoginId", userLoginId).queryOne();
 			if (userLogin != null) {

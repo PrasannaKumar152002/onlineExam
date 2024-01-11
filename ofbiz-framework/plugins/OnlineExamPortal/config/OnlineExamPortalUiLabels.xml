@@ -58,4 +58,16 @@ under the License.
      <property key="EmptyVariableMessage">
         <value xml:lang="en">Is Empty</value>
     </property>
+    <property key="ExamForTopicSuccessMessage">
+    <value xml:lang="en">Topic mapped for exam successfully</value>
+    </property>
+    <property key="ExamForTopicWarningMessage">
+        <value xml:lang="en">Exceeding actual question count...</value>
+    </property>
+    <property key="PercentageWarningMessage">
+        <value xml:lang="en">Exceeding actual percentage...</value>
+    </property>
+    <property key="PercentageSuccessMessage">
+        <value xml:lang="en">Covered percentage...</value>
+    </property>
 </resource>

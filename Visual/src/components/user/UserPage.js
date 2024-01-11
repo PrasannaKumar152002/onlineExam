@@ -9,6 +9,7 @@ import {
 import Exam from '../../page/Exam';
 import Header from '../user/Header';
 import { createContext, useState } from 'react';
+import MainDash from '../MainDash/MainDash';
 export const AppContext=createContext(null);
 
 function UserPage() {
@@ -24,6 +25,7 @@ function UserPage() {
                         <Route path="/report" element={<Report />} />
                         <Route path="/logout" element={<Logout />} />
                         <Route path="/exam" element={<Exam />} />
+                        <Route path='/resultdash' element={<MainDash />}/>
                     </Routes>
                 </div>
             </Router>

@@ -5,12 +5,17 @@ import QuestionForm from "../../Dashboard/Form/QuestionForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
+
+
+
 function QuestionModalSample(props) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  // alert(props.questionType);
+  console.log("&&&&&&&&&&&&&&&&&& " + props.changedOptionC);
+  console.log(props.questionDetail);
   const submitHandler = (e) => {
     e.preventDefault();
     const data_map = {
@@ -27,129 +32,43 @@ function QuestionModalSample(props) {
       numAnswers: props.changednumAnswers
         ? props.changednumAnswers
         : props.numAnswers.toString(),
-      questionType: props.quesType ? props.quesType : props.questionType,
+      questionType: props.questionType,
       difficultyLevel: props.changeddifficultyLevel
         ? props.changeddifficultyLevel
         : props.difficultyLevel.toString(),
       answerValue: props.changedanswerValue
         ? props.changedanswerValue
         : props.answerValue.toString(),
-      topicId: props.topicChange ? props.topicChange : props.topicId,
+      topicId: props.topicChange,
       negativeMarkValue: props.changednegativeMarkValue
         ? props.changednegativeMarkValue
         : props.negativeMarkValue.toString(),
     };
     console.log(data_map);
-    console.log("Question:" + data_map.questionType);
-    if (data_map.questionDetail === "") {
-      document.getElementById("questiondetailerr").style.display = "block";
-    } else {
-      document.getElementById("questiondetailerr").style.display = "none";
-    }
-    if (data_map.optionA === "") {
-      document.getElementById("optionaerr").style.display = "block";
-    } else {
-      document.getElementById("optionaerr").style.display = "none";
-    }
-    if (data_map.optionB === "") {
-      document.getElementById("optionberr").style.display = "block";
-    } else {
-      document.getElementById("optionberr").style.display = "none";
-    }
-    if (data_map.optionC === "") {
-      document.getElementById("optioncerr").style.display = "block";
-    } else {
-      document.getElementById("optioncerr").style.display = "none";
-    }
-    if (data_map.optionD === "") {
-      document.getElementById("optionderr").style.display = "block";
-    } else {
-      document.getElementById("optionderr").style.display = "none";
-    }
-    if (data_map.optionE === "") {
-      document.getElementById("optioneerr").style.display = "block";
-    } else {
-      document.getElementById("optioneerr").style.display = "none";
-    }
-    if (data_map.answer === "") {
-      document.getElementById("answererr").style.display = "block";
-    } else {
-      document.getElementById("answererr").style.display = "none";
-    }
-    if (data_map.numAnswers === "") {
-      document.getElementById("numanserr").style.display = "block";
-    } else {
-      document.getElementById("numanserr").style.display = "none";
-    }
-    if (data_map.questionType === "") {
-      document.getElementById("questiontypeerr").style.display = "block";
-    } else {
-      document.getElementById("questiontypeerr").style.display = "none";
-    }
-    if (data_map.difficultyLevel === "") {
-      document.getElementById("difficultylevelerr").style.display = "block";
-    } else {
-      document.getElementById("difficultylevelerr").style.display = "none";
-    }
-    if (data_map.answerValue === "") {
-      document.getElementById("answervalueerr").style.display = "block";
-    } else {
-      document.getElementById("answervalueerr").style.display = "none";
-    }
-    if (data_map.topicId === "") {
-      document.getElementById("topiciderr").style.display = "block";
-    } else {
-      document.getElementById("topiciderr").style.display = "none";
-    }
-    if (data_map.negativeMarkValue === "") {
-      document.getElementById("negativemarkvalueeerr").style.display = "block";
-    } else {
-      document.getElementById("negativemarkvalueeerr").style.display = "none";
-    }
-    if (
-      !(
-        data_map.questionDetail === "" ||
-        data_map.answer === "" ||
-        data_map.numAnswers === "" ||
-        data_map.questionType === "" ||
-        data_map.difficultyLevel === "" ||
-        data_map.answerValue === "" ||
-        data_map.topicId === "" ||
-        data_map.negativeMarkValue === ""
-      )
-    ) {
-      if (data_map.optionA === "") {
-        data_map.optionA = "null";
-      }
-      if (data_map.optionB === "") {
-        data_map.optionB = "null";
-      }
-      if (data_map.optionC === "") {
-        data_map.optionC = "null";
-      }
-      if (data_map.optionD === "") {
-        data_map.optionD = "null";
-      }
-      if (data_map.optionE === "") {
-        data_map.optionE = "null";
-      }
-      // FETCH
-      fetch("https://"+window.location.hostname + ":8443/OnlineExamPortal/control/update-question", {
+
+    // FETCH
+    fetch(
+      "https://" +
+        window.location.hostname +
+        ":8443/OnlineExamPortal/control/update-question",
+      {
         method: "PUT",
         credentials: "include",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify(data_map),
+      }
+    )
+      .then((response) => {
+        return response.json();
       })
-        .then((response) => {
-          return response.json(); 
-        })
-        .then((fetch_data) => {
-          console.log(fetch_data);
-          props.fetchQuestions();
-        });
-    }
+      .then((fetch_data) => {
+        console.log(fetch_data);
+        props.fetchQuestions();
+      });
+    // props.setQuesType("CHOOSE ONE");
+    // props.setTopicChange("CHOOSE ONE");
     setShow(!show);
   };
 
@@ -171,17 +90,19 @@ function QuestionModalSample(props) {
         </Modal.Header>
         <Modal.Body>
           <QuestionForm
+          display="none"
+          setQuesType={props.setQuesType}
             buttonName={props.buttonName}
             handleCloseQuestion={handleClose}
             submitHandler={submitHandler}
             handleSelectQuesTypeChange={props.handleSelectQuesTypeChange}
-            quesType={props.quesType}
+            // quesType={props.quesType}//question
             setEnum={props.setEnum}
             handleSelectTopicChange={props.handleSelectTopicChange}
             topicChange={props.topicChange}
             topics={props.topics}
             questionDetail={props.questionDetail}
-            topicId={props.topicId}
+            // topicId={props.topicId}
             questionType={props.questionType}
             optionA={props.optionA}
             optionB={props.optionB}
@@ -193,6 +114,7 @@ function QuestionModalSample(props) {
             difficultyLevel={props.difficultyLevel}
             answerValue={props.answerValue}
             negativeMarkValue={props.negativeMarkValue}
+            changedquestionDetail={props.changedquestionDetail}
             changedoptionA={props.changedoptionA}
             changedoptionB={props.changedoptionB}
             changedoptionC={props.changedoptionC}
