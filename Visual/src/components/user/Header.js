@@ -25,7 +25,7 @@ function Header() {
               <i className='bi bi-speedometer2'></i> Dashboard
             </Link>
 
-            <Link to="/report" className='nav-link'>
+            <Link to="/resultdash" className='nav-link'>
               <i className='bi bi-chat-square-text'></i> Report
             </Link>
 
