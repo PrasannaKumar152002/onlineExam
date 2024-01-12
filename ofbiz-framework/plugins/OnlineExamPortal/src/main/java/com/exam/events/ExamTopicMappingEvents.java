@@ -39,6 +39,44 @@ public class ExamTopicMappingEvents {
 	public static final String MODULE = ExamTopicMappingEvents.class.getName();
 	private static final String RES_ERR = "OnlineExamPortalUiLabels";
 
+	public static String getSelectedExams(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> combinedMap = UtilHttp.getCombinedMap(request);
+
+		Delegator delegator = (Delegator) combinedMap.get(EntityConstants.DELEGATOR);
+		List<Map<String, Object>> viewSelectedTopicsList = new ArrayList<Map<String, Object>>();
+		String examId = (String) combinedMap.get(ConstantValues.EXAM_ID);
+		List<GenericValue> examForTopics = null;
+		try {
+			examForTopics = EntityQuery.use(delegator).from("ExamTopicMapping").where(ConstantValues.EXAM_ID, examId)
+					.queryList();
+		} catch (GenericEntityException e) {
+			e.printStackTrace();
+		}
+		Map<String, Object> selectedTopicsInfo = new HashMap<>();
+		Debug.log("" + examForTopics);
+		if (UtilValidate.isNotEmpty(examForTopics)) {
+			for (GenericValue topicPerExam : examForTopics) {
+				Map<String, Object> mappedTopics = new HashMap<String, Object>();
+				String topicName = "";
+				try {
+					topicName = EntityQuery.use(delegator).from("TopicMaster")
+							.where(ConstantValues.TOPIC_ID, topicPerExam.get(ConstantValues.TOPIC_ID)).queryOne()
+							.getString(ConstantValues.TOPIC_NAME);
+				} catch (GenericEntityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				mappedTopics.put(ConstantValues.TOPIC_ID, topicPerExam.getString(ConstantValues.TOPIC_ID));
+				mappedTopics.put(ConstantValues.TOPIC_NAME, topicName);
+				viewSelectedTopicsList.add(mappedTopics);
+			}
+		}
+		selectedTopicsInfo.put("SelectedTopics", viewSelectedTopicsList);
+		request.setAttribute("SelectedTopicsInfo", selectedTopicsInfo);
+		request.setAttribute("examId", examId);
+		return "success";
+	}
+
 	public static String calculatePercentage(HttpServletRequest request, HttpServletResponse response)
 			throws GenericEntityException {
 
@@ -46,6 +84,7 @@ public class ExamTopicMappingEvents {
 
 		Delegator delegator = (Delegator) combinedMap.get(EntityConstants.DELEGATOR);
 
+		List<Map<String, Object>> viewSelectedTopicsList = new ArrayList<Map<String, Object>>();
 		String examId = (String) combinedMap.get(ConstantValues.EXAM_ID);
 		String percentage = (String) combinedMap.get(ConstantValues.EXAM_TOPIC_PERCENTAGE);
 		Integer percentageForExam = 0;
@@ -65,39 +104,55 @@ public class ExamTopicMappingEvents {
 
 		List<GenericValue> examForTopics = EntityQuery.use(delegator).from("ExamTopicMapping")
 				.where(ConstantValues.EXAM_ID, examId).queryList();
+		Map<String, Object> selectedTopicsInfo = new HashMap<>();
 		Debug.log("" + examForTopics);
-		if (UtilValidate.isNotEmpty(examForTopics)) {
+//		if (UtilValidate.isNotEmpty(examForTopics)) {
 			for (GenericValue topicPerExam : examForTopics) {
+				Map<String, Object> mappedTopics = new HashMap<String, Object>();
+				String topicName = EntityQuery.use(delegator).from("TopicMaster")
+						.where(ConstantValues.TOPIC_ID, topicPerExam.get(ConstantValues.TOPIC_ID)).queryOne()
+						.getString(ConstantValues.TOPIC_NAME);
 				String percentageCount = topicPerExam.getString(ConstantValues.EXAM_TOPIC_PERCENTAGE);
 				String questionsCount = topicPerExam.getString(ConstantValues.TOPIC_QUES_PER_EXAM);
 				Debug.log("--------" + percentageCount);
 				questionsForExam = questionsForExam + Integer.parseInt(questionsCount);
 				percentageForExam = percentageForExam + new BigDecimal(percentageCount).intValue();
 				updatedPercentageForExam = updatedPercentageForExam + new BigDecimal(percentageCount).intValue();
+				mappedTopics.put(ConstantValues.TOPIC_ID, topicPerExam.getString(ConstantValues.TOPIC_ID));
+				mappedTopics.put(ConstantValues.TOPIC_NAME, topicName);
+				viewSelectedTopicsList.add(mappedTopics);
 			}
 			if (updatedPercentageForExam > 100) {
 				String warningMessage = UtilProperties.getMessage(RES_ERR, "PercentageWarningMessage",
 						UtilHttp.getLocale(request));
 				percentageForExam = 100 - percentageForExam;
-				Debug.log(warningMessage + "" + percentageForExam);
+				selectedTopicsInfo.put("SelectedTopics", viewSelectedTopicsList);
+				selectedTopicsInfo.put(ConstantValues.EXAM_ID, examId);
+				request.setAttribute("SelectedTopicsInfo", selectedTopicsInfo);
 				request.setAttribute("message", warningMessage);
 				request.setAttribute("percentage", percentageForExam);
+				Debug.log("" + selectedTopicsInfo);
 			} else {
 				String successMessage = UtilProperties.getMessage(RES_ERR, "PercentageSuccessMessage",
 						UtilHttp.getLocale(request));
 				Debug.log(successMessage + "" + updatedPercentageForExam);
 				request.setAttribute("message", successMessage);
 				request.setAttribute("percentage", updatedPercentageForExam);
+				selectedTopicsInfo.put("SelectedTopics", viewSelectedTopicsList);
+				selectedTopicsInfo.put(ConstantValues.EXAM_ID, examId);
+				request.setAttribute("SelectedTopicsInfo", selectedTopicsInfo);
+				Debug.log("" + selectedTopicsInfo);
 			}
 			updatedQuestions = Integer.parseInt(examQues) - questionsForExam;
+			Debug.log("-----------------------Updated Questions: " + updatedQuestions);
 			request.setAttribute("questions", updatedQuestions);
-		} else {
-			request.setAttribute("message", "No previous records found for this examID.");
-			percentageForExam = Integer.parseInt(percentage);
-			updatedQuestions = Integer.parseInt(examQues) - Integer.parseInt(questionsPerTopic);
-			request.setAttribute("percentage", percentageForExam);
-			request.setAttribute("questions", updatedQuestions);
-		}
+//		} else {
+//			request.setAttribute("message", "No previous records found for this examID.");
+//			percentageForExam = Integer.parseInt(percentage);
+//			updatedQuestions = Integer.parseInt(examQues) - Integer.parseInt(questionsPerTopic);
+//			request.setAttribute("percentage", percentageForExam);
+//			request.setAttribute("questions", updatedQuestions);
+//		}
 
 		request.setAttribute("topicQuestionsPerExam", topicQuestionsPerExam);
 		return "success";
@@ -195,17 +250,35 @@ public class ExamTopicMappingEvents {
 			List<GenericValue> listOfExamTopicMapData = EntityQuery.use(delegator).from("ExamTopicMapping").queryList();
 			if (UtilValidate.isNotEmpty(listOfExamTopicMapData)) {
 				for (GenericValue topicOfExam : listOfExamTopicMapData) {
-					Map<String, Object> topicMapList = new HashMap<String, Object>();
-					topicMapList.put(ConstantValues.EXAM_ID, topicOfExam.get(ConstantValues.EXAM_ID));
-					topicMapList.put(ConstantValues.TOPIC_ID, topicOfExam.get(ConstantValues.TOPIC_ID));
+					Map<String, Object> topicToMap = new HashMap<String, Object>();
+					try {
+						String examName = EntityQuery.use(delegator).from("ExamMaster")
+								.where(ConstantValues.EXAM_ID, topicOfExam.get(ConstantValues.EXAM_ID)).queryOne()
+								.getString(ConstantValues.EXAM_NAME);
+						String topicName = EntityQuery.use(delegator).from("TopicMaster")
+								.where(ConstantValues.TOPIC_ID, topicOfExam.get(ConstantValues.TOPIC_ID)).queryOne()
+								.getString(ConstantValues.TOPIC_NAME);
+						if (UtilValidate.isEmpty(examName)) {
+							Debug.logInfo("ExamName: ", examName);
+							Debug.logInfo("TopicName: ", topicName);
+						} else {
+							Debug.logInfo("ExamName: ", examName);
+							Debug.logInfo("TopicName: ", topicName);
+							topicToMap.put(ConstantValues.EXAM_ID, examName);
+							topicToMap.put(ConstantValues.TOPIC_ID, topicName);
 
-					topicMapList.put(ConstantValues.EXAM_TOPIC_PERCENTAGE,
+						}
+					} catch (Exception e) {
+						Debug.logError(e, MODULE);
+					}
+					topicToMap.put(ConstantValues.EXAM_TOPIC_PERCENTAGE,
 							topicOfExam.get(ConstantValues.EXAM_TOPIC_PERCENTAGE));
-					topicMapList.put(ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE,
+					topicToMap.put(ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE,
 							topicOfExam.get(ConstantValues.EXAM_TOPIC_PASS_PERCENTAGE));
-					topicMapList.put(ConstantValues.TOPIC_QUES_PER_EXAM,
+					topicToMap.put(ConstantValues.TOPIC_QUES_PER_EXAM,
 							topicOfExam.get(ConstantValues.TOPIC_QUES_PER_EXAM));
-					viewExamTopicMapList.add(topicMapList);
+					viewExamTopicMapList.add(topicToMap);
+
 				}
 				Map<String, Object> examforTopicsInfo = new HashMap<>();
 				examforTopicsInfo.put("ExamTopicList", viewExamTopicMapList);
