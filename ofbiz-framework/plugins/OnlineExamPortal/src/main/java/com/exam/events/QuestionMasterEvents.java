@@ -134,8 +134,9 @@ public class QuestionMasterEvents {
 							question.get(ConstantValues.QUES_DIFFICULTY_LEVEL));
 					questionList.put(ConstantValues.QUES_ANS_VALUE,
 							question.get(ConstantValues.QUES_ANS_VALUE));
+					String topicName = EntityQuery.use(delegator).from("TopicMaster").where(ConstantValues.TOPIC_ID, question.get(ConstantValues.TOPIC_ID)).queryOne().getString(ConstantValues.TOPIC_NAME);
 					questionList.put(ConstantValues.QUES_TOPIC_ID,
-							question.get(ConstantValues.QUES_TOPIC_ID));
+							topicName);
 					questionList.put(ConstantValues.QUES_NEG_MARK,
 							question.get(ConstantValues.QUES_NEG_MARK));
 					viewQuestionList.add(questionList);

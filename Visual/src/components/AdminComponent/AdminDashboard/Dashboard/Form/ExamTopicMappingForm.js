@@ -23,11 +23,11 @@ export default function ExamTopicMappingForm(props) {
               </label>
               <div className="col col-sm-7">
                 <Combobox
-                  name="examIDerr"
+                  name="examID"
                   data={props.exams}
                   dataKey="examId"
                   textField="examName"
-                 value={props.examID}
+                  value={props.examID}
                   onChange={(value) => props.handleSelectExamChange(value)}
                 />
                 <div className="invalid-feedback mx-sm-5" id="examIDerr">
@@ -45,7 +45,7 @@ export default function ExamTopicMappingForm(props) {
               </label>
               <div className="col col-sm-7">
                 <Combobox
-                  data={props.topics}
+                  data={props.selectedTopics}
                   dataKey="topicId"
                   textField="topicName"
                   value={props.topicChange}
@@ -77,12 +77,13 @@ export default function ExamTopicMappingForm(props) {
                 </div>
               </div>
               <input
-              className="col-3 ms-5"
+                className="col-3 ms-5"
                 type="button"
                 value="CALCULATE"
                 onClick={props.calculatePercentage}
                 style={{
-                  fontWeight: "bolder",color:"white",
+                  fontWeight: "bolder",
+                  color: "white",
                   background:
                     "radial-gradient(circle at 48.7% 44.3%, rgb(30, 144, 231) 0%, rgb(56, 113, 209) 22.9%, rgb(38, 76, 140) 76.7%, rgb(31, 63, 116) 100.2%)",
                 }}
@@ -129,7 +130,8 @@ export default function ExamTopicMappingForm(props) {
                   // onChange={(value) => props.handleSelectCountChange(value)}
                 /> */}
                 <label className="form-control mx-sm-1">
-                  {props.questionsPerExam}</label>
+                  {props.questionsPerExam}
+                </label>
                 <div
                   className="invalid-feedback mx-sm-5"
                   id="questionsperexamerr"
@@ -141,10 +143,44 @@ export default function ExamTopicMappingForm(props) {
           </div>
         </div>
         <div className="container">
-          <h5 style={{color:"red"}} className="text-center">{props.message}</h5>
-          <br/>
-          <h4 style={{color:"blue", fontWeight:"bolder"}} className="text-center">{props.message.startsWith("N") ?<span style={{color:"black"}}>CoveredPercentage: {props.showPercentage}</span>:props.message.startsWith("Exceeding")?<span style={{color:"black"}}>{props.message} Remaining Percentage: {props.showPercentage}<span style={{color:"navy"}}>%</span><span style={{color:"navy"}}>%</span></span>:<span style={{color:"black"}}></span>}</h4>
-          <h4 className="text-center">{props.questions===0 || props.questions===undefined?"No remaining questions":props.message.startsWith("Exceeding") || props.message.startsWith("Covered")?"":props.questions?"Remaining Questions:"+ props.questions:""}</h4>
+          {/* <h5 style={{ color: "red" }} className="text-center">
+            {props.message}
+          </h5>
+          <br />
+          <h1 className="hidden">{props.message === undefined ? "" : ""}</h1> */}
+          <h4
+            style={{ color: "blue", fontWeight: "bolder" }}
+            className="text-center"
+          >
+            {props.message.startsWith("N") ? (
+              <span style={{ color: "black" }}>
+                CoveredPercentage: {props.showPercentage}
+                <span style={{ color: "navy" }}>%</span>
+              </span>
+            ) : props.message.startsWith("Exceeding") ? (
+              <span style={{ color: "black" }}>
+                {props.message} Remaining Percentage: {props.showPercentage}
+                <span style={{ color: "navy" }}></span>
+                <span style={{ color: "navy" }}>%</span>
+              </span>
+            ) : (
+              <span style={{ color: "black" }}>
+                Covered Percentage: {props.showPercentage}
+                <span style={{ color: "navy" }}>%</span>
+                <h4>{props.questions-props.questionsPerExam}</h4>
+              </span>
+            )}
+          </h4>
+          <h4 className="text-center">
+            {props.questions === 0 || props.questions === undefined
+              ? "No remaining questions"
+              : props.message.startsWith("Exceeding") ||
+                props.message.startsWith("Covered")
+              ? ""
+              : props.questions
+              ? "Remaining Questions:" + props.questions
+              : ""}
+          </h4>
           <div className="row">
             <div
               className="mx-auto d-flex justify-content-center p-5"
