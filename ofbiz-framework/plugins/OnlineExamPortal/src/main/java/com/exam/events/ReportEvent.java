@@ -40,12 +40,8 @@ public class ReportEvent {
 				request.setAttribute("_ERROR_MESSAGE_", "fetchExamResult map is empty");
 				return "error";
 			}
-			request.setAttribute("userAttemptMasterMap", resultMap.get("userAttemptMasterMap"));
-			request.setAttribute("userAttemptTopicMasterList", resultMap.get("userAttemptTopicMasterList"));
-			request.setAttribute("userAttemptAnswerMasterList", resultMap.get("userAttemptAnswerMasterList"));
-			request.setAttribute("questions", resultMap.get("questions"));
 			request.setAttribute("examList", resultMap.get("examList"));
-			request.setAttribute("TopicNameList", resultMap.get("TopicNameList"));
+			request.setAttribute("examWisePerformance", resultMap.get("examWisePerformance"));
 			return "success";
 		} catch (Exception e) {
 			return "error";

@@ -10,7 +10,7 @@ import { log } from "util";
 const Cards = () => {
   var card = []
   var topic = []
-  var topicName=[]
+  var topicName = []
   const [answers, setAnswers] = useState();
   const [questions, setQuestions] = useState();
   const [score, setScore] = useState(100);
@@ -39,31 +39,33 @@ const Cards = () => {
         // setScore(fetchedData.userAttemptMasterMap);
         // setExam(fetchedData.examList);
         // setTopicList(fetchedData.userAttemptTopicMasterList);
-        console.log(fetchedData.userAttemptTopicMasterList);
-        fetchedData.userAttemptTopicMasterList.map((oneTopic) => {
-          topic.push(Number(oneTopic.userTopicPercentage))
-          // topicName.push(oneTopic.topicId)
-        })
-        setTopicList(topic);
-        setTopicNames(fetchedData.TopicNameList);
         fetchedData.examList.map((oneExam) => {
+          console.log("fetchedexam", fetchedData.examWisePerformance[oneExam.examId].userAttemptMasterMap.score);
+          fetchedData.examWisePerformance[oneExam.examId].userAttemptTopicMasterList.map((oneTopic) => {
+            topic.push(Number(oneTopic.userTopicPercentage))
+            // topicName.push(oneTopic.topicId)
+          })
+          setTopicList(topic);
+          var topicList=fetchedData.examWisePerformance[oneExam.examId].TopicNameList;
           var info = {
             title: oneExam.examId,
             color: {
               backGround: "linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
               boxShadow: "0px 10px 20px 0px #e0c6f5",
             },
-            barValue: (Number(fetchedData.userAttemptMasterMap.score)/Number(oneExam.noOfQuestions))*100,
+            barValue: (Number(fetchedData.examWisePerformance[oneExam.examId].userAttemptMasterMap.score) / Number(oneExam.noOfQuestions)) * 100,
             value: oneExam.examName,
             series: [
               {
-                name: "TopicPercentages",
-                data: topicList,
+                name: "TopicPercentage",
+                data: topic,
               },
             ],
+            TopicNameList:topicList
           }
+          topic=[];
           card.push(info);
-          
+
         })
         setExam(card);
       })
@@ -72,9 +74,9 @@ const Cards = () => {
       });
   }
   // card=exams;
-  console.log("outCard-",exams);
+  console.log("outCard-", exams);
 
-  
+
   const cards = {
     title: "Sales",
     color: {
@@ -102,11 +104,11 @@ const Cards = () => {
               barValue={card.barValue}
               value={card.value}
               series={card.series}
-              topic={topicNames}
+              topic={card.TopicNameList}
             />
           </div>
         );
-      }):console.log("exams empty")}
+      }) : <p className="ml-5">No content available to view.</p>}
     </div>
   );
 };

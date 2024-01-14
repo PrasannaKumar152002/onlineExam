@@ -28,8 +28,8 @@ function AdminDashboard() {
           throw new Error();
         }
         const data = await response.json();
-        console.log(data);
-        var list = data.StudentList;
+        console.log("student",data);
+        var list = data.StudentListInfo.StudentList;
         setStudents(list);
       } catch (error) {
         console.log(error);

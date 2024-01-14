@@ -180,7 +180,7 @@
 	<request-map uri="create-exam-for-user">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="createUserForExam"></event>
+			invoke="createExamForUser"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

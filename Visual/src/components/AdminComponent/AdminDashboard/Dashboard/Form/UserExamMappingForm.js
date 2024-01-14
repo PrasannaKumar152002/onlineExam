@@ -47,8 +47,8 @@ export default function UserExamMappingForm(props) {
                 throw new Error();
             }
             const data = await response.json();
-            console.log(data);
-            var list = data.ExamMaster;
+            console.log("ExamFetch",data);
+            var list = data.ExamInfo.ExamList;
             setExams(list);
         } catch (error) {
             console.log(error);
@@ -68,8 +68,8 @@ export default function UserExamMappingForm(props) {
                 throw new Error();
             }
             const data = await response.json();
-            console.log(data);
-            var list = data.StudentListInfo.StudentList;
+            console.log("userexammappingfetch",data);
+            var list = data.UserExamInfo.UserExamList;
             setUserExamMapping(list);
         } catch (error) {
             console.log(error);
