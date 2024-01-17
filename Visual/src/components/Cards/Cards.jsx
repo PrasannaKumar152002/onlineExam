@@ -6,17 +6,31 @@ import Card from "../Card/Card";
 import img from "../../components/image/user.png"
 import useStateRef from "react-usestateref";
 import { log } from "util";
+import Report from "../../page/Report";
 
 const Cards = () => {
   var card = []
   var topic = []
   var topicName = []
-  const [answers, setAnswers] = useState();
+  const [userAttemptAnswerMasterList, setUserAttemptAnswerMasterList] = useState();
   const [questions, setQuestions] = useState();
-  const [score, setScore] = useState(100);
+  const [userAttemptMasterMap, setUserAttemptMasterMap] = useState();
   const [exams, setExam] = useStateRef();
   const [topicList, setTopicList] = useStateRef();
-  const [topicNames, setTopicNames] = useStateRef();
+  const [detail, setDetail] = useState(false);
+  const[retrivedData,setRetrivedData]=useState()
+  const colorArr = [
+    "linear-gradient(-225deg, #7de2fc 0%, #b9b6e5 100%)",
+    "linear-gradient(-225deg, #D4145A 0%, #FBB03B 100%)",
+    "linear-gradient(-225deg, #009245 0%, #FCEE21 100%)",
+    "linear-gradient(-225deg, #FF512F 0%, #DD2476 100%)",
+    "linear-gradient(-225deg, #11998E 0%, #38EF7D 100%)",
+    "linear-gradient(180deg, #662D8C  0%, #ED1E79 100%)"
+  ];
+
+  const getRandomColor = () => {
+    return colorArr[Math.floor(Math.random() * colorArr.length)];
+  };
   useEffect(() => {
     console.log("Cardfetch called...");
     fetchResult();
@@ -34,6 +48,7 @@ const Cards = () => {
       .then((res) => res.json())
       .then((fetchedData) => {
         console.log("fetched...date", fetchedData);
+        setRetrivedData(fetchedData);
         // setQuestions(fetchedData.questions);
         // setAnswers(fetchedData.userAttemptAnswerMasterList);
         // setScore(fetchedData.userAttemptMasterMap);
@@ -42,28 +57,29 @@ const Cards = () => {
         fetchedData.examList.map((oneExam) => {
           console.log("fetchedexam", fetchedData.examWisePerformance[oneExam.examId].userAttemptMasterMap.score);
           fetchedData.examWisePerformance[oneExam.examId].userAttemptTopicMasterList.map((oneTopic) => {
-            topic.push(Number(oneTopic.userTopicPercentage))
+            topic.push(Math.round(Number(oneTopic.userTopicPercentage)))
             // topicName.push(oneTopic.topicId)
           })
           setTopicList(topic);
-          var topicList=fetchedData.examWisePerformance[oneExam.examId].TopicNameList;
+          var topicList = fetchedData.examWisePerformance[oneExam.examId].TopicNameList;
           var info = {
             title: oneExam.examId,
             color: {
-              backGround: "linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
+              backGround: getRandomColor(),
               boxShadow: "0px 10px 20px 0px #e0c6f5",
             },
-            barValue: (Number(fetchedData.examWisePerformance[oneExam.examId].userAttemptMasterMap.score) / Number(oneExam.noOfQuestions)) * 100,
+            barValue: Math.round((Number(fetchedData.examWisePerformance[oneExam.examId].userAttemptMasterMap.score) / Number(oneExam.noOfQuestions)) * 100),
             value: oneExam.examName,
             series: [
               {
-                name: "TopicPercentage",
+                name: "TopicPercentages",
                 data: topic,
               },
             ],
-            TopicNameList:topicList
+            TopicNameList: topicList,
+            examId:oneExam.examId
           }
-          topic=[];
+          topic = [];
           card.push(info);
 
         })
@@ -76,6 +92,15 @@ const Cards = () => {
   // card=exams;
   console.log("outCard-", exams);
 
+  const viewDetails=(examId)=>{
+    setDetail(true);
+    setQuestions(retrivedData.examWisePerformance[examId].questions);
+    setUserAttemptAnswerMasterList(retrivedData.examWisePerformance[examId].userAttemptAnswerMasterList);
+    setUserAttemptMasterMap(retrivedData.examWisePerformance[examId].userAttemptMasterMap);
+  }
+  const hideDetails=()=>{
+    setDetail(false);
+  }
 
   const cards = {
     title: "Sales",
@@ -95,7 +120,8 @@ const Cards = () => {
   }
   return (
     <div className="Cards">
-      {exams ? exams.map((card, id) => {
+      {detail?<Report questions={questions} userAttemptAnswerMasterList={userAttemptAnswerMasterList} userAttemptMasterMap={userAttemptMasterMap} hideDetails={hideDetails}/>:(exams ? exams.map((card, id) => {
+        console.log("card=======>", card.TopicNameList, "======>", card.barValue,card.color);
         return (
           <div key={id}>
             <Card
@@ -105,10 +131,12 @@ const Cards = () => {
               value={card.value}
               series={card.series}
               topic={card.TopicNameList}
+              examId={card.examId}
+              viewDetails={viewDetails}
             />
           </div>
         );
-      }) : <p className="ml-5">No content available to view.</p>}
+      }) : <p className="ml-5">No content available to view.</p>)}
     </div>
   );
 };

@@ -54,7 +54,7 @@ public class UserResult {
 		System.out.println("questions-" + questions + "answer-" + answer);
 		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0,
 				totalExamMarks = 0;
-		;
+
 		Map<String, Integer> topic = new HashMap<>();
 		// key===topicID===2===5
 		// VALUE===ANSWER ==3
@@ -70,7 +70,8 @@ public class UserResult {
 				for (List<Map<String, Object>> questionList : questions) {
 					for (Map<String, Object> oneQuestion : questionList) {
 
-						if (oneAnswer.get("questionId").toString().trim().equalsIgnoreCase(oneQuestion.get("questionId").toString().trim())) {
+						if (oneAnswer.get("questionId").toString().trim()
+								.equalsIgnoreCase(oneQuestion.get("questionId").toString().trim())) {
 							Integer questionIdInt = (Integer) oneAnswer.get("questionId");
 							String questionId = String.valueOf(questionIdInt);
 							String selectedAnswer = oneAnswer.get("answer").toString();

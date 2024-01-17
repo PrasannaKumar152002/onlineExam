@@ -144,7 +144,7 @@ export default function ExamTopicMapping() {
         throw new Error();
       }
       const data = await response.json();
-      console.log(data);
+      console.log("topic data",data);
       var list = data.TopicInfo.TopicList;
       setTopics(list);
 

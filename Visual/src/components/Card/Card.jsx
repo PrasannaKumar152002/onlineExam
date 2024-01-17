@@ -103,14 +103,14 @@ function ExpandedCard({ param, setExpanded }) {
       }}
       layoutId="expandableCard"
     >
-      <div style={{ alignSelf: "flex-end", cursor: "pointer", color: "white" }}>
+      <div style={{ alignSelf: "flex-end", cursor: "pointer", color: "red" }}>
         <UilTimes onClick={setExpanded} />
       </div>
-        <span>{param.value}</span>
+      <span>{param.value}</span>
       <div className="chartContainer">
         <Chart options={data.options} series={param.series} type="bar" />
       </div>
-      <span>Last 24 hours</span>
+      <span><button className="btn-primary mb-5" onClick={() => { param.viewDetails(param.examId) }}>Details</button></span>
     </motion.div>
   );
 }

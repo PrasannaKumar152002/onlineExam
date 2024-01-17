@@ -1,11 +1,14 @@
 package com.exam.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Stack;
 
 import javax.servlet.http.HttpSession;
 
@@ -32,12 +35,13 @@ public class ReportService {
 		Map<String, Object> result = new HashMap<String, Object>();
 		Map<String, Object> dataResult = new HashMap<String, Object>();
 		GenericValue userLogin = (GenericValue) context.get(EntityConstants.USER_LOGIN);
-
+		Random rand = new Random();
 		Map<String, Object> combinedMap = (Map<String, Object>) context.get("combinedMap");
 		Delegator delegator = dctx.getDelegator();
 		String partyId = userLogin.getString(ConstantValues.PARTY_ID);
 		try {
-			List<Map<String, Object>> examInfoList = new ArrayList<>();
+			List<Map<String, Object>> examList = new ArrayList<>();
+			Stack<Map<String, Object>> examInfoList = new Stack<>();
 			List<GenericValue> examInfo = EntityQuery.use(delegator).from("ExamMaster").queryList();
 			if (UtilValidate.isEmpty(examInfo)) {
 				errorMap.put("_ERROR_MESSAGE_", "No examInfo is empty");
@@ -55,14 +59,45 @@ public class ReportService {
 				examInfoList.add(oneExamInfoMap);
 
 			}
-			Map<String,Map<String,Object>> examWisePerformance=new HashMap<>();
-			for (Map<String, Object> oneExamId : examInfoList) {
-				Map<String,Object> oneExamPerformanceMap=new HashMap<>();
-				List<GenericValue> performanceIdList = EntityQuery.use(delegator).from("UserAttemptMaster")
-						.where(ConstantValues.EXAM_ID, oneExamId.get(ConstantValues.EXAM_ID).toString(), ConstantValues.PARTY_ID, partyId).queryList();
-				Random rand = new Random();
-				String performanceIdString = performanceIdList.get(rand.nextInt(performanceIdList.size()))
-						.getString(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			Map<String, Map<String, Object>> examWisePerformance = new HashMap<>();
+			GenericValue latestperformaceId;
+			LocalDateTime latestPerformaceTime;
+			while (!examInfoList.isEmpty()) {
+				latestperformaceId = null;
+				latestPerformaceTime = null;
+				Map<String, Object> oneExamId = examInfoList.pop();
+				Map<String, Object> oneExamPerformanceMap = new HashMap<>();
+				List<GenericValue> performanceIdList = EntityQuery
+						.use(delegator).from("UserAttemptMaster").where(ConstantValues.EXAM_ID,
+								oneExamId.get(ConstantValues.EXAM_ID).toString(), ConstantValues.PARTY_ID, partyId)
+						.queryList();
+				if (performanceIdList.size() <= 0) {
+					System.out.println(
+							"No performace exist for this exam " + oneExamId.get(ConstantValues.EXAM_ID).toString());
+					continue;
+				}
+				examList.add(oneExamId);
+				for (GenericValue onePerformaceIdList : performanceIdList) {
+					String thresholdDateString = onePerformaceIdList
+							.getString(ConstantValues.USER_ATTEMPT_COMPLETED_DATE);
+					LocalDateTime thresholdDate = LocalDateTime
+							.parse(thresholdDateString.substring(0, thresholdDateString.length() - 7), formatter);
+					if (latestPerformaceTime == null) {
+						latestPerformaceTime = thresholdDate;
+						latestperformaceId = onePerformaceIdList;
+					} else {
+						if (thresholdDate.isAfter(latestPerformaceTime)) {
+							latestPerformaceTime = thresholdDate;
+							latestperformaceId = onePerformaceIdList;
+						}
+					}
+				}
+				if (latestperformaceId == null) {
+					errorMap.put("_ERROR_MESSAGE_", "Latest Performance Search Error");
+					return errorMap;
+				}
+				String performanceIdString = latestperformaceId.getString(ConstantValues.USER_ANSWER_PERFORMANCE_ID);
 				Integer performanceId = Integer.parseInt(performanceIdString);
 				GenericValue userAttemptMasterEntries = EntityQuery.use(delegator).from("UserAttemptMaster")
 						.where(ConstantValues.USER_ANSWER_PERFORMANCE_ID, performanceId).cache().queryOne();
@@ -164,10 +199,10 @@ public class ReportService {
 				oneExamPerformanceMap.put("userAttemptAnswerMasterList", userAttemptAnswerMasterList);
 				oneExamPerformanceMap.put("questions", questions);
 				oneExamPerformanceMap.put("TopicNameList", topicNameList);
-				examWisePerformance.put(oneExamId.get(ConstantValues.EXAM_ID).toString(),oneExamPerformanceMap);
+				examWisePerformance.put(oneExamId.get(ConstantValues.EXAM_ID).toString(), oneExamPerformanceMap);
 			}
 			result.put("examWisePerformance", examWisePerformance);
-			result.put("examList", examInfoList);
+			result.put("examList", examList);
 			return result;
 		} catch (Exception e) {
 			Debug.logError(e, module);
