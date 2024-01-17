@@ -108,9 +108,9 @@ function ExpandedCard({ param, setExpanded }) {
       </div>
         <span>{param.value}</span>
       <div className="chartContainer">
-        <Chart options={data.options} series={param.series} type="bar" />
+        <Chart options={data.options} series={param.series} type="area" />
       </div>
-      <span>Last 24 hours</span>
+      <span style={{marginBottom:"20px"}}><button className="btn-primary">Details</button></span>
     </motion.div>
   );
 }

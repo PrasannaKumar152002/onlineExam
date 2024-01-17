@@ -5,7 +5,6 @@ import { cardsData } from "../../Data/Data";
 import Card from "../Card/Card";
 import img from "../../components/image/user.png"
 import useStateRef from "react-usestateref";
-import { log } from "util";
 
 const Cards = () => {
   var card = []
