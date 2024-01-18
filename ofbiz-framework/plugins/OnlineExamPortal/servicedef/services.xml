@@ -237,17 +237,9 @@
 		<description>Exam Result</description>
 		<attribute name="combinedMap" type="Object" mode="IN"
 			optional="false"></attribute>
-		<attribute name="userAttemptMasterMap" type="Map" mode="OUT"
-			optional="false"></attribute>
-		<attribute name="userAttemptTopicMasterList" type="List"
-			mode="OUT" optional="false"></attribute>
-		<attribute name="userAttemptAnswerMasterList" type="List"
-			mode="OUT" optional="false"></attribute>
-		<attribute name="questions" type="List" mode="OUT"
-			optional="false"></attribute>
 		<attribute name="examList" type="List" mode="OUT"
 			optional="false"></attribute>
-		<attribute name="TopicNameList" type="List" mode="OUT"
+		<attribute name="examWisePerformance" type="Map" mode="OUT"
 			optional="false"></attribute>
 	</service>
 </services>

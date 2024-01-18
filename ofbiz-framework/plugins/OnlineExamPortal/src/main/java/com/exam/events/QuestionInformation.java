@@ -76,27 +76,36 @@ public class QuestionInformation {
 			// Retrieve necessary information from UserExamMapping
 			String noOfAttempt = userExam.getString(ConstantValues.USEREXAM_NO_OF_ATTEMPTS);
 			String allowedAttempt = userExam.getString(ConstantValues.USEREXAM_ALLOWED_ATTEMPTS);
+			Integer allowedAttemptInt=Integer.parseInt(allowedAttempt);
 			Integer attemptCount = Integer.parseInt(noOfAttempt);
 			noOfAttempt = String.valueOf(attemptCount + 1);
+			Integer noOfAttemptExam=Integer.parseInt(noOfAttempt);
+			if(allowedAttemptInt>=noOfAttemptExam) {
+				// Call service to create a UserAttemptMaster record
+				Map<String, Object> userAttemptMasterResult = dispatcher.runSync("createUserAttemptMaster",
+						UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
+								ConstantValues.PARTY_ID, partyId, ConstantValues.USER_ATTEMPT_NUMBER, noOfAttempt,
+								EntityConstants.USER_LOGIN, userLogin));
 
-			// Call service to create a UserAttemptMaster record
-			Map<String, Object> userAttemptMasterResult = dispatcher.runSync("createUserAttemptMaster",
-					UtilMisc.toMap(ConstantValues.EXAM_ID, examId, ConstantValues.EXAM_TOTAL_QUES, noOfQuestions,
-							ConstantValues.PARTY_ID, partyId, ConstantValues.USEREXAM_NO_OF_ATTEMPTS, noOfAttempt,
-							EntityConstants.USER_LOGIN, userLogin));
-
-			// Check if the service call resulted in an error
-			if (ServiceUtil.isError(userAttemptMasterResult)) {
-				String errorMessage = ServiceUtil.getErrorMessage(userAttemptMasterResult);
+				// Check if the service call resulted in an error
+				if (ServiceUtil.isError(userAttemptMasterResult)) {
+					String errorMessage = ServiceUtil.getErrorMessage(userAttemptMasterResult);
+					request.setAttribute("ERROR_MESSAGE", errorMessage);
+					Debug.logError(errorMessage, MODULE_NAME);
+					return "error";
+				} else {
+					// Handle success scenario
+					String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
+							UtilHttp.getLocale(request));
+					ServiceUtil.getMessages(request, userAttemptMasterResult, successMessage);
+					performanceId = userAttemptMasterResult.get(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID).toString();
+				}
+			}
+			else {
+				String errorMessage = "Your attempt is completed";
 				request.setAttribute("ERROR_MESSAGE", errorMessage);
 				Debug.logError(errorMessage, MODULE_NAME);
 				return "error";
-			} else {
-				// Handle success scenario
-				String successMessage = UtilProperties.getMessage(RES_ERR, "ServiceSuccessMessage",
-						UtilHttp.getLocale(request));
-				ServiceUtil.getMessages(request, userAttemptMasterResult, successMessage);
-				performanceId = userAttemptMasterResult.get(ConstantValues.USER_ATTEMPT_PERFORMANCE_ID).toString();
 			}
 
 			if (UtilValidate.isEmpty(performanceId)) {
@@ -107,7 +116,7 @@ public class QuestionInformation {
 				return "error";
 			}
 
-			Debug.log("Create User Attempt Master Result======================" + userAttemptMasterResult);
+			//Debug.log("Create User Attempt Master Result======================" + userAttemptMasterResult);
 
 			// Query ExamTopicMapping for the given examId
 			List<GenericValue> examTopicMapping = EntityQuery.use(delegator).from("ExamTopicMapping")

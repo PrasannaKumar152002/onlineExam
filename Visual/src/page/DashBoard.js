@@ -60,11 +60,11 @@ const Dashboard = () => {
       {fetchError && <p>{fetchError}</p>}
       {!fetchError && (
         <div className="row">
-          {examData.map((exam) => (
+          {examData.length==0?<p>No exams has been assigned for you. Check back later.</p> :(examData.map((exam) => (
             <div key={exam.examId} className="col-md-4 mb-4">
               {renderExamCard(exam)}
             </div>
-          ))}
+          )))}
         </div>
       )}
       </div>

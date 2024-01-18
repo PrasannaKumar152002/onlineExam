@@ -51,10 +51,10 @@ public class UserResult {
 
 		List<List<Map<String, Object>>> questions = (List<List<Map<String, Object>>>) request.getAttribute("questions");
 		System.out.println("user result///////////////////////////////////////////////////////////////////////////");
-		System.out.println("questions-" + questions + "answer-" + answers);
-		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0, totalExamMarks=0;
-				
-		
+//		System.out.println("questions-" + questions + "answer-" + answer);
+		int correctAnswerCount = 0, correctAnswerMark = 0, wrongAnswerCount = 0, wrongAnswerMark = 0,
+				totalExamMarks = 0;
+
 		Map<String, Integer> topic = new HashMap<>();
 		
 		try {
@@ -69,7 +69,8 @@ public class UserResult {
 				for (List<Map<String, Object>> questionList : questions) {
 					for (Map<String, Object> oneQuestion : questionList) {
 
-						if (oneAnswer.get("questionId").toString().trim().equalsIgnoreCase(oneQuestion.get("questionId").toString().trim())) {
+						if (oneAnswer.get("questionId").toString().trim()
+								.equalsIgnoreCase(oneQuestion.get("questionId").toString().trim())) {
 							Integer questionIdInt = (Integer) oneAnswer.get("questionId");
 							String questionId = String.valueOf(questionIdInt);
 							String selectedAnswer = oneAnswer.get("answer").toString();

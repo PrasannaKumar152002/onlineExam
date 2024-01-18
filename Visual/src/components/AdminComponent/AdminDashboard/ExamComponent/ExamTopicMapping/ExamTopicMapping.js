@@ -3,16 +3,18 @@ import Table from "react-bootstrap/Table";
 import ExamTopicMappingForm from "../../Dashboard/Form/ExamTopicMappingForm";
 export default function ExamTopicMapping() {
   const [topics, setTopics] = useState([]);
+  let changedTopics = JSON.parse(JSON.stringify(topics));
+  console.log("CHANGED TOPICS:" + changedTopics);
   const [exams, setExams] = useState([]);
   const [examTopic, setExamTopic] = useState([]);
   const [percentage, setPercentage] = useState();
+  const [selectedTopics, setSelectedTopics] = useState([]);
   const [questionsPerExam, setQuestionsPerExam] = useState();
   const [topicChange, setTopicChange] = useState("CHOOSE ONE");
   const [examID, setExamID] = useState("CHOOSE ONE");
   const [message, setMessage] = useState("");
   const [showPercentage, setShowPercentage] = useState("");
   const [questions, setQuestions] = useState("");
-  const [reloadComponent, setReloadComponent] = useState(false);
 
   useEffect(() => {
     fetchTopics();
@@ -21,19 +23,108 @@ export default function ExamTopicMapping() {
   }, []);
 
   const handleChangePercentage = (e) => {
-    if (e.target.value % 5 !== 0 || e.target.value % 10 !== 0) {
-      setPercentage(e.target.value);
-    } else {
     setPercentage(e.target.value);
+    let value = e.target.value;
+    if ((e.target.value % 10 === 0 || e.target.value % 5 === 0)) {
+      setPercentage(value);
+      console.log(value);
+      document.getElementById("percentageerr").style.display = "none";
     }
+    else
+    {
+      setPercentage(value);
+      console.log(value);
+      document.getElementById("percentageerr").style.display = "block";
+    }
+    // if (e.target.value && e.target.value % 10 === 0) {
+    //   setPercentage(e.target.value);
+    //   document.getElementById("percentageerr").style.display = "none";
+    // }
+    // else
+    // {
+    //   setPercentage(e.target.value);
+    //   document.getElementById("percentageerr").style.display = "block";
+    // }
+    // if (e.target.value && e.target.value % 10 === 0) {
+    //   setPercentage(e.target.value);
+    //   document.getElementById("percentageerr").style.display = "none";
+    // }
+    //  else {
+    //   setPercentage(0);
+    //   document.getElementById("percentageerr").style.display = "none";
+    // }
     // setQuestionsPerExam(e.target.value);
   };
   const handleSelectTopicChange = (e) => {
     setTopicChange(e.topicId);
   };
 
-  const handleSelectExamChange = (e) => {
+  const handleSelectExamChange = async (e) => {
     setExamID(e.examId);
+    console.log("-----------------------------" + e.examId);
+    try {
+      const data_map = {
+        examId: e.examId,
+      };
+      // if (examID) {
+      const response = await fetch(
+        "https://" +
+          window.location.hostname +
+          ":8443/OnlineExamPortal/control/fetch-selected-topics",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(data_map),
+        }
+      );
+      if (!response.ok) {
+        throw new Error();
+      }
+      const data = await response.json();
+      console.log(data);
+      let list = data.SelectedTopicsInfo.SelectedTopics;
+      if (!list) {
+        setSelectedTopics(topics);
+      } else {
+        // setSelectedTopics(list);
+        // console.log("LIST" + selectedTopics);
+        // topics = topics.filter(val => !list.includes(val));
+        // console.log("RESULT" + result);
+        // let newTopics = topics.filter(val => !list.topicId.includes(val.topicId));
+        const newTopics = changedTopics.filter(
+          (elem) => !list.find(({ topicId }) => elem.topicId === topicId)
+        );
+        console.log("ORIGINAL TOPICS: " + topics);
+        console.log("CHANGED TOPICS: " + newTopics);
+        setSelectedTopics(newTopics);
+        console.log("RESULT------------" + newTopics);
+      }
+      // }
+      // else {
+      //   const response = await fetch(
+      //     "https://" +
+      //       window.location.hostname +
+      //       ":8443/OnlineExamPortal/control/fetch-topics",
+      //     {
+      //       method: "GET",
+      //       credentials: "include",
+      //     }
+      //   );
+      //   if (!response.ok) {
+      //     throw new Error();
+      //   }
+      //   const data = await response.json();
+      //   console.log(data);
+      //   let list = data.TopicInfo.TopicList;
+      //   setTopics(list);
+      // }
+      // setTopics(topics);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleSelectCountChange = (e) => {
     // setQuestionsPerExam()
@@ -53,9 +144,11 @@ export default function ExamTopicMapping() {
         throw new Error();
       }
       const data = await response.json();
-      console.log(data);
+      console.log("topic data",data);
       var list = data.TopicInfo.TopicList;
       setTopics(list);
+
+      // if ()
     } catch (error) {
       console.log(error);
     }
@@ -135,7 +228,13 @@ export default function ExamTopicMapping() {
       document.getElementById("percentageerr").style.display = "none";
     }
     try {
-      if (!(examID === "CHOOSE ONE" || topicChange === "CHOOSE ONE" || data_map.percentage === undefined)) {
+      if (
+        !(
+          examID === "CHOOSE ONE" ||
+          topicChange === "CHOOSE ONE" ||
+          data_map.percentage === undefined
+        )
+      ) {
         fetch(
           "https://" +
             window.location.hostname +
@@ -153,15 +252,13 @@ export default function ExamTopicMapping() {
             return response.json();
           })
           .then((fetch_data) => {
-            // console.log(fetch_data.output);
+            console.log("fetch_data....", fetch_data);
+            // console.log("ExamID:" + fetch_data.SelectedTopicsInfo.examId);
             var topicQuestionsPerExam = fetch_data.topicQuestionsPerExam;
-            console.log(topicQuestionsPerExam);
-            // var message = fetch_data.message;
-            // setMessage(message);
             console.log(fetch_data.message);
             setMessage(fetch_data.message);
             setShowPercentage(fetch_data.percentage);
-            console.log(fetch_data.percentage)
+            console.log(fetch_data.percentage);
             setQuestions(fetch_data.questions);
             setQuestionsPerExam(topicQuestionsPerExam);
             fetchExamTopicMapping();
@@ -208,12 +305,10 @@ export default function ExamTopicMapping() {
     }
     if (
       !(
-        (
-          examID === "CHOOSE ONE" ||
-          topicChange === "CHOOSE ONE" ||
-          data_map.percentage === undefined ||
-          data_map.topicPassPercentage === ""
-        )
+        examID === "CHOOSE ONE" ||
+        topicChange === "CHOOSE ONE" ||
+        data_map.percentage === undefined ||
+        data_map.topicPassPercentage === ""
       )
     ) {
       try {
@@ -244,8 +339,8 @@ export default function ExamTopicMapping() {
             fetchExamTopicMapping();
             setExamID("CHOOSE ONE");
             setTopicChange("CHOOSE ONE");
-            setReloadComponent(!reloadComponent);
-            console.log(reloadComponent);
+            setTopics(topics);
+            console.log("TOPICS:" + topics);
           });
       } catch (error) {
         console.log(error);
@@ -259,7 +354,7 @@ export default function ExamTopicMapping() {
         questions={questions}
         message={message}
         percentage={percentage}
-        topics={topics}
+        selectedTopics={selectedTopics}
         submitHandler={submitHandler}
         examID={examID}
         topicChange={topicChange}
@@ -281,7 +376,7 @@ export default function ExamTopicMapping() {
           questions={questions}
           message={message}
           percentage={percentage}
-          topics={topics}
+          selectedTopics={selectedTopics}
           submitHandler={submitHandler}
           examID={examID}
           topicChange={topicChange}
@@ -327,7 +422,7 @@ export default function ExamTopicMapping() {
           questions={questions}
           message={message}
           percentage={percentage}
-          topics={topics}
+          selectedTopics={selectedTopics}
           submitHandler={submitHandler}
           examID={examID}
           topicChange={topicChange}

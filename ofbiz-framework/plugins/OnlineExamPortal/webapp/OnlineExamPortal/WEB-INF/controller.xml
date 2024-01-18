@@ -73,7 +73,15 @@
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>
-
+	
+	<request-map uri="fetch-selected-topics">
+		<security https="true" auth="true" />
+		<event type="java" path="com.exam.events.ExamTopicMappingEvents"
+			invoke="getSelectedExams" />
+		<response name="success" type="request" value="json" />
+		<response name="error" type="request" value="json" />
+	</request-map>
+	
 	<request-map uri="fetch-one-topic">
 		<security https="true" auth="false" />
 		<event type="java" path="com.exam.events.TopicMasterEvents"
@@ -180,7 +188,7 @@
 	<request-map uri="create-exam-for-user">
 		<security https="true" auth="true" />
 		<event type="java" path="com.exam.events.UserExamMappingEvents"
-			invoke="createUserForExam"></event>
+			invoke="createExamForUser"></event>
 		<response name="success" type="request" value="json" />
 		<response name="error" type="request" value="json" />
 	</request-map>

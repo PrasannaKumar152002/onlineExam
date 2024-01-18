@@ -117,8 +117,7 @@ function QuestionPalette({ data }) {
       .then((res) => res.json())
       .then((fetchedData) => {
         console.log("fetched...date", fetchedData);
-        // setQuestions(fetchedData.questions);
-        // setAnswers(fetchedData.selectionAnswerResult);
+       
 
       })
       .catch((error) => {
@@ -162,12 +161,16 @@ function QuestionPalette({ data }) {
           )}</span>
               </div>
               `;
-          // startTimer();
+           startTimer();
         }
         else {
           nav("/dashboard"); window.location.reload()
         }
       });
+      return () => {
+      
+        clearInterval(timerInterval);
+      };
     }
   }, [data])
 
@@ -188,7 +191,7 @@ function QuestionPalette({ data }) {
       setCircleDasharray();
       setRemainingPathColor(timeLeft);
 
-      if (timeLeft === 0) {
+      if (timeLeft <= 0) {
         onTimesUp();
       }
     }, 1000);
@@ -348,15 +351,7 @@ function QuestionPalette({ data }) {
     </div>
   );
   const [sequence, setSequence] = useState(1);
-  // const renderQuestionGroup = (questionGroup) => (
-  //   <React.Fragment key={questionGroup[0].questionId}>
-  //     {Array.isArray(questionGroup) ? (
-  //       questionGroup.map((question) => renderQuestion(question))
-  //     ) : (
-  //       <p>Error: Invalid format for questionGroup</p>
-  //     )}
-  //   </React.Fragment>
-  // );
+  
   return (
     <div>
       {questions ? (

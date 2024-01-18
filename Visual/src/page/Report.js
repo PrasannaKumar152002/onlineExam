@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState,useRef } from 'react';
 import { AppContext } from '../components/user/UserPage';
 import Header from '../components/user/Header';
 import "../page/answer.css";
@@ -13,59 +13,46 @@ import Icon from '@ant-design/icons/lib/components/Icon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import tick from '../components/image/check.png'
 import wrong from '../components/image/cancel.png'
+import {useReactToPrint} from 'react-to-print';
 
-
-const Report = () => {
-  var user=sessionStorage.getItem("userId");
+const Report = (props) => {
+  var user = sessionStorage.getItem("userId");
   const { answers, setAnswers } = useContext(AppContext);
   const { questions, setQuestions } = useContext(AppContext);
-  const [score,setScore]=useState(100);
-  const url = "https://" + window.location.hostname + ":8443/OnlineExamPortal/control/fetch-user-report";
-  const fetchResult = () => {
-    fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    })
-      .then((res) => res.json())
-      .then((fetchedData) => {
-        console.log("fetched...date", fetchedData);
-        setQuestions(fetchedData.questions);
-        setAnswers(fetchedData.userAttemptAnswerMasterList);
-        setScore(fetchedData.userAttemptMasterMap);
-
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }
+  const [score, setScore] = useState(0);
+  const printRef=useRef();
+  
   useEffect(() => {
     console.log("fetch called...");
-    fetchResult();
+    setQuestions(props.questions);
+    setAnswers(props.userAttemptAnswerMasterList);
+    setScore(props.userAttemptMasterMap);
+
   }, []);
-  const td = {
-    name: "prasanna",
-    emailid: "pras1542002@gmail.com",
-    contact: 9342465971,
-    TotalScore: 100
-  }
-  var seq=1;
+  
+  var seq = 1;
+
+  const handlePrint=useReactToPrint({content:()=>printRef.current})
   return (
     <div>
-      <Header />
-      <div className="answer-table-outer">
+      <div className="answer-table-outer" style={{ width: "100%" }}>
+      <div className="answer-table-wrapper" ref={printRef}>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button class="btn btn-outline-primary" type="button" onClick={props.hideDetails}>Back</button>
+      <button class="btn btn-outline-danger" type="button"onClick={handlePrint}>Print</button>
+    </div>
+       
         <Title className="answer-table-heading" level={4}>Result</Title>
-        <div className="answer-table-wrapper">
+        
           <Descriptions bordered title={null} border size="small">
             <Descriptions.Item label="Email Id">{user}</Descriptions.Item>
             <Descriptions.Item label="Score">{Number(score.score)}</Descriptions.Item>
-            <Descriptions.Item label="Result">{score?score.userPassed=="Y"?"Pass":"Fail":td.TotalScore}</Descriptions.Item>
+            <Descriptions.Item label="Result">{score ? score.userPassed == "Y" ? "Pass" : "Fail" : 0}</Descriptions.Item>
           </Descriptions>
           <br />
 
 
-          <table class="table">
+          <table class="table" >
             <thead class="thead-light">
               <tr>
                 <th scope="col">S.No</th>
@@ -78,9 +65,9 @@ const Report = () => {
               </tr>
             </thead>
             <tbody>
-              {questions ? (questions.map((oneQuestion,index) => {
-                console.log("index-",index);
-                console.log("answer=",score);
+              {questions ? (questions.map((oneQuestion, index) => {
+                console.log("index-", index);
+                console.log("answer=", score);
                 return (
                   <tr>
                     <th scope="row">{seq++}</th>
@@ -88,7 +75,7 @@ const Report = () => {
                     <td><button type="button" class="btn btn-outline-success">{oneQuestion.answer}</button></td>
                     <td><button type="button" class="btn btn-outline-primary">{answers[index].submittedAnswer}</button></td>
                     <td>{oneQuestion.answerValue}</td>
-                    <td>{oneQuestion.answer.trim()==answers[index].submittedAnswer.trim()?<img src={tick} style={{ width: "20px" }} />:<img src={wrong} style={{ width: "22px" }} />}</td>
+                    <td>{oneQuestion.answer == answers[index].submittedAnswer ? <img src={tick} style={{ width: "20px" }} /> : <img src={wrong} style={{ width: "22px" }} />}</td>
                   </tr>
                 )
               })
